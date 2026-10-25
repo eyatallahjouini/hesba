@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/creme" android:orientation="vertical">
+  <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+      <TextView android:id="@+id/txtRecipeCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4 recettes enregistrées" android:textColor="@color/brun_clair" android:textSize="15sp"/>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mes recettes" android:textColor="@color/brun" android:textSize="32sp" android:textStyle="bold" android:fontFamily="serif"/>
+      <LinearLayout android:id="@+id/listRecipes" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="12dp">
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gâteau au chocolat" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12 parts" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+            </LinearLayout>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="▲ Marge 47 %" android:textColor="@color/vert" android:textSize="13sp" android:textStyle="bold" android:background="@drawable/bg_badge_green" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="5dp" android:paddingBottom="5dp"/>
+          </LinearLayout>
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginEnd="28dp">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Coût par part" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1,87 dt" android:textColor="@color/brun" android:textSize="22sp" android:textStyle="bold" android:fontFamily="serif"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Prix de vente" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="3,50 dt" android:textColor="@color/brun" android:textSize="22sp" android:textStyle="bold" android:fontFamily="serif"/>
+            </LinearLayout>
+          </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="12dp">
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tarte aux fraises" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="8 parts" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+            </LinearLayout>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="▲ Marge 40 %" android:textColor="@color/vert" android:textSize="13sp" android:textStyle="bold" android:background="@drawable/bg_badge_green" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="5dp" android:paddingBottom="5dp"/>
+          </LinearLayout>
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginEnd="28dp">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Coût par part" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2,40 dt" android:textColor="@color/brun" android:textSize="22sp" android:textStyle="bold" android:fontFamily="serif"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Prix de vente" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4,00 dt" android:textColor="@color/brun" android:textSize="22sp" android:textStyle="bold" android:fontFamily="serif"/>
+            </LinearLayout>
+          </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="12dp">
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Makroudh" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="20 pièces" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+            </LinearLayout>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="▲ Marge 42 %" android:textColor="@color/vert" android:textSize="13sp" android:textStyle="bold" android:background="@drawable/bg_badge_green" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="5dp" android:paddingBottom="5dp"/>
+          </LinearLayout>
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginEnd="28dp">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Coût par pièce" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,35 dt" android:textColor="@color/brun" android:textSize="22sp" android:textStyle="bold" android:fontFamily="serif"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Prix de vente" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,60 dt" android:textColor="@color/brun" android:textSize="22sp" android:textStyle="bold" android:fontFamily="serif"/>
+            </LinearLayout>
+          </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="12dp">
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sandwich thon" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 unité" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+            </LinearLayout>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="▼ Marge 17 %" android:textColor="@color/rouge" android:textSize="13sp" android:textStyle="bold" android:background="@drawable/bg_badge_red" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="5dp" android:paddingBottom="5dp"/>
+          </LinearLayout>
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginEnd="28dp">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Coût par unité" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2,90 dt" android:textColor="@color/brun" android:textSize="22sp" android:textStyle="bold" android:fontFamily="serif"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Prix de vente" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="3,50 dt" android:textColor="@color/brun" android:textSize="22sp" android:textStyle="bold" android:fontFamily="serif"/>
+            </LinearLayout>
+          </LinearLayout>
+        </LinearLayout>
+      </LinearLayout>
+      <Button android:id="@+id/btnNewRecipe" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="+ Nouvelle recette" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
+    </LinearLayout>
+  </ScrollView>
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:background="@color/white" android:elevation="8dp">
+    <LinearLayout android:id="@+id/navBilan" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
+      <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_bilan" android:contentDescription="Bilan" app:tint="@color/brun"/>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Bilan" android:textColor="@color/brun" android:textSize="12sp"/>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/navRecettes" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true" android:background="@drawable/bg_nav_active">
+      <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_recettes" android:contentDescription="Recettes" app:tint="@color/brun"/>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Recettes" android:textColor="@color/brun" android:textSize="12sp" android:textStyle="bold"/>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/navIngredients" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
+      <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_ingredients" android:contentDescription="Ingrédients" app:tint="@color/brun"/>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Ingrédients" android:textColor="@color/brun" android:textSize="12sp"/>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/navVentes" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
+      <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_ventes" android:contentDescription="Ventes" app:tint="@color/brun"/>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Ventes" android:textColor="@color/brun" android:textSize="12sp"/>
+    </LinearLayout>
+  </LinearLayout>
+</LinearLayout>

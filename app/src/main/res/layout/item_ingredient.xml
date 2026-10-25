@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+      <TextView android:id="@+id/txtIngredientName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ingrédient" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+      <TextView android:id="@+id/txtIngredientUnit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 kg" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+      <TextView android:id="@+id/txtUpdated" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="▲ Prix mis à jour" android:textColor="@color/rouge" android:textSize="13sp" android:textStyle="bold"/>
+    </LinearLayout>
+    <TextView android:id="@+id/txtPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,00 dt" android:textColor="@color/brun" android:textSize="20sp" android:textStyle="bold" android:fontFamily="serif"/>
+  </LinearLayout>
+  <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/caramel"/>
+</LinearLayout>

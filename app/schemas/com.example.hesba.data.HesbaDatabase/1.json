@@ -1,0 +1,351 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "3c11844500c1e88c5c6ca91776ac7c4b",
+    "entities": [
+      {
+        "tableName": "utilisateur",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `prenom` TEXT NOT NULL, `email` TEXT NOT NULL, `motDePasseHash` TEXT NOT NULL, `activite` TEXT NOT NULL, `politiqueConfidentialiteAcceptee` INTEGER NOT NULL, `dateCreation` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prenom",
+            "columnName": "prenom",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "motDePasseHash",
+            "columnName": "motDePasseHash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activite",
+            "columnName": "activite",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "politiqueConfidentialiteAcceptee",
+            "columnName": "politiqueConfidentialiteAcceptee",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateCreation",
+            "columnName": "dateCreation",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_utilisateur_email",
+            "unique": true,
+            "columnNames": [
+              "email"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_utilisateur_email` ON `${TABLE_NAME}` (`email`)"
+          }
+        ]
+      },
+      {
+        "tableName": "ingredient",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nom` TEXT NOT NULL, `unite` TEXT NOT NULL, `quantiteEmballage` REAL NOT NULL, `prixPaye` REAL NOT NULL, `dateMiseAJour` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nom",
+            "columnName": "nom",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unite",
+            "columnName": "unite",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantiteEmballage",
+            "columnName": "quantiteEmballage",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prixPaye",
+            "columnName": "prixPaye",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateMiseAJour",
+            "columnName": "dateMiseAJour",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "recette",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nom` TEXT NOT NULL, `nombreParts` INTEGER NOT NULL, `margeVoulue` REAL NOT NULL, `prixVente` REAL, `photoUri` TEXT, `dateCreation` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nom",
+            "columnName": "nom",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombreParts",
+            "columnName": "nombreParts",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "margeVoulue",
+            "columnName": "margeVoulue",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prixVente",
+            "columnName": "prixVente",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "photoUri",
+            "columnName": "photoUri",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "dateCreation",
+            "columnName": "dateCreation",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "ligne_recette",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `recetteId` INTEGER NOT NULL, `ingredientId` INTEGER NOT NULL, `quantite` REAL NOT NULL, `unite` TEXT NOT NULL, FOREIGN KEY(`recetteId`) REFERENCES `recette`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`ingredientId`) REFERENCES `ingredient`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recetteId",
+            "columnName": "recetteId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ingredientId",
+            "columnName": "ingredientId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantite",
+            "columnName": "quantite",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unite",
+            "columnName": "unite",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ligne_recette_ingredientId",
+            "unique": false,
+            "columnNames": [
+              "ingredientId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ligne_recette_ingredientId` ON `${TABLE_NAME}` (`ingredientId`)"
+          },
+          {
+            "name": "index_ligne_recette_recetteId_ingredientId",
+            "unique": true,
+            "columnNames": [
+              "recetteId",
+              "ingredientId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ligne_recette_recetteId_ingredientId` ON `${TABLE_NAME}` (`recetteId`, `ingredientId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "recette",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "recetteId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "ingredient",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ingredientId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "vente",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `recetteId` INTEGER, `nomRecette` TEXT NOT NULL, `quantite` INTEGER NOT NULL, `prixVenteUnitaire` REAL NOT NULL, `coutUnitaire` REAL NOT NULL, `date` INTEGER NOT NULL, FOREIGN KEY(`recetteId`) REFERENCES `recette`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recetteId",
+            "columnName": "recetteId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "nomRecette",
+            "columnName": "nomRecette",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantite",
+            "columnName": "quantite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prixVenteUnitaire",
+            "columnName": "prixVenteUnitaire",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coutUnitaire",
+            "columnName": "coutUnitaire",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_vente_recetteId",
+            "unique": false,
+            "columnNames": [
+              "recetteId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_vente_recetteId` ON `${TABLE_NAME}` (`recetteId`)"
+          },
+          {
+            "name": "index_vente_date",
+            "unique": false,
+            "columnNames": [
+              "date"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_vente_date` ON `${TABLE_NAME}` (`date`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "recette",
+            "onDelete": "SET NULL",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "recetteId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c11844500c1e88c5c6ca91776ac7c4b')"
+    ]
+  }
+}

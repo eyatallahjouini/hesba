@@ -1,5 +1,8 @@
 package com.example.hesba
-
+import androidx.lifecycle.lifecycleScope
+import com.example.hesba.data.HesbaDatabase
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,17 +39,25 @@ class ComposeRecipeActivity : AppCompatActivity() {
 
         val list = findViewById<LinearLayout>(R.id.listLines)
         list.removeAllViews()   // enlève les lignes d'exemple du dessin
-        for (ingredient in loadIngredients()) addRow(list, ingredient)
+        loadFromDatabase(list)
 
         findViewById<EditText>(R.id.editYield).doAfterTextChanged { recalculate() }
         recalculate()
     }
 
-    // ÉTAPE 1 : liste écrite à la main (sans base de données)
-    private fun loadIngredients(): List<Ingredient> = listOf(
-        Ingredient(nom = "Harissa", unite = "g", quantiteEmballage = 1000.0, prixPaye = 6.0),
-        Ingredient(nom = "Pain", unite = "piece", quantiteEmballage = 1.0, prixPaye = 0.25)
-    )
+    private fun loadFromDatabase(list: LinearLayout) {
+        lifecycleScope.launch {
+            val dao = HesbaDatabase.getInstance(this@ComposeRecipeActivity).ingredientDao()
+            var ingredients = dao.tous().first()
+            if (ingredients.isEmpty()) {
+                dao.inserer(Ingredient(nom = "Harissa", unite = "g", quantiteEmballage = 1000.0, prixPaye = 6.0))
+                dao.inserer(Ingredient(nom = "Pain", unite = "piece", quantiteEmballage = 1.0, prixPaye = 0.25))
+                ingredients = dao.tous().first()
+            }
+            for (ingredient in ingredients) addRow(list, ingredient)
+            recalculate()
+        }
+    }
 
     private fun addRow(list: LinearLayout, ingredient: Ingredient) {
         val view = LayoutInflater.from(this).inflate(R.layout.item_recipe_line, list, false)

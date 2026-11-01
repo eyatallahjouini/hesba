@@ -53,9 +53,15 @@ interface RecetteDao {
 
     @Query("SELECT * FROM recette ORDER BY nom")
     fun toutes(): Flow<List<Recette>>
-
+    // Récupère uniquement les recettes de l'utilisateur connecté
+    @Query("SELECT * FROM recette WHERE utilisateurId = :utilisateurId ORDER BY nom")
+    fun parUtilisateur(utilisateurId: Long): Flow<List<Recette>>
     @Query("SELECT * FROM recette WHERE id = :id")
     suspend fun parId(id: Long): Recette?
+    @Query("UPDATE recette SET prixVente = :prixVente WHERE id = :id")
+
+    suspend fun mettreAJourPrixVente(id: Long, prixVente: Double)
+
 }
 
 @Dao
@@ -63,6 +69,8 @@ interface LigneRecetteDao {
     @Insert
     suspend fun inserer(ligne: LigneRecette): Long
 
+    @Insert
+    suspend fun insererToutes(lignes: List<LigneRecette>)
     @Insert
     suspend fun insererTout(lignes: List<LigneRecette>)
 

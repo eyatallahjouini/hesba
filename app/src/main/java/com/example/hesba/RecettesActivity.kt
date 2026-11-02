@@ -7,6 +7,8 @@ import android.graphics.Outline
 import android.os.Bundle
 import android.view.ViewOutlineProvider
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -105,13 +107,44 @@ class RecettesActivity : AppCompatActivity() {
             }
             view.findViewById<TextView>(R.id.txtCost).text = money(result.costPerPiece)
             view.findViewById<TextView>(R.id.txtPrice).text = money(result.advisedPrice)
+            // carte ou crayon : modifier · corbeille : supprimer
+            view.findViewById<View>(R.id.cardRecipe).setOnClickListener { openEdit(recette) }
+            view.findViewById<View>(R.id.btnEditRecipe).setOnClickListener { openEdit(recette) }
+            view.findViewById<View>(R.id.btnDeleteRecipe).setOnClickListener { askDelete(recette) }
             list.addView(view)
         }
     }
 
+    // ouvre « Nouvelle recette » en mode « Modifier »
+    private fun openEdit(recette: Recette) {
+        startActivity(
+            Intent(this, ComposeRecipeActivity::class.java).putExtra("EXTRA_RECETTE_ID", recette.id)
+        )
+    }
+
+    private fun askDelete(recette: Recette) {
+        AlertDialog.Builder(this)
+            .setTitle("Supprimer « ${recette.nom} » ?")
+            .setMessage("La recette, ses ingrédients et sa photo seront supprimés. Tes ingrédients restent dans ta liste.")
+            .setPositiveButton("Supprimer") { _, _ -> delete(recette) }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    // les lignes partent avec la recette (LigneRecette : CASCADE) ; la photo est effacée à la main
+    private fun delete(recette: Recette) {
+        lifecycleScope.launch {
+            HesbaDatabase.getInstance(this@RecettesActivity).recetteDao().supprimer(recette)
+            withContext(Dispatchers.IO) { photoFile(recette.id).delete() }
+            Toast.makeText(this@RecettesActivity, "« ${recette.nom} » supprimée", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun photoFile(recipeId: Long) = File(File(filesDir, "photos"), "recette_$recipeId.jpg")
+
     // petite version de la photo (environ 150 px) pour ne pas charger l'image entière
     private fun loadThumbnail(recipeId: Long): Bitmap? {
-        val file = File(File(filesDir, "photos"), "recette_$recipeId.jpg")
+        val file = photoFile(recipeId)
         if (!file.exists()) return null
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeFile(file.path, bounds)

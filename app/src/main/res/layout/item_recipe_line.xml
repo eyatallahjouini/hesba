@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="center_vertical">
     <TextView android:id="@+id/txtIngredientName" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ingrédient" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
-    <EditText android:id="@+id/editQty" android:layout_width="72dp" android:layout_height="44dp" android:layout_marginTop="0dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="numberDecimal" android:maxLines="1" android:hint="0" android:gravity="center"/>
-    <TextView android:id="@+id/txtUnit" android:layout_width="56dp" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="g" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+    <EditText android:id="@+id/editQty" android:layout_width="72dp" android:layout_height="44dp" android:background="@drawable/bg_input" android:paddingStart="8dp" android:paddingEnd="8dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="numberDecimal" android:maxLines="1" android:hint="0" android:gravity="center"/>
+    <TextView android:id="@+id/txtUnit" android:layout_width="48dp" android:layout_height="wrap_content" android:layout_marginStart="6dp" android:text="g" android:textColor="@color/brun_clair" android:textSize="14sp"/>
     <TextView android:id="@+id/txtLineCost" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,00 dt" android:textColor="@color/brun" android:textSize="16sp" android:textStyle="bold" android:fontFamily="serif"/>
+    <!-- retirer cet ingrédient de la recette -->
+    <ImageButton android:id="@+id/btnRemoveLine" android:layout_width="30dp" android:layout_height="30dp" android:layout_marginStart="8dp" android:background="@drawable/bg_circle" android:backgroundTint="@color/rouge_clair" android:src="@drawable/ic_action_delete" android:scaleType="fitCenter" android:padding="7dp" app:tint="@color/rouge" android:contentDescription="Retirer de la recette"/>
   </LinearLayout>
 </LinearLayout>

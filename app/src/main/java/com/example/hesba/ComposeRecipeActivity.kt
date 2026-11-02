@@ -44,11 +44,14 @@ import java.util.Locale
 class ComposeRecipeActivity : AppCompatActivity() {
 
     // une ligne de l'écran = un ingrédient choisi + son champ de quantité + son coût affiché
-    private class Row(var ingredient: Ingredient, val editQty: EditText, val txtCost: TextView)
+    private class Row(var ingredient: Ingredient, val editQty: EditText, val txtCost: TextView, val view: View)
 
     private val rows = mutableListOf<Row>()
     private var allIngredients = emptyList<Ingredient>()
-    private val margin = 0.40   // 40 %, fixe pour l'instant
+    private var margin = 0.40   // 40 % pour une nouvelle recette ; en modification, la marge de la recette
+
+    // mode « Modifier » : ouvert depuis la liste avec EXTRA_RECETTE_ID
+    private var editing: Recette? = null
 
     // photo choisie (déjà réduite), copiée dans photos/recette_<id>.jpg à l'enregistrement
     private var photo: Bitmap? = null
@@ -87,7 +90,45 @@ class ComposeRecipeActivity : AppCompatActivity() {
         followIngredients()
         updateEmptyMessage()
         recalculate()
+
+        val recipeId = intent.getLongExtra("EXTRA_RECETTE_ID", 0L)
+        if (recipeId > 0L) loadForEdit(recipeId)
     }
+
+    // remplit l'écran avec la recette existante : nom, parts, photo, ingrédients et quantités
+    private fun loadForEdit(recipeId: Long) {
+        lifecycleScope.launch {
+            val db = HesbaDatabase.getInstance(this@ComposeRecipeActivity)
+            val recette = db.recetteDao().parId(recipeId)
+            if (recette == null) {
+                toast("Recette introuvable")
+                finish()
+                return@launch
+            }
+            editing = recette
+            margin = recette.margeVoulue / 100.0
+            findViewById<TextView>(R.id.txtComposeSubtitle).text = "Modifier la recette"
+            findViewById<TextView>(R.id.btnSaveRecipe).text = "Enregistrer les modifications"
+            findViewById<EditText>(R.id.editRecipeName).setText(recette.nom)
+            findViewById<EditText>(R.id.editYield).setText(recette.nombreParts.toString())
+
+            val ingredientsById = db.ingredientDao().tous().first().associateBy { it.id }
+            for (ligne in db.ligneRecetteDao().parRecette(recipeId).first()) {
+                val ingredient = ingredientsById[ligne.ingredientId] ?: continue
+                addRow(ingredient, number(ligne.quantite))
+            }
+
+            val existing = withContext(Dispatchers.IO) {
+                val file = File(File(filesDir, "photos"), "recette_$recipeId.jpg")
+                if (file.exists()) BitmapFactory.decodeFile(file.path) else null
+            }
+            if (existing != null) showPhoto(existing)
+        }
+    }
+
+    private fun number(value: Double): String =
+        if (value % 1.0 == 0.0) value.toLong().toString()
+        else String.format(Locale.US, "%.3f", value).trimEnd('0').trimEnd('.')
 
     // suit la table ingredient : un ingrédient créé devient choisissable,
     // un prix changé met à jour les lignes déjà ajoutées
@@ -161,7 +202,15 @@ class ComposeRecipeActivity : AppCompatActivity() {
         val editQty = view.findViewById<EditText>(R.id.editQty)
         editQty.setText(qty)
         editQty.doAfterTextChanged { recalculate() }
-        rows.add(Row(ingredient, editQty, view.findViewById(R.id.txtLineCost)))
+        val row = Row(ingredient, editQty, view.findViewById(R.id.txtLineCost), view)
+        // ✕ : retire l'ingrédient de la recette (il reste dans la liste des ingrédients)
+        view.findViewById<View>(R.id.btnRemoveLine).setOnClickListener {
+            rows.remove(row)
+            list.removeView(view)
+            updateEmptyMessage()
+            recalculate()
+        }
+        rows.add(row)
         list.addView(view)
         updateEmptyMessage()
         recalculate()
@@ -198,18 +247,28 @@ class ComposeRecipeActivity : AppCompatActivity() {
             // pas encore de connexion : on prend l'utilisateur enregistré, sinon 1 (comme NouvelleRecetteActivity)
             val userId = db.utilisateurDao().utilisateurCourant().first()?.id?.toInt() ?: 1
             val chosenPhoto = photo
+            val old = editing
             // la photo est copiée avant la fin de la transaction : la liste la trouve dès son rafraîchissement
             val photoSaved = db.withTransaction {
-                val recipeId = db.recetteDao().inserer(
-                    Recette(
-                        utilisateurId = userId,
-                        nom = name,
-                        nombreParts = pieces,
-                        margeVoulue = margin * 100,
-                        coutParPart = perPiece,
-                        prixVente = price
+                val recipeId = if (old == null) {
+                    db.recetteDao().inserer(
+                        Recette(
+                            utilisateurId = userId,
+                            nom = name,
+                            nombreParts = pieces,
+                            margeVoulue = margin * 100,
+                            coutParPart = perPiece,
+                            prixVente = price
+                        )
                     )
-                )
+                } else {
+                    // modification : mêmes id, utilisateur, marge et date ; les anciennes lignes sont remplacées
+                    db.recetteDao().modifier(
+                        old.copy(nom = name, nombreParts = pieces, coutParPart = perPiece, prixVente = price)
+                    )
+                    db.ligneRecetteDao().supprimerParRecette(old.id)
+                    old.id
+                }
                 db.ligneRecetteDao().insererToutes(usedRows.map { row ->
                     LigneRecette(
                         recetteId = recipeId,
@@ -222,7 +281,10 @@ class ComposeRecipeActivity : AppCompatActivity() {
                 else withContext(Dispatchers.IO) { savePhoto(chosenPhoto, recipeId) }
             }
             if (!photoSaved) toast("La photo n'a pas pu être enregistrée")
-            toast("Recette « $name » enregistrée · ${money(perPiece)} par part")
+            toast(
+                if (old == null) "Recette « $name » enregistrée · ${money(perPiece)} par part"
+                else "Recette « $name » modifiée · ${money(perPiece)} par part"
+            )
             finish()
         }
     }
@@ -263,14 +325,18 @@ class ComposeRecipeActivity : AppCompatActivity() {
                 toast("Impossible d'ouvrir cette photo")
                 return@launch
             }
-            photo = bitmap
-            findViewById<ImageView>(R.id.imgRecipePhoto).apply {
-                setImageBitmap(bitmap)
-                visibility = View.VISIBLE
-            }
-            findViewById<View>(R.id.photoPlaceholder).visibility = View.GONE
-            findViewById<View>(R.id.txtChangePhoto).visibility = View.VISIBLE
+            photo = bitmap   // nouvelle photo : elle sera enregistrée
+            showPhoto(bitmap)
         }
+    }
+
+    private fun showPhoto(bitmap: Bitmap) {
+        findViewById<ImageView>(R.id.imgRecipePhoto).apply {
+            setImageBitmap(bitmap)
+            visibility = View.VISIBLE
+        }
+        findViewById<View>(R.id.photoPlaceholder).visibility = View.GONE
+        findViewById<View>(R.id.txtChangePhoto).visibility = View.VISIBLE
     }
 
     private fun decodeScaled(uri: Uri, maxSize: Int): Bitmap? {

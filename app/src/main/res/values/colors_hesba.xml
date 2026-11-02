@@ -5,10 +5,8 @@
   <color name="brun_leger">#5A413B</color>
   <color name="caramel_clair">#F6E4C8</color>
   <color name="vert_clair">#E4F1E5</color>
-  <color name="vert_pale">#A5D6A7</color>
   <color name="rouge_clair">#FBE4E4</color>
   <color name="safran_texte">#9A5200</color>
   <color name="gris_hint">#8D7B76</color>
-  <color name="marron_barre">#8D6E63</color>
   <color name="jaune_energie">#FFD54F</color>
 </resources>

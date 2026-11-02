@@ -1,7 +1,19 @@
 package com.example.hesba
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.widget.ImageView
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +50,14 @@ class ComposeRecipeActivity : AppCompatActivity() {
     private var allIngredients = emptyList<Ingredient>()
     private val margin = 0.40   // 40 %, fixe pour l'instant
 
+    // photo choisie (déjà réduite), copiée dans photos/recette_<id>.jpg à l'enregistrement
+    private var photo: Bitmap? = null
+
+    // sélecteur de photos d'Android : aucune permission à demander
+    private val pickPhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) loadPhoto(uri)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,6 +70,12 @@ class ComposeRecipeActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<View>(R.id.btnAddIngredient).setOnClickListener { chooseIngredient() }
+        findViewById<View>(R.id.photoZone).apply {
+            clipToOutline = true   // la photo suit les coins arrondis du cadre
+            setOnClickListener {
+                pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
+        }
 
         findViewById<EditText>(R.id.editYield).doAfterTextChanged { recalculate() }
         findViewById<EditText>(R.id.editRecipeName).doAfterTextChanged { text ->
@@ -171,7 +197,9 @@ class ComposeRecipeActivity : AppCompatActivity() {
             val db = HesbaDatabase.getInstance(this@ComposeRecipeActivity)
             // pas encore de connexion : on prend l'utilisateur enregistré, sinon 1 (comme NouvelleRecetteActivity)
             val userId = db.utilisateurDao().utilisateurCourant().first()?.id?.toInt() ?: 1
-            db.withTransaction {
+            val chosenPhoto = photo
+            // la photo est copiée avant la fin de la transaction : la liste la trouve dès son rafraîchissement
+            val photoSaved = db.withTransaction {
                 val recipeId = db.recetteDao().inserer(
                     Recette(
                         utilisateurId = userId,
@@ -190,7 +218,10 @@ class ComposeRecipeActivity : AppCompatActivity() {
                         unite = row.ingredient.unite
                     )
                 })
+                if (chosenPhoto == null) true
+                else withContext(Dispatchers.IO) { savePhoto(chosenPhoto, recipeId) }
             }
+            if (!photoSaved) toast("La photo n'a pas pu être enregistrée")
             toast("Recette « $name » enregistrée · ${money(perPiece)} par part")
             finish()
         }
@@ -223,6 +254,52 @@ class ComposeRecipeActivity : AppCompatActivity() {
             "Ingrédient le plus cher : ${rows[top].ingredient.nom} (${money(lineCosts[top])}, $share % du lot)"
         }
     }
+
+    // lit l'image choisie, la réduit (max 1080 px) puis l'affiche dans le cadre
+    private fun loadPhoto(uri: Uri) {
+        lifecycleScope.launch {
+            val bitmap = withContext(Dispatchers.IO) { runCatching { decodeScaled(uri, 1080) }.getOrNull() }
+            if (bitmap == null) {
+                toast("Impossible d'ouvrir cette photo")
+                return@launch
+            }
+            photo = bitmap
+            findViewById<ImageView>(R.id.imgRecipePhoto).apply {
+                setImageBitmap(bitmap)
+                visibility = View.VISIBLE
+            }
+            findViewById<View>(R.id.photoPlaceholder).visibility = View.GONE
+            findViewById<View>(R.id.txtChangePhoto).visibility = View.VISIBLE
+        }
+    }
+
+    private fun decodeScaled(uri: Uri, maxSize: Int): Bitmap? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // ImageDecoder tient compte de l'orientation de la photo
+            val source = ImageDecoder.createSource(contentResolver, uri)
+            return ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
+                val w = info.size.width
+                val h = info.size.height
+                val scale = maxSize.toFloat() / maxOf(w, h)
+                if (scale < 1f) decoder.setTargetSize((w * scale).toInt(), (h * scale).toInt())
+                decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+            }
+        }
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+        var sample = 1
+        while (maxOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= maxSize) sample *= 2
+        val options = BitmapFactory.Options().apply { inSampleSize = sample }
+        return contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
+    }
+
+    // copie dans le stockage privé de l'appli : photos/recette_<id>.jpg
+    private fun savePhoto(bitmap: Bitmap, recipeId: Long): Boolean = runCatching {
+        val dir = File(filesDir, "photos").apply { mkdirs() }
+        FileOutputStream(File(dir, "recette_$recipeId.jpg")).use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, it)
+        }
+    }.getOrDefault(false)
 
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 

@@ -1,7 +1,15 @@
 package com.example.hesba
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Outline
 import android.os.Bundle
+import android.view.ViewOutlineProvider
+import android.widget.ImageView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -61,6 +69,8 @@ class RecettesActivity : AppCompatActivity() {
             if (lignes.isEmpty()) RecipeCosting.Result(recette.coutParPart, recette.prixVente ?: 0.0)
             else RecipeCosting.compute(recette, lignes, ingredientsById)
         }
+        // photos lues hors du fil principal : photos/recette_<id>.jpg (seulement si la recette en a une)
+        val photos = withContext(Dispatchers.IO) { recettes.associate { it.id to loadThumbnail(it.id) } }
         list.removeAllViews()
         val count = recettes.size
         findViewById<TextView>(R.id.txtRecipeCount).text =
@@ -71,6 +81,14 @@ class RecettesActivity : AppCompatActivity() {
         val inflater = LayoutInflater.from(this)
         for ((recette, result) in recettes.zip(results)) {
             val view = inflater.inflate(R.layout.item_recipe, list, false)
+            photos[recette.id]?.let { bitmap ->
+                view.findViewById<ImageView>(R.id.imgRecipePhoto).apply {
+                    setImageBitmap(bitmap)
+                    outlineProvider = CircleOutline
+                    clipToOutline = true
+                    visibility = View.VISIBLE
+                }
+            }
             view.findViewById<TextView>(R.id.txtName).text = recette.nom
             view.findViewById<TextView>(R.id.txtServings).text = "${recette.nombreParts} parts"
             // même règle que la liste d'Aya : vert à partir de 20 %, rouge en dessous
@@ -88,6 +106,24 @@ class RecettesActivity : AppCompatActivity() {
             view.findViewById<TextView>(R.id.txtCost).text = money(result.costPerPiece)
             view.findViewById<TextView>(R.id.txtPrice).text = money(result.advisedPrice)
             list.addView(view)
+        }
+    }
+
+    // petite version de la photo (environ 150 px) pour ne pas charger l'image entière
+    private fun loadThumbnail(recipeId: Long): Bitmap? {
+        val file = File(File(filesDir, "photos"), "recette_$recipeId.jpg")
+        if (!file.exists()) return null
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(file.path, bounds)
+        var sample = 1
+        while (minOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= 150) sample *= 2
+        return BitmapFactory.decodeFile(file.path, BitmapFactory.Options().apply { inSampleSize = sample })
+    }
+
+    // découpe la photo en rond
+    private object CircleOutline : ViewOutlineProvider() {
+        override fun getOutline(view: View, outline: Outline) {
+            outline.setOval(0, 0, view.width, view.height)
         }
     }
 

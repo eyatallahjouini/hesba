@@ -20,9 +20,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // TEMPORAIRE : ouvrir Composer la recette depuis la barre du bas
+        // barre du bas de l'ancien écran Bilan : vers les nouveaux onglets
         findViewById<View>(R.id.navRecettes).setOnClickListener {
-            startActivity(Intent(this, ComposeRecipeActivity::class.java))
+            startActivity(Intent(this, RecettesActivity::class.java))
+        }
+        findViewById<View>(R.id.navIngredients).setOnClickListener {
+            startActivity(Intent(this, IngredientsActivity::class.java))
         }
     }
 }

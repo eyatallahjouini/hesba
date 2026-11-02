@@ -53,22 +53,5 @@
       <Button android:id="@+id/btnAddIngredient" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="+ Ajouter un ingrédient" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
     </LinearLayout>
   </ScrollView>
-  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:background="@color/white" android:elevation="8dp">
-    <LinearLayout android:id="@+id/navBilan" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
-      <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_bilan" android:contentDescription="Bilan" app:tint="@color/brun"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Bilan" android:textColor="@color/brun" android:textSize="12sp"/>
-    </LinearLayout>
-    <LinearLayout android:id="@+id/navRecettes" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
-      <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_recettes" android:contentDescription="Recettes" app:tint="@color/brun"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Recettes" android:textColor="@color/brun" android:textSize="12sp"/>
-    </LinearLayout>
-    <LinearLayout android:id="@+id/navIngredients" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true" android:background="@drawable/bg_nav_active">
-      <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_ingredients" android:contentDescription="Ingrédients" app:tint="@color/brun"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Ingrédients" android:textColor="@color/brun" android:textSize="12sp" android:textStyle="bold"/>
-    </LinearLayout>
-    <LinearLayout android:id="@+id/navVentes" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
-      <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_ventes" android:contentDescription="Ventes" app:tint="@color/brun"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Ventes" android:textColor="@color/brun" android:textSize="12sp"/>
-    </LinearLayout>
-  </LinearLayout>
+  <include layout="@layout/view_bottom_nav"/>
 </LinearLayout>

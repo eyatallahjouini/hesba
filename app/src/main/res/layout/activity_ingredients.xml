@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/creme" android:orientation="vertical">
+  <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+      <TextView android:id="@+id/txtIngredientCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="5 ingrédients · prix d'achat en dinars" android:textColor="@color/brun_clair" android:textSize="15sp"/>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mes ingrédients" android:textColor="@color/brun" android:textSize="32sp" android:textStyle="bold" android:fontFamily="serif"/>
+      <TextView android:id="@+id/txtNoIngredient" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:background="@drawable/bg_card" android:padding="18dp" android:text="Aucun ingrédient pour l&apos;instant. Ajoute tes ingrédients avec leur prix d&apos;achat." android:textColor="@color/brun_clair" android:textSize="15sp" android:visibility="gone"/>
+      <LinearLayout android:id="@+id/listIngredients" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="14dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Farine" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 kg" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+          </LinearLayout>
+          <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1,80 dt" android:textColor="@color/brun" android:textSize="20sp" android:textStyle="bold" android:fontFamily="serif"/>
+        </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/caramel"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sucre" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 kg" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+          </LinearLayout>
+          <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2,50 dt" android:textColor="@color/brun" android:textSize="20sp" android:textStyle="bold" android:fontFamily="serif"/>
+        </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/caramel"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Beurre" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 kg" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="▲ Prix mis à jour" android:textColor="@color/rouge" android:textSize="13sp" android:textStyle="bold"/>
+          </LinearLayout>
+          <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="16,00 dt" android:textColor="@color/brun" android:textSize="20sp" android:textStyle="bold" android:fontFamily="serif"/>
+        </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/caramel"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Œufs" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="plateau de 30" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+          </LinearLayout>
+          <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="9,00 dt" android:textColor="@color/brun" android:textSize="20sp" android:textStyle="bold" android:fontFamily="serif"/>
+        </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/caramel"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp">
+          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Chocolat noir" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 kg" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+          </LinearLayout>
+          <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="20,00 dt" android:textColor="@color/brun" android:textSize="20sp" android:textStyle="bold" android:fontFamily="serif"/>
+        </LinearLayout>
+      </LinearLayout>
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_alert" android:padding="18dp" android:layout_marginTop="14dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Change un prix, tout se recalcule" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Appuie sur un ingrédient pour changer son prix : tes recettes et tes marges se mettent à jour toutes seules." android:textColor="@color/brun_clair" android:textSize="14sp"/>
+      </LinearLayout>
+      <Button android:id="@+id/btnAddIngredient" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="+ Ajouter un ingrédient" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
+    </LinearLayout>
+  </ScrollView>
+  <include layout="@layout/view_bottom_nav"/>
+</LinearLayout>

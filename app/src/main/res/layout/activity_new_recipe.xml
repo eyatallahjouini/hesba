@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/creme" android:orientation="vertical">
+  <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/btnBack" android:layout_width="44dp" android:text="‹" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:gravity="center" android:layout_height="44dp" android:background="@drawable/bg_back" android:clickable="true" android:focusable="true"/>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="14dp">
+          <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nouvelle recette" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:fontFamily="serif"/>
+        </LinearLayout>
+      </LinearLayout>
+      <LinearLayout android:id="@+id/btnAddPhoto" android:layout_width="match_parent" android:layout_height="150dp" android:orientation="vertical" android:background="@drawable/bg_dashed" android:layout_marginTop="18dp" android:gravity="center" android:clickable="true" android:focusable="true">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📷" android:textColor="@color/brun" android:textSize="34sp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Ajouter une photo" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Facultatif" android:textColor="@color/brun" android:textSize="13sp" android:textStyle="bold" android:background="@drawable/bg_tag" android:paddingStart="12dp" android:paddingEnd="12dp" android:paddingTop="4dp" android:paddingBottom="4dp"/>
+      </LinearLayout>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="Nom de la recette" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
+      <EditText android:id="@+id/editRecipeName" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="textCapSentences" android:maxLines="1" android:hint="Ex. Gâteau au chocolat"/>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Nombre de parts" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
+      <EditText android:id="@+id/editServings" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="number" android:maxLines="1" android:hint="12"/>
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="16dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ingrédients" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold"/>
+        <LinearLayout android:id="@+id/listLines" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="center_vertical">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Farine" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+            <EditText android:id="@+id/editQty_Farine" android:layout_width="72dp" android:layout_height="44dp" android:layout_marginTop="0dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="numberDecimal" android:maxLines="1" android:hint="0" android:text="250" android:gravity="center"/>
+            <TextView android:layout_width="56dp" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="g" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,45 dt" android:textColor="@color/brun" android:textSize="16sp" android:textStyle="bold" android:fontFamily="serif"/>
+          </LinearLayout>
+          <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="12dp" android:background="@color/caramel"/>
+          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="center_vertical">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Beurre" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
+            <EditText android:id="@+id/editQty_Beurre" android:layout_width="72dp" android:layout_height="44dp" android:layout_marginTop="0dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="numberDecimal" android:maxLines="1" android:hint="0" android:text="200" android:gravity="center"/>
+            <TextView android:layout_width="56dp" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="g" android:textColor="@color/brun_clair" android:textSize="14sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="3,20 dt" android:textColor="@color/brun" android:textSize="16sp" android:textStyle="bold" android:fontFamily="serif"/>
+          </LinearLayout>
+        </LinearLayout>
+        <TextView android:id="@+id/btnAddIngredient" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="+ Ajouter un ingrédient" android:textColor="@color/safran_texte" android:textSize="15sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+      </LinearLayout>
+      <Button android:id="@+id/btnCalculate" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="Calculer le coût" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
+    </LinearLayout>
+  </ScrollView>
+</LinearLayout>

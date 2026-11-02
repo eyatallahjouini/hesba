@@ -3,6 +3,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.hesba.data.HesbaDatabase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -40,6 +41,10 @@ class ComposeRecipeActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
+        // ouvre le formulaire d'Aya ; la liste se met à jour toute seule au retour
+        findViewById<View>(R.id.btnAddIngredient).setOnClickListener {
+            startActivity(Intent(this, NouvelIngredientActivity::class.java))
+        }
 
         val list = findViewById<LinearLayout>(R.id.listLines)
         list.removeAllViews()   // enlève les lignes d'exemple du dessin
@@ -107,26 +112,29 @@ class ComposeRecipeActivity : AppCompatActivity() {
 
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
+    // suit la table ingredient : un ingrédient ajouté ou un prix changé met l'écran à jour,
+    // en gardant les quantités déjà tapées
     private fun loadFromDatabase(list: LinearLayout) {
         lifecycleScope.launch {
             val dao = HesbaDatabase.getInstance(this@ComposeRecipeActivity).ingredientDao()
-            var ingredients = dao.tous().first()
-            if (ingredients.isEmpty()) {
-                dao.inserer(Ingredient(nom = "Harissa", unite = "g", quantiteEmballage = 1000.0, prixPaye = 6.0))
-                dao.inserer(Ingredient(nom = "Pain", unite = "piece", quantiteEmballage = 1.0, prixPaye = 0.25))
-                ingredients = dao.tous().first()
+            dao.tous().collect { ingredients ->
+                val typed = rows.associate { it.ingredient.id to it.editQty.text.toString() }
+                rows.clear()
+                list.removeAllViews()
+                for (ingredient in ingredients) addRow(list, ingredient, typed[ingredient.id] ?: "")
+                findViewById<View>(R.id.txtNoIngredient).visibility =
+                    if (ingredients.isEmpty()) View.VISIBLE else View.GONE
+                recalculate()
             }
-            for (ingredient in ingredients) addRow(list, ingredient)
-            recalculate()
         }
     }
 
-    private fun addRow(list: LinearLayout, ingredient: Ingredient) {
+    private fun addRow(list: LinearLayout, ingredient: Ingredient, qty: String) {
         val view = LayoutInflater.from(this).inflate(R.layout.item_recipe_line, list, false)
         view.findViewById<TextView>(R.id.txtIngredientName).text = ingredient.nom
         view.findViewById<TextView>(R.id.txtUnit).text = unitLabel(ingredient.unite)
         val editQty = view.findViewById<EditText>(R.id.editQty)
-        editQty.setText("")
+        editQty.setText(qty)
         val txtCost = view.findViewById<TextView>(R.id.txtLineCost)
         txtCost.text = money(0.0)
         editQty.doAfterTextChanged { recalculate() }

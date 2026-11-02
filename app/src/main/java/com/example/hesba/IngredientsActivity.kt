@@ -56,6 +56,7 @@ class IngredientsActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.txtIngredientCount).text =
             "$count ingrédient${if (count > 1) "s" else ""} · prix d'achat en dinars"
         list.visibility = if (ingredients.isEmpty()) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.txtNoIngredient).visibility = if (ingredients.isEmpty()) View.VISIBLE else View.GONE
 
         val inflater = LayoutInflater.from(this)
         for (ingredient in ingredients) {

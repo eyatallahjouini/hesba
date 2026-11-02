@@ -66,6 +66,7 @@ class RecettesActivity : AppCompatActivity() {
         val count = recettes.size
         findViewById<TextView>(R.id.txtRecipeCount).text =
             if (count <= 1) "$count recette enregistrée" else "$count recettes enregistrées"
+        findViewById<View>(R.id.txtNoRecipe).visibility = if (count == 0) View.VISIBLE else View.GONE
 
         val inflater = LayoutInflater.from(this)
         for ((recette, result) in recettes.zip(results)) {

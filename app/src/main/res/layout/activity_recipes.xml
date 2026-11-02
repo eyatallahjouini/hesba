@@ -82,6 +82,7 @@
           </LinearLayout>
         </LinearLayout>
       </LinearLayout>
+      <TextView android:id="@+id/txtNoRecipe" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:background="@drawable/bg_card" android:padding="18dp" android:text="Aucune recette pour l&apos;instant. Appuie sur « Nouvelle recette » pour calculer ton premier coût de revient." android:textColor="@color/brun_clair" android:textSize="15sp" android:visibility="gone"/>
       <Button android:id="@+id/btnNewRecipe" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="+ Nouvelle recette" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
     </LinearLayout>
   </ScrollView>

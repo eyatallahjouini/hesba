@@ -1,49 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/creme" android:orientation="vertical">
+<!-- Même ordre que activity_nouvelle_recette (Aya) : retour + titre, photo, nom, parts, ingrédients, bouton.
+     Avec en plus la carte des résultats (coût du lot, coût par part, prix conseillé). Couleurs : palette Hesba. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/creme" android:orientation="vertical">
   <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+
+      <!-- 1. Retour + titre -->
       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-        <TextView android:id="@+id/btnBack" android:layout_width="44dp" android:text="‹" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:gravity="center" android:layout_height="44dp" android:background="@drawable/bg_back" android:clickable="true" android:focusable="true"/>
+        <TextView android:id="@+id/btnBack" android:layout_width="44dp" android:layout_height="44dp" android:text="‹" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:gravity="center" android:background="@drawable/bg_back" android:clickable="true" android:focusable="true" android:contentDescription="Retour"/>
         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="14dp">
           <TextView android:id="@+id/txtRecipeName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nouvelle recette" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:fontFamily="serif"/>
           <TextView android:id="@+id/txtComposeSubtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Composer la recette" android:textColor="@color/brun_clair" android:textSize="14sp"/>
         </LinearLayout>
       </LinearLayout>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="Nom de la recette" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
-      <EditText android:id="@+id/editRecipeName" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="textCapSentences" android:maxLines="1" android:hint="Ex. Sandwich harissa"/>
-      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="18dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ingrédients et quantités" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold"/>
-        <LinearLayout android:id="@+id/listLines" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="center_vertical">
-            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Harissa" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
-            <EditText android:id="@+id/editQty_Harissa" android:layout_width="72dp" android:layout_height="44dp" android:layout_marginTop="0dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="numberDecimal" android:maxLines="1" android:hint="0" android:text="50" android:gravity="center"/>
-            <TextView android:layout_width="56dp" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="g" android:textColor="@color/brun_clair" android:textSize="14sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,30 dt" android:textColor="@color/brun" android:textSize="16sp" android:textStyle="bold" android:fontFamily="serif"/>
-          </LinearLayout>
-          <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="12dp" android:background="@color/caramel"/>
-          <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="center_vertical">
-            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Pain" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
-            <EditText android:id="@+id/editQty_Pain" android:layout_width="72dp" android:layout_height="44dp" android:layout_marginTop="0dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="numberDecimal" android:maxLines="1" android:hint="0" android:text="10" android:gravity="center"/>
-            <TextView android:layout_width="56dp" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="pièces" android:textColor="@color/brun_clair" android:textSize="14sp"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2,50 dt" android:textColor="@color/brun" android:textSize="16sp" android:textStyle="bold" android:fontFamily="serif"/>
-          </LinearLayout>
+
+      <!-- 2. Photo facultative : appui = choisir une image dans la galerie -->
+      <FrameLayout android:id="@+id/photoZone" android:layout_width="match_parent" android:layout_height="160dp" android:layout_marginTop="18dp" android:background="@drawable/bg_dashed" android:clickable="true" android:focusable="true" android:contentDescription="Ajouter une photo">
+        <ImageView android:id="@+id/imgRecipePhoto" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:importantForAccessibility="no" android:visibility="gone"/>
+        <LinearLayout android:id="@+id/photoPlaceholder" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center">
+          <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@android:drawable/ic_menu_camera" android:importantForAccessibility="no" app:tint="@color/brun_clair"/>
+          <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Ajouter une photo" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
+          <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:background="@drawable/bg_chip" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="2dp" android:paddingBottom="2dp" android:text="Facultatif" android:textColor="@color/brun_clair" android:textSize="12sp"/>
         </LinearLayout>
-        <TextView android:id="@+id/txtNoIngredient" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Aucun ingrédient pour l'instant. Ajoute d'abord tes ingrédients et leur prix d'achat." android:textColor="@color/brun_clair" android:textSize="15sp" android:visibility="gone"/>
-        <TextView android:id="@+id/btnAddIngredient" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="+ Ajouter un ingrédient" android:textColor="@color/safran_texte" android:textSize="15sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+        <TextView android:id="@+id/txtChangePhoto" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|end" android:layout_margin="10dp" android:background="@drawable/bg_chip" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="4dp" android:paddingBottom="4dp" android:text="Changer la photo" android:textColor="@color/brun" android:textSize="12sp" android:textStyle="bold" android:visibility="gone"/>
+      </FrameLayout>
+
+      <!-- 3. Nom -->
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="Nom de la recette" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
+      <EditText android:id="@+id/editRecipeName" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="textCapSentences" android:maxLines="1" android:hint="Nom de ta recette"/>
+
+      <!-- 4. Nombre de parts -->
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Nombre de parts" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
+      <EditText android:id="@+id/editYield" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="number" android:maxLines="1" android:hint="Combien de parts obtiens-tu ?"/>
+
+      <!-- 5. Ingrédients choisis + quantité -->
+      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="18dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ingrédients" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/txtNoIngredient" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Aucun ingrédient ajouté. Appuie sur « + Ajouter un ingrédient »." android:textColor="@color/brun_clair" android:textSize="15sp"/>
+        <LinearLayout android:id="@+id/listLines" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+        <TextView android:id="@+id/btnAddIngredient" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:paddingTop="6dp" android:paddingBottom="6dp" android:text="+ Ajouter un ingrédient" android:textColor="@color/safran_texte" android:textSize="15sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
       </LinearLayout>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Combien de pièces obtiens-tu ?" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
-      <EditText android:id="@+id/editYield" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="number" android:maxLines="1" android:hint="10" android:text="10"/>
+
+      <!-- Résultats calculés en direct -->
       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card_dark" android:padding="22dp" android:layout_marginTop="16dp">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
           <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Coût du lot" android:textColor="@color/caramel" android:textSize="14sp"/>
-          <TextView android:id="@+id/txtBatchCost" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2,80 dt" android:textColor="@color/creme" android:textSize="14sp"/>
+          <TextView android:id="@+id/txtBatchCost" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,00 dt" android:textColor="@color/creme" android:textSize="14sp"/>
         </LinearLayout>
-        <TextView android:id="@+id/txtPieceLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Coût par pièce" android:textColor="@color/caramel" android:textSize="14sp"/>
-        <TextView android:id="@+id/txtCostPerPiece" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,28 dt" android:textColor="@color/creme" android:textSize="44sp" android:textStyle="bold" android:fontFamily="serif"/>
-        <TextView android:id="@+id/txtAdvisedPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Prix conseillé (marge 40 %) : 0,47 dt" android:textColor="@color/jaune_energie" android:textSize="15sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/txtPieceLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Coût par part" android:textColor="@color/caramel" android:textSize="14sp"/>
+        <TextView android:id="@+id/txtCostPerPiece" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,00 dt" android:textColor="@color/creme" android:textSize="44sp" android:textStyle="bold" android:fontFamily="serif"/>
+        <TextView android:id="@+id/txtAdvisedPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Prix conseillé : 0,00 dt" android:textColor="@color/jaune_energie" android:textSize="15sp" android:textStyle="bold"/>
         <TextView android:id="@+id/txtMostExpensive" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Ingrédient le plus cher : —" android:textColor="@color/caramel" android:textSize="14sp"/>
       </LinearLayout>
-      <Button android:id="@+id/btnSaveRecipe" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="Enregistrer la recette" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
+
+      <!-- 6. Bouton principal -->
+      <Button android:id="@+id/btnSaveRecipe" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="Calculer le coût" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
     </LinearLayout>
   </ScrollView>
 </LinearLayout>

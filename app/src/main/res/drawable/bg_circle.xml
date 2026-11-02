@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rond plein : la couleur est donnée par backgroundTint -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/caramel">
+  <item>
+    <shape android:shape="oval">
+      <solid android:color="@color/white"/>
+    </shape>
+  </item>
+</ripple>

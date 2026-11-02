@@ -1,13 +1,10 @@
 package com.example.hesba
 
 import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.text.InputType
 import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -19,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.hesba.data.HesbaDatabase
 import com.example.hesba.data.Ingredient
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -42,7 +40,6 @@ class IngredientsActivity : AppCompatActivity() {
         }
 
         val list = findViewById<LinearLayout>(R.id.listIngredients)
-        list.removeAllViews()   // enlève les ingrédients d'exemple du dessin
 
         val db = HesbaDatabase.getInstance(this)
         lifecycleScope.launch {
@@ -65,53 +62,59 @@ class IngredientsActivity : AppCompatActivity() {
             view.findViewById<TextView>(R.id.txtIngredientUnit).text = packageLabel(ingredient)
             view.findViewById<TextView>(R.id.txtUpdated).visibility = View.GONE
             view.findViewById<TextView>(R.id.txtPrice).text = money(ingredient.prixPaye)
-            view.setOnClickListener { askNewPrice(ingredient) }
+            // ligne ou crayon : modifier · corbeille : supprimer
+            view.findViewById<View>(R.id.rowIngredient).setOnClickListener { openEdit(ingredient) }
+            view.findViewById<View>(R.id.btnEditIngredient).setOnClickListener { openEdit(ingredient) }
+            view.findViewById<View>(R.id.btnDeleteIngredient).setOnClickListener { askDelete(ingredient) }
             list.addView(view)
         }
     }
 
-    // appui sur un ingrédient : changer son prix d'achat, puis recalculer les recettes qui l'utilisent
-    private fun askNewPrice(ingredient: Ingredient) {
-        val input = EditText(this).apply {
-            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-            setText(String.format(Locale.US, "%.2f", ingredient.prixPaye))
-            selectAll()
-        }
-        val margin = (20 * resources.displayMetrics.density).toInt()
-        val container = FrameLayout(this).apply {
-            setPadding(margin, 0, margin, 0)
-            addView(input, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-        }
-
-        AlertDialog.Builder(this)
-            .setTitle("Nouveau prix : ${ingredient.nom}")
-            .setMessage("Prix payé pour ${packageLabel(ingredient)} (en dinars)")
-            .setView(container)
-            .setPositiveButton("Enregistrer") { _, _ ->
-                val price = input.text.toString().replace(',', '.').trim().toDoubleOrNull()
-                if (price == null || price <= 0.0) {
-                    Toast.makeText(this, "Prix invalide", Toast.LENGTH_SHORT).show()
-                } else if (price != ingredient.prixPaye) {
-                    savePrice(ingredient, price)
-                }
-            }
-            .setNegativeButton("Annuler", null)
-            .show()
+    // ouvre la page d'Aya en mode « Modifier »
+    private fun openEdit(ingredient: Ingredient) {
+        startActivity(
+            Intent(this, NouvelIngredientActivity::class.java)
+                .putExtra("EXTRA_INGREDIENT_ID", ingredient.id)
+        )
     }
 
-    private fun savePrice(ingredient: Ingredient, price: Double) {
+    // la base refuse de supprimer un ingrédient utilisé (LigneRecette : RESTRICT) : on prévient avant
+    private fun askDelete(ingredient: Ingredient) {
         lifecycleScope.launch {
             val db = HesbaDatabase.getInstance(this@IngredientsActivity)
-            db.ingredientDao().modifier(
-                ingredient.copy(prixPaye = price, dateMiseAJour = System.currentTimeMillis())
-            )
-            val count = RecipeCosting.refreshRecipesUsing(db, ingredient.id)
-            val message = when (count) {
-                0 -> "Prix mis à jour"
-                1 -> "Prix mis à jour · 1 recette recalculée"
-                else -> "Prix mis à jour · $count recettes recalculées"
+            val usedIn = db.recetteDao().toutes().first().filter { recette ->
+                db.ligneRecetteDao().parRecette(recette.id).first().any { it.ingredientId == ingredient.id }
             }
-            Toast.makeText(this@IngredientsActivity, message, Toast.LENGTH_SHORT).show()
+            if (usedIn.isNotEmpty()) {
+                AlertDialog.Builder(this@IngredientsActivity)
+                    .setTitle("Suppression impossible")
+                    .setMessage(
+                        "« ${ingredient.nom} » est utilisé dans : ${usedIn.joinToString { it.nom }}.\n\n" +
+                            "Retire-le d'abord de ces recettes."
+                    )
+                    .setPositiveButton("OK", null)
+                    .show()
+                return@launch
+            }
+            AlertDialog.Builder(this@IngredientsActivity)
+                .setTitle("Supprimer « ${ingredient.nom} » ?")
+                .setMessage("Cette action est définitive.")
+                .setPositiveButton("Supprimer") { _, _ -> delete(ingredient) }
+                .setNegativeButton("Annuler", null)
+                .show()
+        }
+    }
+
+    private fun delete(ingredient: Ingredient) {
+        lifecycleScope.launch {
+            val db = HesbaDatabase.getInstance(this@IngredientsActivity)
+            try {
+                db.ingredientDao().supprimer(ingredient)
+                Toast.makeText(this@IngredientsActivity, "« ${ingredient.nom} » supprimé", Toast.LENGTH_SHORT).show()
+            } catch (e: SQLiteConstraintException) {
+                // ajouté à une recette entre-temps
+                Toast.makeText(this@IngredientsActivity, "Utilisé dans une recette : suppression impossible", Toast.LENGTH_LONG).show()
+            }
         }
     }
 

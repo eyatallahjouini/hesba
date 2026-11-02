@@ -13,6 +13,7 @@
 
         <activity
             android:name=".LoginActivity"
+            android:theme="@style/Theme.Hesba.Eyatallah"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -23,24 +24,29 @@
 
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.Hesba.Eyatallah"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ComposeRecipeActivity"
+            android:theme="@style/Theme.Hesba.Eyatallah"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".RecettesActivity"
+            android:theme="@style/Theme.Hesba.Eyatallah"
             android:exported="false" />
 
         <activity
             android:name=".IngredientsActivity"
+            android:theme="@style/Theme.Hesba.Eyatallah"
             android:exported="false" />
 
         <activity
             android:name=".ProfilActivity"
+            android:theme="@style/Theme.Hesba.Eyatallah"
             android:exported="false" />
 
         <activity

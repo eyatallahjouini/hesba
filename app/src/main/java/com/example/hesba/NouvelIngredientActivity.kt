@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.hesba.data.HesbaDatabase
 import com.example.hesba.data.Ingredient
+import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -26,6 +27,9 @@ class NouvelIngredientActivity : AppCompatActivity() {
     private lateinit var btnEnregistrer: Button
 
     private var uniteChoisie = "kg" // Unité affichée à l'utilisateur ("kg", "l", "piece")
+
+    // Mode « Modifier » : ouvert depuis la page Ingrédients avec EXTRA_INGREDIENT_ID
+    private var ingredientAModifier: Ingredient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +72,42 @@ class NouvelIngredientActivity : AppCompatActivity() {
         }
 
         btnEnregistrer.setOnClickListener { enregistrerIngredient() }
+
+        val idAModifier = intent.getLongExtra("EXTRA_INGREDIENT_ID", 0L)
+        if (idAModifier > 0L) chargerPourModification(idAModifier)
     }
+
+    // Remplit le formulaire avec l'ingrédient existant (g -> kg, ml -> L)
+    private fun chargerPourModification(id: Long) {
+        lifecycleScope.launch {
+            val db = HesbaDatabase.getInstance(this@NouvelIngredientActivity)
+            val ingredient = db.ingredientDao().parId(id)
+            if (ingredient == null) {
+                afficherToast("Ingrédient introuvable")
+                finish()
+                return@launch
+            }
+            ingredientAModifier = ingredient
+            findViewById<TextView>(R.id.tvTitle)?.text = "Modifier l'ingrédient"
+
+            val (uniteAffichee, boutonId, quantiteAffichee) = when (ingredient.unite) {
+                "g" -> Triple("kg", R.id.btnKg, ingredient.quantiteEmballage / 1000)
+                "ml" -> Triple("l", R.id.btnLitre, ingredient.quantiteEmballage / 1000)
+                else -> Triple("piece", R.id.btnPiece, ingredient.quantiteEmballage)
+            }
+            uniteChoisie = uniteAffichee
+            findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupUnite)?.check(boutonId)
+
+            etNom.setText(ingredient.nom)
+            etQuantite.setText(nombre(quantiteAffichee))
+            etPrix.setText(nombre(ingredient.prixPaye))
+            calculerPrixUnitaire()
+        }
+    }
+
+    private fun nombre(valeur: Double): String =
+        if (valeur % 1.0 == 0.0) valeur.toLong().toString()
+        else String.format(Locale.US, "%.3f", valeur).trimEnd('0').trimEnd('.')
 
     private fun calculerPrixUnitaire() {
         val qte = etQuantite.text.toString().replace(",", ".").trim().toDoubleOrNull() ?: 0.0
@@ -109,12 +148,18 @@ class NouvelIngredientActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val db = HesbaDatabase.getInstance(this@NouvelIngredientActivity)
 
+            val ancien = ingredientAModifier
             val existeDeja = db.ingredientDao().tous().first().any {
-                it.nom.equals(nom, ignoreCase = true)
+                it.nom.equals(nom, ignoreCase = true) && it.id != ancien?.id
             }
 
             if (existeDeja) {
                 afficherToast("L'ingrédient '$nom' existe déjà dans votre stock !")
+                return@launch
+            }
+
+            if (ancien != null) {
+                modifierIngredient(db, ancien, nom, uniteBase, quantiteBase, prix)
                 return@launch
             }
 
@@ -135,6 +180,44 @@ class NouvelIngredientActivity : AppCompatActivity() {
             etPrix.text.clear()
             etNom.requestFocus()
         }
+    }
+
+    // Mode « Modifier » : l'unité ne change pas si l'ingrédient est déjà dans une recette
+    // (les quantités des recettes sont enregistrées dans cette unité)
+    private suspend fun modifierIngredient(
+        db: HesbaDatabase,
+        ancien: Ingredient,
+        nom: String,
+        uniteBase: String,
+        quantiteBase: Double,
+        prix: Double
+    ) {
+        if (uniteBase != ancien.unite) {
+            val utiliseDans = db.recetteDao().toutes().first().filter { recette ->
+                db.ligneRecetteDao().parRecette(recette.id).first().any { it.ingredientId == ancien.id }
+            }
+            if (utiliseDans.isNotEmpty()) {
+                afficherToast("Unité non modifiable : utilisé dans ${utiliseDans.joinToString { it.nom }}")
+                return
+            }
+        }
+
+        db.ingredientDao().modifier(
+            ancien.copy(
+                nom = nom,
+                unite = uniteBase,
+                quantiteEmballage = quantiteBase,
+                prixPaye = prix,
+                dateMiseAJour = System.currentTimeMillis()
+            )
+        )
+        // prix ou quantité changés : les recettes qui l'utilisent sont recalculées
+        val nombreRecettes = RecipeCosting.refreshRecipesUsing(db, ancien.id)
+        afficherToast(
+            if (nombreRecettes == 0) "Ingrédient '$nom' modifié"
+            else "Ingrédient '$nom' modifié · $nombreRecettes recette(s) recalculée(s)"
+        )
+        finish()
     }
 
     private fun afficherToast(message: String) {

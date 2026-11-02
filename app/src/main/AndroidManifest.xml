@@ -60,6 +60,11 @@
         <activity
             android:name=".NouvelIngredientActivity"
             android:exported="false" />
+        <activity
+            android:name=".RegisterActivity"
+            android:theme="@style/Theme.Hesba.Eyatallah"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

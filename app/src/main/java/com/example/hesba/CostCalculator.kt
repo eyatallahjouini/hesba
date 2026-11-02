@@ -47,6 +47,16 @@ object CostCalculator {
         return (sellingPrice - cost) / sellingPrice
     }
 
+    // conseiller de marge : position de la ligne qui coûte le plus cher
+    // renvoie -1 si la liste est vide ou si toutes les lignes coûtent 0
+    fun mostExpensiveIndex(lineCosts: List<Double>): Int {
+        var best = -1
+        for (i in lineCosts.indices) {
+            if (lineCosts[i] > 0.0 && (best == -1 || lineCosts[i] > lineCosts[best])) best = i
+        }
+        return best
+    }
+
     // ===== PARTIE 3 : pour plus tard (version 3) =====
 
     // avec pertes : coût réel = coût ÷ (1 − % de perte)

@@ -40,6 +40,7 @@
         <TextView android:id="@+id/txtPieceLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Coût par sandwich" android:textColor="@color/caramel" android:textSize="14sp"/>
         <TextView android:id="@+id/txtCostPerPiece" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,28 dt" android:textColor="@color/creme" android:textSize="44sp" android:textStyle="bold" android:fontFamily="serif"/>
         <TextView android:id="@+id/txtAdvisedPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Prix conseillé (marge 40 %) : 0,47 dt" android:textColor="@color/jaune_energie" android:textSize="15sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/txtMostExpensive" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Ingrédient le plus cher : —" android:textColor="@color/caramel" android:textSize="14sp"/>
       </LinearLayout>
       <Button android:id="@+id/btnSaveRecipe" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="Enregistrer la recette" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
     </LinearLayout>

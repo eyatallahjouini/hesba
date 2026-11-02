@@ -152,6 +152,15 @@ class ComposeRecipeActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.txtCostPerPiece).text = money(perPiece)
         findViewById<TextView>(R.id.txtAdvisedPrice).text =
             "Prix conseillé (marge ${(margin * 100).toInt()} %) : ${money(price)}"
+
+        // conseiller de marge : l'ingrédient qui pèse le plus dans le coût du lot
+        val top = CostCalculator.mostExpensiveIndex(lineCosts)
+        findViewById<TextView>(R.id.txtMostExpensive).text = if (top == -1) {
+            "Ingrédient le plus cher : —"
+        } else {
+            val share = (lineCosts[top] / batch * 100).toInt()
+            "Ingrédient le plus cher : ${rows[top].ingredient.nom} (${money(lineCosts[top])}, $share % du lot)"
+        }
     }
 
     private fun readNumber(edit: EditText): Double =

@@ -5,10 +5,12 @@
       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
         <TextView android:id="@+id/btnBack" android:layout_width="44dp" android:text="‹" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:gravity="center" android:layout_height="44dp" android:background="@drawable/bg_back" android:clickable="true" android:focusable="true"/>
         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="14dp">
-          <TextView android:id="@+id/txtRecipeName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sandwich harissa" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:fontFamily="serif"/>
+          <TextView android:id="@+id/txtRecipeName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nouvelle recette" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:fontFamily="serif"/>
           <TextView android:id="@+id/txtComposeSubtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Composer la recette" android:textColor="@color/brun_clair" android:textSize="14sp"/>
         </LinearLayout>
       </LinearLayout>
+      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="Nom de la recette" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
+      <EditText android:id="@+id/editRecipeName" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="textCapSentences" android:maxLines="1" android:hint="Ex. Sandwich harissa"/>
       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="18dp" android:layout_marginTop="18dp">
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ingrédients et quantités" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold"/>
         <LinearLayout android:id="@+id/listLines" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">

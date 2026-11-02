@@ -14,7 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
+import android.widget.Toast
+import androidx.room.withTransaction
 import com.example.hesba.data.Ingredient
+import com.example.hesba.data.LigneRecette
+import com.example.hesba.data.Recette
 import java.util.Locale
 
 class ComposeRecipeActivity : AppCompatActivity() {
@@ -42,8 +46,66 @@ class ComposeRecipeActivity : AppCompatActivity() {
         loadFromDatabase(list)
 
         findViewById<EditText>(R.id.editYield).doAfterTextChanged { recalculate() }
+        findViewById<EditText>(R.id.editRecipeName).doAfterTextChanged { text ->
+            val name = text.toString().trim()
+            findViewById<TextView>(R.id.txtRecipeName).text = name.ifEmpty { "Nouvelle recette" }
+        }
+        findViewById<View>(R.id.btnSaveRecipe).setOnClickListener { saveRecipe() }
         recalculate()
     }
+
+    // enregistre la recette puis ses lignes (ingrédient + quantité, jamais le prix)
+    private fun saveRecipe() {
+        val name = findViewById<EditText>(R.id.editRecipeName).text.toString().trim()
+        val pieces = readNumber(findViewById(R.id.editYield)).toInt()
+        val usedRows = rows.filter { readNumber(it.editQty) > 0.0 }
+
+        when {
+            name.isEmpty() -> { toast("Donne un nom à la recette"); return }
+            usedRows.isEmpty() -> { toast("Mets une quantité pour au moins un ingrédient"); return }
+            pieces <= 0 -> { toast("Le nombre de pièces doit être supérieur à 0"); return }
+        }
+
+        val batch = CostCalculator.recipeCost(usedRows.map { row ->
+            CostCalculator.lineCost(
+                readNumber(row.editQty),
+                CostCalculator.pricePerUnit(row.ingredient.prixPaye, row.ingredient.quantiteEmballage)
+            )
+        })
+        val perPiece = CostCalculator.costPerPiece(batch, pieces.toDouble())
+        val price = CostCalculator.sellingPriceHT(perPiece, margin)
+
+        findViewById<View>(R.id.btnSaveRecipe).isEnabled = false
+        lifecycleScope.launch {
+            val db = HesbaDatabase.getInstance(this@ComposeRecipeActivity)
+            // pas encore de connexion : on prend l'utilisateur enregistré, sinon 1 (comme NouvelleRecetteActivity)
+            val userId = db.utilisateurDao().utilisateurCourant().first()?.id?.toInt() ?: 1
+            db.withTransaction {
+                val recipeId = db.recetteDao().inserer(
+                    Recette(
+                        utilisateurId = userId,
+                        nom = name,
+                        nombreParts = pieces,
+                        margeVoulue = margin * 100,
+                        coutParPart = perPiece,
+                        prixVente = price
+                    )
+                )
+                db.ligneRecetteDao().insererToutes(usedRows.map { row ->
+                    LigneRecette(
+                        recetteId = recipeId,
+                        ingredientId = row.ingredient.id,
+                        quantite = readNumber(row.editQty),
+                        unite = row.ingredient.unite
+                    )
+                })
+            }
+            toast("Recette « $name » enregistrée")
+            finish()
+        }
+    }
+
+    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
     private fun loadFromDatabase(list: LinearLayout) {
         lifecycleScope.launch {

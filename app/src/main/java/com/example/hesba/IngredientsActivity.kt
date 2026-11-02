@@ -3,8 +3,14 @@ package com.example.hesba
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.text.InputType
 import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -58,7 +64,53 @@ class IngredientsActivity : AppCompatActivity() {
             view.findViewById<TextView>(R.id.txtIngredientUnit).text = packageLabel(ingredient)
             view.findViewById<TextView>(R.id.txtUpdated).visibility = View.GONE
             view.findViewById<TextView>(R.id.txtPrice).text = money(ingredient.prixPaye)
+            view.setOnClickListener { askNewPrice(ingredient) }
             list.addView(view)
+        }
+    }
+
+    // appui sur un ingrédient : changer son prix d'achat, puis recalculer les recettes qui l'utilisent
+    private fun askNewPrice(ingredient: Ingredient) {
+        val input = EditText(this).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            setText(String.format(Locale.US, "%.2f", ingredient.prixPaye))
+            selectAll()
+        }
+        val margin = (20 * resources.displayMetrics.density).toInt()
+        val container = FrameLayout(this).apply {
+            setPadding(margin, 0, margin, 0)
+            addView(input, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Nouveau prix : ${ingredient.nom}")
+            .setMessage("Prix payé pour ${packageLabel(ingredient)} (en dinars)")
+            .setView(container)
+            .setPositiveButton("Enregistrer") { _, _ ->
+                val price = input.text.toString().replace(',', '.').trim().toDoubleOrNull()
+                if (price == null || price <= 0.0) {
+                    Toast.makeText(this, "Prix invalide", Toast.LENGTH_SHORT).show()
+                } else if (price != ingredient.prixPaye) {
+                    savePrice(ingredient, price)
+                }
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    private fun savePrice(ingredient: Ingredient, price: Double) {
+        lifecycleScope.launch {
+            val db = HesbaDatabase.getInstance(this@IngredientsActivity)
+            db.ingredientDao().modifier(
+                ingredient.copy(prixPaye = price, dateMiseAJour = System.currentTimeMillis())
+            )
+            val count = RecipeCosting.refreshRecipesUsing(db, ingredient.id)
+            val message = when (count) {
+                0 -> "Prix mis à jour"
+                1 -> "Prix mis à jour · 1 recette recalculée"
+                else -> "Prix mis à jour · $count recettes recalculées"
+            }
+            Toast.makeText(this@IngredientsActivity, message, Toast.LENGTH_SHORT).show()
         }
     }
 

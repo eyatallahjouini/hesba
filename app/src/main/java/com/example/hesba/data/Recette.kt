@@ -6,10 +6,11 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "recette")
 data class Recette(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val utilisateurId : Int ,
     val nom: String,
     val nombreParts: Int,
-    val margeVoulue: Double,            // ex. 30.0 pour 30 %
-    val prixVente: Double? = null,      // null = pas encore fixé
-    val photoUri: String? = null,
+    val margeVoulue: Double = 40.0,
+    val coutParPart: Double = 0.0,
+    val prixVente: Double? = null,
     val dateCreation: Long = System.currentTimeMillis()
 )

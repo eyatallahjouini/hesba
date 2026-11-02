@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3c11844500c1e88c5c6ca91776ac7c4b",
+    "identityHash": "f553715c258ca7a0759739b74db660c2",
     "entities": [
       {
         "tableName": "utilisateur",
@@ -119,11 +119,17 @@
       },
       {
         "tableName": "recette",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nom` TEXT NOT NULL, `nombreParts` INTEGER NOT NULL, `margeVoulue` REAL NOT NULL, `prixVente` REAL, `photoUri` TEXT, `dateCreation` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `utilisateurId` INTEGER NOT NULL, `nom` TEXT NOT NULL, `nombreParts` INTEGER NOT NULL, `margeVoulue` REAL NOT NULL, `coutParPart` REAL NOT NULL, `prixVente` REAL, `dateCreation` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "utilisateurId",
+            "columnName": "utilisateurId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -146,14 +152,15 @@
             "notNull": true
           },
           {
+            "fieldPath": "coutParPart",
+            "columnName": "coutParPart",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
             "fieldPath": "prixVente",
             "columnName": "prixVente",
             "affinity": "REAL"
-          },
-          {
-            "fieldPath": "photoUri",
-            "columnName": "photoUri",
-            "affinity": "TEXT"
           },
           {
             "fieldPath": "dateCreation",
@@ -345,7 +352,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c11844500c1e88c5c6ca91776ac7c4b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f553715c258ca7a0759739b74db660c2')"
     ]
   }
 }

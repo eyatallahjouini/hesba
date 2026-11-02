@@ -38,7 +38,6 @@ class RecettesActivity : AppCompatActivity() {
         }
 
         val list = findViewById<LinearLayout>(R.id.listRecipes)
-        list.removeAllViews()   // enlève les recettes d'exemple du dessin
 
         val db = HesbaDatabase.getInstance(this)
         lifecycleScope.launch {
@@ -67,13 +66,25 @@ class RecettesActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.txtRecipeCount).text =
             if (count <= 1) "$count recette enregistrée" else "$count recettes enregistrées"
         findViewById<View>(R.id.txtNoRecipe).visibility = if (count == 0) View.VISIBLE else View.GONE
+        list.visibility = if (count == 0) View.GONE else View.VISIBLE
 
         val inflater = LayoutInflater.from(this)
         for ((recette, result) in recettes.zip(results)) {
             val view = inflater.inflate(R.layout.item_recipe, list, false)
             view.findViewById<TextView>(R.id.txtName).text = recette.nom
             view.findViewById<TextView>(R.id.txtServings).text = "${recette.nombreParts} parts"
-            view.findViewById<TextView>(R.id.txtMargin).text = "▲ Marge ${recette.margeVoulue.toInt()} %"
+            // même règle que la liste d'Aya : vert à partir de 20 %, rouge en dessous
+            val margin = recette.margeVoulue.toInt()
+            val badge = view.findViewById<TextView>(R.id.txtMargin)
+            if (margin >= 20) {
+                badge.text = "▲ Marge $margin %"
+                badge.setBackgroundResource(R.drawable.bg_badge_green)
+                badge.setTextColor(getColor(R.color.vert))
+            } else {
+                badge.text = "▼ Marge $margin %"
+                badge.setBackgroundResource(R.drawable.bg_badge_red)
+                badge.setTextColor(getColor(R.color.rouge))
+            }
             view.findViewById<TextView>(R.id.txtCost).text = money(result.costPerPiece)
             view.findViewById<TextView>(R.id.txtPrice).text = money(result.advisedPrice)
             list.addView(view)

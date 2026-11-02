@@ -42,7 +42,6 @@ class IngredientsActivity : AppCompatActivity() {
         }
 
         val list = findViewById<LinearLayout>(R.id.listIngredients)
-        list.removeAllViews()   // enlève les ingrédients d'exemple du dessin
 
         val db = HesbaDatabase.getInstance(this)
         lifecycleScope.launch {

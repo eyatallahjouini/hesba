@@ -1,33 +1,41 @@
 package com.example.hesba
-import androidx.lifecycle.lifecycleScope
-import com.example.hesba.data.HesbaDatabase
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
-import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.room.withTransaction
+import com.example.hesba.data.HesbaDatabase
 import com.example.hesba.data.Ingredient
 import com.example.hesba.data.LigneRecette
 import com.example.hesba.data.Recette
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.util.Locale
 
+// Nouvelle recette : même fonctionnement que l'écran d'Aya (NouvelleRecetteActivity).
+// La recette démarre vide ; l'utilisateur choisit chaque ingrédient dans sa liste puis tape la quantité.
 class ComposeRecipeActivity : AppCompatActivity() {
 
-    // une ligne de l'écran = un ingrédient + son champ de quantité + son coût affiché
-    private class Row(val ingredient: Ingredient, val editQty: EditText, val txtCost: TextView)
+    // une ligne de l'écran = un ingrédient choisi + son champ de quantité + son coût affiché
+    private class Row(var ingredient: Ingredient, val editQty: EditText, val txtCost: TextView)
 
     private val rows = mutableListOf<Row>()
+    private var allIngredients = emptyList<Ingredient>()
     private val margin = 0.40   // 40 %, fixe pour l'instant
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,14 +49,7 @@ class ComposeRecipeActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
-        // ouvre le formulaire d'Aya ; la liste se met à jour toute seule au retour
-        findViewById<View>(R.id.btnAddIngredient).setOnClickListener {
-            startActivity(Intent(this, NouvelIngredientActivity::class.java))
-        }
-
-        val list = findViewById<LinearLayout>(R.id.listLines)
-        list.removeAllViews()   // enlève les lignes d'exemple du dessin
-        loadFromDatabase(list)
+        findViewById<View>(R.id.btnAddIngredient).setOnClickListener { chooseIngredient() }
 
         findViewById<EditText>(R.id.editYield).doAfterTextChanged { recalculate() }
         findViewById<EditText>(R.id.editRecipeName).doAfterTextChanged { text ->
@@ -56,7 +57,92 @@ class ComposeRecipeActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.txtRecipeName).text = name.ifEmpty { "Nouvelle recette" }
         }
         findViewById<View>(R.id.btnSaveRecipe).setOnClickListener { saveRecipe() }
+
+        followIngredients()
+        updateEmptyMessage()
         recalculate()
+    }
+
+    // suit la table ingredient : un ingrédient créé devient choisissable,
+    // un prix changé met à jour les lignes déjà ajoutées
+    private fun followIngredients() {
+        lifecycleScope.launch {
+            HesbaDatabase.getInstance(this@ComposeRecipeActivity).ingredientDao().tous().collect { ingredients ->
+                allIngredients = ingredients
+                val byId = ingredients.associateBy { it.id }
+                rows.forEach { row -> byId[row.ingredient.id]?.let { row.ingredient = it } }
+                recalculate()
+            }
+        }
+    }
+
+    // « + Ajouter un ingrédient » : liste des ingrédients pas encore dans la recette
+    private fun chooseIngredient() {
+        if (allIngredients.isEmpty()) {
+            AlertDialog.Builder(this)
+                .setTitle("Aucun ingrédient")
+                .setMessage("Tu n'as encore aucun ingrédient. Crée-le d'abord avec son prix d'achat.")
+                .setPositiveButton("Créer un ingrédient") { _, _ ->
+                    startActivity(Intent(this, NouvelIngredientActivity::class.java))
+                }
+                .setNegativeButton("Annuler", null)
+                .show()
+            return
+        }
+        val chosenIds = rows.map { it.ingredient.id }.toSet()
+        val available = allIngredients.filter { it.id !in chosenIds }
+        if (available.isEmpty()) {
+            toast("Tous tes ingrédients sont déjà dans la recette")
+            return
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Choisir un ingrédient")
+            .setItems(available.map { "${it.nom} (${unitLabel(it.unite)})" }.toTypedArray()) { _, position ->
+                askQuantity(available[position])
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    private fun askQuantity(ingredient: Ingredient) {
+        val input = EditText(this).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            hint = "Quantité en ${unitLabel(ingredient.unite)}"
+        }
+        val pad = (20 * resources.displayMetrics.density).toInt()
+        val container = FrameLayout(this).apply {
+            setPadding(pad, 0, pad, 0)
+            addView(input, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Quantité : ${ingredient.nom}")
+            .setMessage("Quantité utilisée dans la recette (${unitLabel(ingredient.unite)})")
+            .setView(container)
+            .setPositiveButton("Ajouter") { _, _ ->
+                val qty = input.text.toString().replace(',', '.').trim().toDoubleOrNull() ?: 0.0
+                if (qty > 0.0) addRow(ingredient, input.text.toString().trim())
+                else toast("Quantité invalide")
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    private fun addRow(ingredient: Ingredient, qty: String) {
+        val list = findViewById<LinearLayout>(R.id.listLines)
+        val view = LayoutInflater.from(this).inflate(R.layout.item_recipe_line, list, false)
+        view.findViewById<TextView>(R.id.txtIngredientName).text = ingredient.nom
+        view.findViewById<TextView>(R.id.txtUnit).text = unitLabel(ingredient.unite)
+        val editQty = view.findViewById<EditText>(R.id.editQty)
+        editQty.setText(qty)
+        editQty.doAfterTextChanged { recalculate() }
+        rows.add(Row(ingredient, editQty, view.findViewById(R.id.txtLineCost)))
+        list.addView(view)
+        updateEmptyMessage()
+        recalculate()
+    }
+
+    private fun updateEmptyMessage() {
+        findViewById<View>(R.id.txtNoIngredient).visibility = if (rows.isEmpty()) View.VISIBLE else View.GONE
     }
 
     // enregistre la recette puis ses lignes (ingrédient + quantité, jamais le prix)
@@ -67,8 +153,8 @@ class ComposeRecipeActivity : AppCompatActivity() {
 
         when {
             name.isEmpty() -> { toast("Donne un nom à la recette"); return }
-            usedRows.isEmpty() -> { toast("Mets une quantité pour au moins un ingrédient"); return }
-            pieces <= 0 -> { toast("Le nombre de pièces doit être supérieur à 0"); return }
+            pieces <= 0 -> { toast("Le nombre de parts doit être supérieur à 0"); return }
+            usedRows.isEmpty() -> { toast("Ajoute au moins un ingrédient avec sa quantité"); return }
         }
 
         val batch = CostCalculator.recipeCost(usedRows.map { row ->
@@ -105,44 +191,11 @@ class ComposeRecipeActivity : AppCompatActivity() {
                     )
                 })
             }
-            toast("Recette « $name » enregistrée")
+            toast("Recette « $name » enregistrée · ${money(perPiece)} par part")
             finish()
         }
     }
 
-    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
-    // suit la table ingredient : un ingrédient ajouté ou un prix changé met l'écran à jour,
-    // en gardant les quantités déjà tapées
-    private fun loadFromDatabase(list: LinearLayout) {
-        lifecycleScope.launch {
-            val dao = HesbaDatabase.getInstance(this@ComposeRecipeActivity).ingredientDao()
-            dao.tous().collect { ingredients ->
-                val typed = rows.associate { it.ingredient.id to it.editQty.text.toString() }
-                rows.clear()
-                list.removeAllViews()
-                for (ingredient in ingredients) addRow(list, ingredient, typed[ingredient.id] ?: "")
-                findViewById<View>(R.id.txtNoIngredient).visibility =
-                    if (ingredients.isEmpty()) View.VISIBLE else View.GONE
-                recalculate()
-            }
-        }
-    }
-
-    private fun addRow(list: LinearLayout, ingredient: Ingredient, qty: String) {
-        val view = LayoutInflater.from(this).inflate(R.layout.item_recipe_line, list, false)
-        view.findViewById<TextView>(R.id.txtIngredientName).text = ingredient.nom
-        view.findViewById<TextView>(R.id.txtUnit).text = unitLabel(ingredient.unite)
-        val editQty = view.findViewById<EditText>(R.id.editQty)
-        editQty.setText(qty)
-        val txtCost = view.findViewById<TextView>(R.id.txtLineCost)
-        txtCost.text = money(0.0)
-        editQty.doAfterTextChanged { recalculate() }
-        rows.add(Row(ingredient, editQty, txtCost))
-        list.addView(view)
-    }
-
-    // le cœur : on appelle TES formules
     private fun recalculate() {
         val lineCosts = rows.map { row ->
             val qty = readNumber(row.editQty)
@@ -170,6 +223,8 @@ class ComposeRecipeActivity : AppCompatActivity() {
             "Ingrédient le plus cher : ${rows[top].ingredient.nom} (${money(lineCosts[top])}, $share % du lot)"
         }
     }
+
+    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
     private fun readNumber(edit: EditText): Double =
         edit.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0

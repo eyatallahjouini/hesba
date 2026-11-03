@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.hesba.auth.SessionManager
 import com.example.hesba.data.HesbaDatabase
 import com.example.hesba.data.Ingredient
 import com.google.android.material.button.MaterialButtonToggleGroup
@@ -25,6 +26,7 @@ class NouvelIngredientActivity : AppCompatActivity() {
     private lateinit var etPrix: EditText
     private lateinit var tvPrixCalcul: TextView
     private lateinit var btnEnregistrer: Button
+    private lateinit var session: SessionManager
 
     private var uniteChoisie = "kg" // Unité affichée à l'utilisateur ("kg", "l", "piece")
 
@@ -34,6 +36,8 @@ class NouvelIngredientActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nouvel_ingredient)
+
+        session = SessionManager(this)
 
         etNom = findViewById(R.id.etNomIngredient)
         etQuantite = findViewById(R.id.etQuantite)
@@ -145,12 +149,17 @@ class NouvelIngredientActivity : AppCompatActivity() {
             else -> qteSaisie to "piece"
         }
 
+        val currentUserId = session.getUserId()
+
         lifecycleScope.launch {
             val db = HesbaDatabase.getInstance(this@NouvelIngredientActivity)
 
             val ancien = ingredientAModifier
+            // Vérification des doublons uniquement parmi les ingrédients du MÊME utilisateur (ou invité)
             val existeDeja = db.ingredientDao().tous().first().any {
-                it.nom.equals(nom, ignoreCase = true) && it.id != ancien?.id
+                it.nom.equals(nom, ignoreCase = true) &&
+                        it.id != ancien?.id &&
+                        it.utilisateurId == currentUserId
             }
 
             if (existeDeja) {
@@ -168,7 +177,8 @@ class NouvelIngredientActivity : AppCompatActivity() {
                     nom = nom,
                     unite = uniteBase,
                     quantiteEmballage = quantiteBase,
-                    prixPaye = prix
+                    prixPaye = prix,
+                    utilisateurId = currentUserId // Enregistrement avec l'ID de session courant
                 )
             )
 
@@ -183,7 +193,6 @@ class NouvelIngredientActivity : AppCompatActivity() {
     }
 
     // Mode « Modifier » : l'unité ne change pas si l'ingrédient est déjà dans une recette
-    // (les quantités des recettes sont enregistrées dans cette unité)
     private suspend fun modifierIngredient(
         db: HesbaDatabase,
         ancien: Ingredient,
@@ -209,10 +218,11 @@ class NouvelIngredientActivity : AppCompatActivity() {
                 quantiteEmballage = quantiteBase,
                 prixPaye = prix,
                 dateMiseAJour = System.currentTimeMillis()
+                // utilisateurId reste conservé via copy()
             )
         )
         // prix ou quantité changés : les recettes qui l'utilisent sont recalculées
-        val nombreRecettes = RecipeCosting.refreshRecipesUsing(db, ancien.id)
+        val nombreRecettes = RecipeCosting.refreshRecipesUsing(db, ancien.id, session.getUserId())
         afficherToast(
             if (nombreRecettes == 0) "Ingrédient '$nom' modifié"
             else "Ingrédient '$nom' modifié · $nombreRecettes recette(s) recalculée(s)"

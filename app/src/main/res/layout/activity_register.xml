@@ -1,27 +1,360 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/creme" android:orientation="vertical">
-  <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
-        <TextView android:id="@+id/btnBack" android:layout_width="44dp" android:text="‹" android:textColor="@color/brun" android:textSize="24sp" android:textStyle="bold" android:gravity="center" android:layout_height="44dp" android:background="@drawable/bg_back" android:clickable="true" android:focusable="true"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/creme"
+    android:orientation="vertical">
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:clipToPadding="false"
+      android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center_vertical"
+          android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="‹"
+            android:textColor="@color/brun"
+            android:textSize="24sp"
+            android:textStyle="bold" />
       </LinearLayout>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Créer ton compte" android:textColor="@color/brun" android:textSize="30sp" android:textStyle="bold" android:fontFamily="serif"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Ton atelier, tes recettes, tes prix : tout au même endroit." android:textColor="@color/brun_clair" android:textSize="15sp"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Prénom" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
-      <EditText android:id="@+id/editName" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="textPersonName" android:maxLines="1" android:hint="Ton prénom"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Email" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
-      <EditText android:id="@+id/editEmail" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="textEmailAddress" android:maxLines="1" android:hint="nom@exemple.com"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Mot de passe" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
-      <EditText android:id="@+id/editPassword" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/bg_input" android:paddingStart="16dp" android:paddingEnd="16dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="textPassword" android:maxLines="1" android:hint="Ton mot de passe"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="8 caractères minimum" android:textColor="@color/brun_clair" android:textSize="13sp"/>
-      <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Ton activité" android:textColor="@color/brun" android:textSize="14sp" android:textStyle="bold"/>
-      <RadioGroup android:id="@+id/rgActivity" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="vertical">
-        <RadioButton android:id="@+id/rbHome" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:layout_marginEnd="0dp" android:button="@null" android:background="@drawable/bg_chip" android:paddingStart="18dp" android:paddingEnd="18dp" android:paddingTop="10dp" android:paddingBottom="10dp" android:textColor="@color/brun" android:textSize="15sp" android:textStyle="bold" android:checked="true" android:text="À domicile"/>
-        <RadioButton android:id="@+id/rbLocalSolo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:layout_marginEnd="0dp" android:button="@null" android:background="@drawable/bg_chip" android:paddingStart="18dp" android:paddingEnd="18dp" android:paddingTop="10dp" android:paddingBottom="10dp" android:textColor="@color/brun" android:textSize="15sp" android:textStyle="bold" android:text="Local sans employé"/>
-        <RadioButton android:id="@+id/rbLocalStaff" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="8dp" android:layout_marginEnd="0dp" android:button="@null" android:background="@drawable/bg_chip" android:paddingStart="18dp" android:paddingEnd="18dp" android:paddingTop="10dp" android:paddingBottom="10dp" android:textColor="@color/brun" android:textSize="15sp" android:textStyle="bold" android:text="Local avec employés"/>
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="20dp"
+          android:fontFamily="serif"
+          android:text="Créer ton compte"
+          android:textColor="@color/brun"
+          android:textSize="30sp"
+          android:textStyle="bold" />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:text="Ton atelier, tes recettes, tes prix : tout au même endroit."
+          android:textColor="@color/brun_clair"
+          android:textSize="15sp" />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="20dp"
+          android:text="Prénom"
+          android:textColor="@color/brun"
+          android:textSize="14sp"
+          android:textStyle="bold" />
+
+      <EditText
+          android:id="@+id/editName"
+          android:layout_width="match_parent"
+          android:layout_height="52dp"
+          android:layout_marginTop="6dp"
+          android:background="@drawable/bg_input"
+          android:hint="Ton prénom"
+          android:inputType="textPersonName"
+          android:maxLines="1"
+          android:paddingStart="16dp"
+          android:paddingEnd="16dp"
+          android:textColor="@color/brun"
+          android:textColorHint="@color/gris_hint"
+          android:textSize="16sp" />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:text="Email"
+          android:textColor="@color/brun"
+          android:textSize="14sp"
+          android:textStyle="bold" />
+
+      <EditText
+          android:id="@+id/editEmail"
+          android:layout_width="match_parent"
+          android:layout_height="52dp"
+          android:layout_marginTop="6dp"
+          android:background="@drawable/bg_input"
+          android:hint="nom@exemple.com"
+          android:inputType="textEmailAddress"
+          android:maxLines="1"
+          android:paddingStart="16dp"
+          android:paddingEnd="16dp"
+          android:textColor="@color/brun"
+          android:textColorHint="@color/gris_hint"
+          android:textSize="16sp" />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:text="Mot de passe"
+          android:textColor="@color/brun"
+          android:textSize="14sp"
+          android:textStyle="bold" />
+
+      <EditText
+          android:id="@+id/editPassword"
+          android:layout_width="match_parent"
+          android:layout_height="52dp"
+          android:layout_marginTop="6dp"
+          android:background="@drawable/bg_input"
+          android:hint="Ton mot de passe"
+          android:inputType="textPassword"
+          android:maxLines="1"
+          android:paddingStart="16dp"
+          android:paddingEnd="16dp"
+          android:textColor="@color/brun"
+          android:textColorHint="@color/gris_hint"
+          android:textSize="16sp" />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:text="8 caractères minimum"
+          android:textColor="@color/brun_clair"
+          android:textSize="13sp" />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="20dp"
+          android:text="Ton activité"
+          android:textColor="@color/brun"
+          android:textSize="14sp"
+          android:textStyle="bold" />
+
+      <RadioGroup
+          android:id="@+id/rgActivity"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_chip"
+            android:button="@null"
+            android:checked="true"
+            android:paddingStart="18dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="10dp"
+            android:text="À domicile"
+            android:textColor="@color/brun"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/rbLocalSolo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_chip"
+            android:button="@null"
+            android:paddingStart="18dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="10dp"
+            android:text="Local sans employé"
+            android:textColor="@color/brun"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/rbLocalStaff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_chip"
+            android:button="@null"
+            android:paddingStart="18dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="10dp"
+            android:text="Local avec employés"
+            android:textColor="@color/brun"
+            android:textSize="15sp"
+            android:textStyle="bold" />
       </RadioGroup>
-      <CheckBox android:id="@+id/checkPrivacy" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:buttonTint="@color/safran" android:textColor="@color/brun" android:text="J'accepte la politique de confidentialité"/>
-      <Button android:id="@+id/btnRegister" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="20dp" android:text="Créer mon compte" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/brun" android:backgroundTint="@color/safran" app:cornerRadius="16dp"/>
+
+      <!-- Section dynamique pour le Loyer et le Volume Mensuel (Local solo et avec employés) -->
+      <LinearLayout
+          android:id="@+id/layoutRentField"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Loyer / Charges fixes du local (DT / mois)"
+            android:textColor="@color/brun"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editRent"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input"
+            android:hint="Ex: 800.00"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/brun"
+            android:textColorHint="@color/gris_hint"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Production mensuelle estimée (parts / mois)"
+            android:textColor="@color/brun"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editMonthlyVolume"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input"
+            android:hint="Ex: 300"
+            android:inputType="number"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/brun"
+            android:textColorHint="@color/gris_hint"
+            android:textSize="16sp" />
+      </LinearLayout>
+
+      <!-- Section dynamique pour les détails des employés (Local avec employés uniquement) -->
+      <LinearLayout
+          android:id="@+id/layoutEmployeeFields"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Nombre d'employés"
+            android:textColor="@color/brun"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editEmpCount"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input"
+            android:hint="Ex: 2"
+            android:inputType="number"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/brun"
+            android:textColorHint="@color/gris_hint"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Salaire mensuel moyen par employé (DT)"
+            android:textColor="@color/brun"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editEmpSalary"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_input"
+            android:hint="Ex: 1200.00"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/brun"
+            android:textColorHint="@color/gris_hint"
+            android:textSize="16sp" />
+      </LinearLayout>
+
+      <CheckBox
+          android:id="@+id/checkPrivacy"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="12dp"
+          android:buttonTint="@color/safran"
+          android:text="J'accepte la politique de confidentialité"
+          android:textColor="@color/brun" />
+
+      <Button
+          android:id="@+id/btnRegister"
+          android:layout_width="match_parent"
+          android:layout_height="56dp"
+          android:layout_marginTop="20dp"
+          android:backgroundTint="@color/safran"
+          android:text="Créer mon compte"
+          android:textAllCaps="false"
+          android:textColor="@color/brun"
+          android:textSize="16sp"
+          android:textStyle="bold"
+          app:cornerRadius="16dp" />
+
+      <TextView
+          android:id="@+id/txtLoginLink"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_marginTop="16dp"
+          android:clickable="true"
+          android:focusable="true"
+          android:padding="8dp"
+          android:text="Déjà un compte ? Connecte-toi"
+          android:textColor="@color/brun"
+          android:textSize="14sp"
+          android:textStyle="bold" />
+
     </LinearLayout>
   </ScrollView>
 </LinearLayout>

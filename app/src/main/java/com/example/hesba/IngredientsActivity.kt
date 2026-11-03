@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.hesba.auth.SessionManager
 import com.example.hesba.data.HesbaDatabase
 import com.example.hesba.data.Ingredient
 import kotlinx.coroutines.flow.first
@@ -22,6 +23,8 @@ import java.util.Locale
 
 // Onglet « Ingrédients » : liste des ingrédients et de leur prix d'achat
 class IngredientsActivity : AppCompatActivity() {
+
+    private lateinit var session: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +37,9 @@ class IngredientsActivity : AppCompatActivity() {
         }
         BottomNav.setup(this, BottomNav.Tab.INGREDIENTS)
 
-        // le formulaire d'ajout est celui d'Aya (NouvelIngredientActivity) : on l'ouvre sans le modifier
+        session = SessionManager(this)
+
+        // Le formulaire d'ajout (NouvelIngredientActivity) : on l'ouvre sans le modifier
         findViewById<View>(R.id.btnAddIngredient).setOnClickListener {
             startActivity(Intent(this, NouvelIngredientActivity::class.java))
         }
@@ -42,8 +47,13 @@ class IngredientsActivity : AppCompatActivity() {
         val list = findViewById<LinearLayout>(R.id.listIngredients)
 
         val db = HesbaDatabase.getInstance(this)
+        val currentUserId = session.getUserId()
+
+        // Écoute de la liste des ingrédients uniquement pour l'utilisateur courant (ou invité -1L)
         lifecycleScope.launch {
-            db.ingredientDao().tous().collect { ingredients -> show(list, ingredients) }
+            db.ingredientDao().getIngredientsParUtilisateur(currentUserId).collect { ingredients ->
+                show(list, ingredients)
+            }
         }
     }
 
@@ -62,7 +72,7 @@ class IngredientsActivity : AppCompatActivity() {
             view.findViewById<TextView>(R.id.txtIngredientUnit).text = packageLabel(ingredient)
             view.findViewById<TextView>(R.id.txtUpdated).visibility = View.GONE
             view.findViewById<TextView>(R.id.txtPrice).text = money(ingredient.prixPaye)
-            // ligne ou crayon : modifier · corbeille : supprimer
+            // Ligne ou crayon : modifier · Corbeille : supprimer
             view.findViewById<View>(R.id.rowIngredient).setOnClickListener { openEdit(ingredient) }
             view.findViewById<View>(R.id.btnEditIngredient).setOnClickListener { openEdit(ingredient) }
             view.findViewById<View>(R.id.btnDeleteIngredient).setOnClickListener { askDelete(ingredient) }
@@ -70,7 +80,7 @@ class IngredientsActivity : AppCompatActivity() {
         }
     }
 
-    // ouvre la page d'Aya en mode « Modifier »
+    // Ouvre la page en mode « Modifier »
     private fun openEdit(ingredient: Ingredient) {
         startActivity(
             Intent(this, NouvelIngredientActivity::class.java)
@@ -78,7 +88,7 @@ class IngredientsActivity : AppCompatActivity() {
         )
     }
 
-    // la base refuse de supprimer un ingrédient utilisé (LigneRecette : RESTRICT) : on prévient avant
+    // La base refuse de supprimer un ingrédient utilisé (LigneRecette : RESTRICT) : on prévient avant
     private fun askDelete(ingredient: Ingredient) {
         lifecycleScope.launch {
             val db = HesbaDatabase.getInstance(this@IngredientsActivity)
@@ -90,7 +100,7 @@ class IngredientsActivity : AppCompatActivity() {
                     .setTitle("Suppression impossible")
                     .setMessage(
                         "« ${ingredient.nom} » est utilisé dans : ${usedIn.joinToString { it.nom }}.\n\n" +
-                            "Retire-le d'abord de ces recettes."
+                                "Retire-le d'abord de ces recettes."
                     )
                     .setPositiveButton("OK", null)
                     .show()
@@ -112,7 +122,7 @@ class IngredientsActivity : AppCompatActivity() {
                 db.ingredientDao().supprimer(ingredient)
                 Toast.makeText(this@IngredientsActivity, "« ${ingredient.nom} » supprimé", Toast.LENGTH_SHORT).show()
             } catch (e: SQLiteConstraintException) {
-                // ajouté à une recette entre-temps
+                // Ajouté à une recette entre-temps
                 Toast.makeText(this@IngredientsActivity, "Utilisé dans une recette : suppression impossible", Toast.LENGTH_LONG).show()
             }
         }

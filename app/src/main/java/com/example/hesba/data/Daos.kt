@@ -20,6 +20,21 @@ interface UtilisateurDao {
 
     @Query("SELECT * FROM utilisateur LIMIT 1")
     fun utilisateurCourant(): Flow<Utilisateur?>
+    @Query("SELECT * FROM utilisateur WHERE id = :userId LIMIT 1")
+    fun parId(userId: Long): Flow<Utilisateur?>
+    // Mise à jour de la structure d'activité et de la paie
+    @Query("""
+    UPDATE utilisateur 
+    SET activite = :activite, 
+        nombreEmployes = :nombreEmployes, 
+        salaireMoyenEmploye = :salaireMoyenEmploye 
+    WHERE id = :userId
+""")
+    suspend fun modifierStructure(userId: Long, activite: String, nombreEmployes: Int, salaireMoyenEmploye: Double)
+
+    // Mise à jour du mot de passe
+    @Query("UPDATE utilisateur SET motDePasseHash = :nouveauHash WHERE id = :userId")
+    suspend fun modifierMotDePasse(userId: Long, nouveauHash: String)
 }
 
 @Dao
@@ -38,6 +53,8 @@ interface IngredientDao {
 
     @Query("SELECT * FROM ingredient WHERE id = :id")
     suspend fun parId(id: Long): Ingredient?
+    @Query("SELECT * FROM ingredient WHERE utilisateurId = :userId ORDER BY nom ASC")
+    fun getIngredientsParUtilisateur(userId: Long): Flow<List<Ingredient>>
 }
 
 @Dao
@@ -61,6 +78,8 @@ interface RecetteDao {
     @Query("UPDATE recette SET prixVente = :prixVente WHERE id = :id")
 
     suspend fun mettreAJourPrixVente(id: Long, prixVente: Double)
+    @Query("SELECT * FROM recette WHERE utilisateurId = :userId ORDER BY nom ASC")
+    fun getRecettesParUtilisateur(userId: Long): Flow<List<Recette>>
 
 }
 

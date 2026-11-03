@@ -5,32 +5,37 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Outline
 import android.os.Bundle
-import android.view.ViewOutlineProvider
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.File
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewOutlineProvider
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.hesba.auth.SessionManager
 import com.example.hesba.data.HesbaDatabase
 import com.example.hesba.data.Ingredient
+import com.example.hesba.data.LigneRecette
 import com.example.hesba.data.Recette
+import com.example.hesba.data.Utilisateur
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.Locale
 
-// Onglet « Recettes » : liste des recettes enregistrées dans la base
+// Onglet « Recettes » : liste des recettes enregistrées avec calcul dynamique selon le profil utilisateur
 class RecettesActivity : AppCompatActivity() {
+
+    private lateinit var session: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,18 +48,27 @@ class RecettesActivity : AppCompatActivity() {
         }
         BottomNav.setup(this, BottomNav.Tab.RECETTES)
 
+        session = SessionManager(this)
+
         findViewById<View>(R.id.btnNewRecipe).setOnClickListener {
             startActivity(Intent(this, ComposeRecipeActivity::class.java))
         }
 
         val list = findViewById<LinearLayout>(R.id.listRecipes)
-
         val db = HesbaDatabase.getInstance(this)
+        val currentUserId = session.getUserId()
+
         lifecycleScope.launch {
-            // la liste se redessine quand une recette OU le prix d'un ingrédient change
-            combine(db.recetteDao().toutes(), db.ingredientDao().tous()) { recettes, ingredients ->
-                recettes to ingredients
-            }.collect { (recettes, ingredients) -> show(db, list, recettes, ingredients) }
+            // Écoute combinée : Recettes + Ingrédients + Profil Utilisateur
+            combine(
+                db.recetteDao().getRecettesParUtilisateur(currentUserId),
+                db.ingredientDao().getIngredientsParUtilisateur(currentUserId),
+                db.utilisateurDao().parId(currentUserId)
+            ) { recettes, ingredients, user ->
+                Triple(recettes, ingredients, user)
+            }.collect { (recettes, ingredients, user) ->
+                show(db, list, recettes, ingredients, user)
+            }
         }
     }
 
@@ -62,16 +76,17 @@ class RecettesActivity : AppCompatActivity() {
         db: HesbaDatabase,
         list: LinearLayout,
         recettes: List<Recette>,
-        ingredients: List<Ingredient>
+        ingredients: List<Ingredient>,
+        user: Utilisateur?
     ) {
         val ingredientsById = ingredients.associateBy { it.id }
-        // coût recalculé en direct avec les prix actuels (sinon valeur enregistrée si la recette n'a pas de lignes)
+
+        // Calcul dynamique synchronisé avec les données du profil actuel
         val results = recettes.map { recette ->
             val lignes = db.ligneRecetteDao().parRecette(recette.id).first()
-            if (lignes.isEmpty()) RecipeCosting.Result(recette.coutParPart, recette.prixVente ?: 0.0)
-            else RecipeCosting.compute(recette, lignes, ingredientsById)
+            computeDynamicCostAndPrice(recette, lignes, ingredientsById, user)
         }
-        // photos lues hors du fil principal : photos/recette_<id>.jpg (seulement si la recette en a une)
+
         val photos = withContext(Dispatchers.IO) { recettes.associate { it.id to loadThumbnail(it.id) } }
         list.removeAllViews()
         val count = recettes.size
@@ -93,7 +108,7 @@ class RecettesActivity : AppCompatActivity() {
             }
             view.findViewById<TextView>(R.id.txtName).text = recette.nom
             view.findViewById<TextView>(R.id.txtServings).text = "${recette.nombreParts} parts"
-            // même règle que la liste d'Aya : vert à partir de 20 %, rouge en dessous
+
             val margin = recette.margeVoulue.toInt()
             val badge = view.findViewById<TextView>(R.id.txtMargin)
             if (margin >= 20) {
@@ -105,9 +120,11 @@ class RecettesActivity : AppCompatActivity() {
                 badge.setBackgroundResource(R.drawable.bg_badge_red)
                 badge.setTextColor(getColor(R.color.rouge))
             }
-            view.findViewById<TextView>(R.id.txtCost).text = money(result.costPerPiece)
-            view.findViewById<TextView>(R.id.txtPrice).text = money(result.advisedPrice)
-            // carte ou crayon : modifier · corbeille : supprimer
+
+            // Affichage des prix calculés en parfaite harmonie avec ComposeRecipeActivity et ProfilActivity
+            view.findViewById<TextView>(R.id.txtCost).text = money(result.first)
+            view.findViewById<TextView>(R.id.txtPrice).text = money(result.second)
+
             view.findViewById<View>(R.id.cardRecipe).setOnClickListener { openEdit(recette) }
             view.findViewById<View>(R.id.btnEditRecipe).setOnClickListener { openEdit(recette) }
             view.findViewById<View>(R.id.btnDeleteRecipe).setOnClickListener { askDelete(recette) }
@@ -115,7 +132,67 @@ class RecettesActivity : AppCompatActivity() {
         }
     }
 
-    // ouvre « Nouvelle recette » en mode « Modifier »
+    // Calcul dynamique miroir à celui de ComposeRecipeActivity
+    private fun computeDynamicCostAndPrice(
+        recette: Recette,
+        lignes: List<LigneRecette>,
+        ingredientsById: Map<Long, Ingredient>,
+        user: Utilisateur?
+    ): Pair<Double, Double> {
+        // 1. Si la recette ne contient aucun ingrédient, le coût et le prix sont 0,00 dt
+        if (lignes.isEmpty()) {
+            return Pair(0.0, 0.0)
+        }
+
+        // 2. Coût direct des ingrédients
+        val coutIngredientsBatch = lignes.sumOf { ligne ->
+            val ing = ingredientsById[ligne.ingredientId]
+            if (ing != null) {
+                val prixUnitaire = CostCalculator.pricePerUnit(ing.prixPaye, ing.quantiteEmballage)
+                CostCalculator.lineCost(ligne.quantite, prixUnitaire)
+            } else 0.0
+        }
+
+        // 3. Activité (par défaut "domicile" si l'utilisateur est null/non connecté)
+        val activite = user?.activite ?: "domicile"
+        val prepTimeMin = recette.tempsPreparationMinutes
+        val tempsHeures = prepTimeMin / 60.0
+
+        // 4. Calcul de la main-d'œuvre
+        val coutMainOeuvre = when (activite) {
+            "avec_employe" -> {
+                val nbEmp = if ((user?.nombreEmployes ?: 0) > 0) user!!.nombreEmployes else 1
+                val salaire = if ((user?.salaireMoyenEmploye ?: 0.0) > 0.0) user!!.salaireMoyenEmploye else 1200.0
+                CostCalculator.laborCost(nbEmp * salaire, 160.0, tempsHeures)
+            }
+            "sans_employe" -> CostCalculator.laborCost(1500.0, 160.0, tempsHeures)
+            else -> 0.0 // domicile
+        }
+
+        // 5. Charges fixes (Loyer) par part
+        val rent = user?.loyerMensuel ?: 0.0
+        val volumeMensuel = if ((user?.volumeMensuel ?: 0) > 0) user!!.volumeMensuel.toDouble() else 300.0
+
+        val chargesFixesPart = when (activite) {
+            "sans_employe", "avec_employe" -> {
+                if (rent > 0.0 && volumeMensuel > 0.0) {
+                    CostCalculator.fixedCostPerUnit(rent, volumeMensuel)
+                } else 0.0
+            }
+            else -> 0.0 // domicile
+        }
+
+        // 6. Coût complet par part et Prix de vente conseillé
+        val safePieces = if (recette.nombreParts > 0) recette.nombreParts.toDouble() else 1.0
+        val totalBatch = coutIngredientsBatch + coutMainOeuvre
+        val coutParPart = CostCalculator.costPerPiece(totalBatch, safePieces) + chargesFixesPart
+
+        val margeDecimale = recette.margeVoulue / 100.0
+        val prixVente = CostCalculator.sellingPriceHT(coutParPart, margeDecimale)
+
+        return Pair(coutParPart, prixVente)
+    }
+
     private fun openEdit(recette: Recette) {
         startActivity(
             Intent(this, ComposeRecipeActivity::class.java).putExtra("EXTRA_RECETTE_ID", recette.id)
@@ -131,7 +208,6 @@ class RecettesActivity : AppCompatActivity() {
             .show()
     }
 
-    // les lignes partent avec la recette (LigneRecette : CASCADE) ; la photo est effacée à la main
     private fun delete(recette: Recette) {
         lifecycleScope.launch {
             HesbaDatabase.getInstance(this@RecettesActivity).recetteDao().supprimer(recette)
@@ -142,7 +218,6 @@ class RecettesActivity : AppCompatActivity() {
 
     private fun photoFile(recipeId: Long) = File(File(filesDir, "photos"), "recette_$recipeId.jpg")
 
-    // petite version de la photo (environ 150 px) pour ne pas charger l'image entière
     private fun loadThumbnail(recipeId: Long): Bitmap? {
         val file = photoFile(recipeId)
         if (!file.exists()) return null
@@ -153,7 +228,6 @@ class RecettesActivity : AppCompatActivity() {
         return BitmapFactory.decodeFile(file.path, BitmapFactory.Options().apply { inSampleSize = sample })
     }
 
-    // découpe la photo en rond
     private object CircleOutline : ViewOutlineProvider() {
         override fun getOutline(view: View, outline: Outline) {
             outline.setOval(0, 0, view.width, view.height)

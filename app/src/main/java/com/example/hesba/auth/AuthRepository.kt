@@ -28,6 +28,10 @@ class AuthRepository(private val dao: UtilisateurDao) {
         email: String,
         motDePasse: String,
         activite: String,
+        loyerMensuel: Double = 0.0,
+        volumeMensuel: Int = 300,
+        nombreEmployes: Int = 0,
+        salaireMoyenEmploye: Double = 0.0,
         politiqueAcceptee: Boolean
     ): AuthResult {
         val mail = email.trim().lowercase()
@@ -47,7 +51,9 @@ class AuthRepository(private val dao: UtilisateurDao) {
                 email = mail,
                 motDePasseHash = PasswordHasher.hash(motDePasse),
                 activite = activite,
-                politiqueConfidentialiteAcceptee = true
+                nombreEmployes = nombreEmployes,
+                salaireMoyenEmploye = salaireMoyenEmploye
+
             )
         )
         return AuthResult.Success(id)

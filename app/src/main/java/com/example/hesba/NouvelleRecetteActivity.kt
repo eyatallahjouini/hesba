@@ -1,11 +1,11 @@
 package com.example.hesba
+
 import java.util.Locale
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.hesba.auth.SessionManager
 import com.example.hesba.data.HesbaDatabase
 import com.example.hesba.data.Ingredient
 import com.example.hesba.data.LigneRecette
@@ -28,7 +29,7 @@ import kotlinx.coroutines.flow.first
 class NouvelleRecetteActivity : AppCompatActivity() {
 
     private lateinit var db: HesbaDatabase
-    private val utilisateurIdConnecte: Long = 1L
+    private lateinit var session: SessionManager
 
     // Liste des ingrédients ajoutés à la recette (Ingrédient + Quantité utilisée)
     private val ingredientsSelectionnes = mutableListOf<Pair<Ingredient, Double>>()
@@ -52,7 +53,8 @@ class NouvelleRecetteActivity : AppCompatActivity() {
                 nom = nom,
                 unite = unite,
                 quantiteEmballage = quantiteEmballage,
-                prixPaye = prixPaye
+                prixPaye = prixPaye,
+                utilisateurId = session.getUserId()
             )
 
             // Ajout dans la liste locale et rafraîchissement du RecyclerView
@@ -68,6 +70,7 @@ class NouvelleRecetteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_nouvelle_recette)
 
         db = HesbaDatabase.getInstance(this)
+        session = SessionManager(this)
 
         val btnRetour = findViewById<ImageButton>(R.id.btnRetour)
         val etNomRecette = findViewById<EditText>(R.id.etNomRecette)
@@ -80,8 +83,10 @@ class NouvelleRecetteActivity : AppCompatActivity() {
 
         // Configuration de l'adaptateur avec la fonction de mise à jour des quantités
         adapter = IngredientAdapter(ingredientsSelectionnes) { position, nouvelleQuantite ->
-            val oldPair = ingredientsSelectionnes[position]
-            ingredientsSelectionnes[position] = Pair(oldPair.first, nouvelleQuantite)
+            if (position in ingredientsSelectionnes.indices) {
+                val oldPair = ingredientsSelectionnes[position]
+                ingredientsSelectionnes[position] = Pair(oldPair.first, nouvelleQuantite)
+            }
         }
 
         rvIngredients.layoutManager = LinearLayoutManager(this)
@@ -114,7 +119,7 @@ class NouvelleRecetteActivity : AppCompatActivity() {
     private fun enregistrerRecetteComplete(
         nomRecette: String,
         nbParts: Int,
-        ingredients: List<Pair<Ingredient, Double>> // Contient (Ingredient, Quantité_Saisie_Dans_Recette)
+        ingredients: List<Pair<Ingredient, Double>>
     ) {
         lifecycleScope.launch {
             var coutTotalRecette = 0.0
@@ -122,10 +127,7 @@ class NouvelleRecetteActivity : AppCompatActivity() {
             // 1. Calcul basé UNIQUEMENT sur la quantité modifiée pour la recette
             ingredients.forEach { (ingredient, quantiteUtiliseeDansRecette) ->
                 if (ingredient.quantiteEmballage > 0 && quantiteUtiliseeDansRecette > 0) {
-                    // Coût unitaire par unité d'emballage (ex: 16 DT / 1 kg = 16 DT/kg)
                     val prixParUnite = ingredient.prixPaye / ingredient.quantiteEmballage
-
-                    // Coût réel pour la quantité exacte utilisée dans la recette
                     val coutIngredientRecette = prixParUnite * quantiteUtiliseeDansRecette
                     coutTotalRecette += coutIngredientRecette
                 }
@@ -138,9 +140,12 @@ class NouvelleRecetteActivity : AppCompatActivity() {
             val margeDefaut = 40.0
             val tauxMarge = margeDefaut / 100.0 // 0.40
             val prixVenteParPartCalculated = if (tauxMarge < 1.0) coutParPartCalculated / (1.0 - tauxMarge) else coutParPartCalculated
-            // 4. Instanciation de l'objet Recette avec les valeurs calculées
+
+            val currentUserId = session.getUserId()
+
+            // 4. Instanciation de l'objet Recette avec l'ID utilisateur dynamique
             val nouvelleRecette = Recette(
-                utilisateurId = utilisateurIdConnecte.toInt(),
+                utilisateurId = currentUserId,
                 nom = nomRecette,
                 nombreParts = nbParts,
                 margeVoulue = margeDefaut,
@@ -156,7 +161,7 @@ class NouvelleRecetteActivity : AppCompatActivity() {
                 LigneRecette(
                     recetteId = recetteIdGenerer,
                     ingredientId = ingredient.id,
-                    quantite = quantiteUtiliseeDansRecette, // Quantité modifiée conservée en BDD
+                    quantite = quantiteUtiliseeDansRecette,
                     unite = ingredient.unite
                 )
             }
@@ -165,9 +170,8 @@ class NouvelleRecetteActivity : AppCompatActivity() {
 
             afficherToast("Recette enregistrée ! Coût/part : ${String.format(Locale.US, "%.3f", coutParPartCalculated)} DT")
 
-            // Si cet écran est le seul de l'app, finish() la quitterait : on ouvre la liste avant
             if (isTaskRoot) {
-                startActivity(Intent(this@NouvelleRecetteActivity, MesRecettesActivity::class.java))
+                startActivity(Intent(this@NouvelleRecetteActivity, RecettesActivity::class.java))
             }
             finish()
         }
@@ -178,24 +182,25 @@ class NouvelleRecetteActivity : AppCompatActivity() {
         toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 150)
         toast.show()
     }
+
     private fun afficherDialogueSelectionIngredient() {
         lifecycleScope.launch {
-            // 1. Récupération de tous les ingrédients enregistrés dans la BDD Room
-            val tousLesIngredients = db.ingredientDao().tous().first()
+            val currentUserId = session.getUserId()
 
-            if (tousLesIngredients.isEmpty()) {
+            // Récupération uniquement des ingrédients de l'utilisateur actif (ou invité -1L)
+            val mesIngredients = db.ingredientDao().getIngredientsParUtilisateur(currentUserId).first()
+
+            if (mesIngredients.isEmpty()) {
                 afficherToast("Aucun ingrédient disponible. Créez-en un via le menu principal !")
                 return@launch
             }
 
-            // Tableau des noms d'ingrédients à afficher dans la liste
-            val nomsIngredients = tousLesIngredients.map { "${it.nom} (${it.unite})" }.toTypedArray()
+            val nomsIngredients = mesIngredients.map { "${it.nom} (${it.unite})" }.toTypedArray()
 
-            // 2. Création de la boîte de dialogue de sélection
             androidx.appcompat.app.AlertDialog.Builder(this@NouvelleRecetteActivity)
                 .setTitle("Sélectionner un ingrédient")
                 .setItems(nomsIngredients) { _, position ->
-                    val ingredientChoisi = tousLesIngredients[position]
+                    val ingredientChoisi = mesIngredients[position]
                     demanderQuantitePourRecette(ingredientChoisi)
                 }
                 .setNegativeButton("Annuler", null)
@@ -203,7 +208,6 @@ class NouvelleRecetteActivity : AppCompatActivity() {
         }
     }
 
-    // Boîte de dialogue pour saisir la quantité utilisée dans la recette
     private fun demanderQuantitePourRecette(ingredient: Ingredient) {
         val input = EditText(this).apply {
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -228,7 +232,6 @@ class NouvelleRecetteActivity : AppCompatActivity() {
             .setPositiveButton("Ajouter") { _, _ ->
                 val qte = input.text.toString().replace(",", ".").toDoubleOrNull() ?: 0.0
                 if (qte > 0) {
-                    // Ajout à la liste de la recette
                     ingredientsSelectionnes.add(Pair(ingredient, qte))
                     adapter.notifyItemInserted(ingredientsSelectionnes.size - 1)
                     afficherToast("${ingredient.nom} ajouté !")
@@ -240,7 +243,6 @@ class NouvelleRecetteActivity : AppCompatActivity() {
             .show()
     }
 
-    // Adaptateur personnalisé permettant d'éditer la quantité directement dans la liste
     private class IngredientAdapter(
         private val list: List<Pair<Ingredient, Double>>,
         private val onQuantiteChanged: (position: Int, nouvelleQte: Double) -> Unit
@@ -252,7 +254,6 @@ class NouvelleRecetteActivity : AppCompatActivity() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            // Création d'une vue de ligne personnalisée avec un nom et un champ de saisie
             val context = parent.context
             val layout = android.widget.LinearLayout(context).apply {
                 orientation = android.widget.LinearLayout.HORIZONTAL

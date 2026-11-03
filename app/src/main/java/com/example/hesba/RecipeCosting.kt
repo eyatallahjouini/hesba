@@ -28,16 +28,17 @@ object RecipeCosting {
     }
 
     // Après un changement de prix : met à jour coutParPart et prixVente des recettes qui utilisent l'ingrédient.
-    // Renvoie le nombre de recettes recalculées.
-    suspend fun refreshRecipesUsing(db: HesbaDatabase, ingredientId: Long): Int {
-        // lectures d'abord (hors transaction), puis toutes les écritures ensemble
-        val ingredientsById = db.ingredientDao().tous().first().associateBy { it.id }
-        val updated = db.recetteDao().toutes().first().mapNotNull { recette ->
+    // Prend en paramètre l'utilisateurId (ou ID invité -1L) pour ne traiter que ses propres données.
+    suspend fun refreshRecipesUsing(db: HesbaDatabase, ingredientId: Long, userId: Long): Int {
+        // Lectures filtrées par utilisateur
+        val ingredientsById = db.ingredientDao().getIngredientsParUtilisateur(userId).first().associateBy { it.id }
+        val updated = db.recetteDao().getRecettesParUtilisateur(userId).first().mapNotNull { recette ->
             val lignes = db.ligneRecetteDao().parRecette(recette.id).first()
             if (lignes.none { it.ingredientId == ingredientId }) return@mapNotNull null
             val result = compute(recette, lignes, ingredientsById)
             recette.copy(coutParPart = result.costPerPiece, prixVente = result.advisedPrice)
         }
+
         db.withTransaction {
             for (recette in updated) db.recetteDao().modifier(recette)
         }

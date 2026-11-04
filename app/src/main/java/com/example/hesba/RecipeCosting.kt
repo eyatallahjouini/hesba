@@ -1,47 +1,60 @@
 package com.example.hesba
 
-import androidx.room.withTransaction
-import com.example.hesba.data.HesbaDatabase
 import com.example.hesba.data.Ingredient
 import com.example.hesba.data.LigneRecette
 import com.example.hesba.data.Recette
-import kotlinx.coroutines.flow.first
+import com.example.hesba.data.Utilisateur
+import java.math.BigDecimal
 
-// Calcule le coût d'une recette à partir de ses lignes et des prix ACTUELS des ingrédients.
-// Les lignes ne gardent que l'ingrédient et la quantité : le prix vient toujours de la table ingredient.
+/**
+ * Passerelle entre les tables Room et [CostCalculator].
+ * Les lignes ne gardent que l'ingrédient, la quantité et l'unité : le prix vient TOUJOURS
+ * de la table ingredient, donc un changement de prix se répercute partout.
+ */
 object RecipeCosting {
 
-    data class Result(val costPerPiece: Double, val advisedPrice: Double)
+    fun priceOf(ingredient: Ingredient) = CostCalculator.IngredientPrice(
+        id = ingredient.id,
+        name = ingredient.nom,
+        baseUnit = ingredient.unite,
+        packageQuantity = BigDecimal(ingredient.quantiteEmballage.toString()),
+        packagePriceMillimes = ingredient.prixMillimes,
+        yieldPercent = BigDecimal(ingredient.rendementPourcent.toString())
+    )
 
-    fun compute(recette: Recette, lignes: List<LigneRecette>, ingredientsById: Map<Long, Ingredient>): Result {
-        val batch = CostCalculator.recipeCost(lignes.map { ligne ->
-            val ingredient = ingredientsById[ligne.ingredientId]
-            if (ingredient == null) 0.0
-            else CostCalculator.lineCost(
-                ligne.quantite,
-                CostCalculator.pricePerUnit(ingredient.prixPaye, ingredient.quantiteEmballage)
-            )
-        })
-        val perPiece = CostCalculator.costPerPiece(batch, recette.nombreParts.toDouble())
-        val price = CostCalculator.sellingPriceHT(perPiece, recette.margeVoulue / 100.0)
-        return Result(perPiece, price)
+    fun lineOf(ligne: LigneRecette) =
+        CostCalculator.Line(ligne.ingredientId, BigDecimal(ligne.quantite.toString()), ligne.unite)
+
+    /** Part des charges fixes du profil (loyer ÷ parts par mois). 0 si le profil ne les renseigne pas. */
+    fun fixedPerPortion(user: Utilisateur?): Long =
+        if (user == null) 0 else CostCalculator.fixedCostPerPortion(user.loyerMensuelMillimes, user.volumeMensuel)
+
+    /** Estimation de la main-d'œuvre d'un lot depuis le profil ; null si le profil ne suffit pas. */
+    fun laborEstimate(user: Utilisateur?, minutes: Int): Long? {
+        if (user == null) return null
+        val people = if (user.activite == "avec_employe") user.nombreEmployes else 1
+        if (people <= 0) return null
+        return CostCalculator.laborCost(user.salaireMoyenMillimes * people, user.heuresTravailMois * people, minutes)
     }
 
-    // Après un changement de prix : met à jour coutParPart et prixVente des recettes qui utilisent l'ingrédient.
-    // Prend en paramètre l'utilisateurId (ou ID invité -1L) pour ne traiter que ses propres données.
-    suspend fun refreshRecipesUsing(db: HesbaDatabase, ingredientId: Long, userId: Long): Int {
-        // Lectures filtrées par utilisateur
-        val ingredientsById = db.ingredientDao().getIngredientsParUtilisateur(userId).first().associateBy { it.id }
-        val updated = db.recetteDao().getRecettesParUtilisateur(userId).first().mapNotNull { recette ->
-            val lignes = db.ligneRecetteDao().parRecette(recette.id).first()
-            if (lignes.none { it.ingredientId == ingredientId }) return@mapNotNull null
-            val result = compute(recette, lignes, ingredientsById)
-            recette.copy(coutParPart = result.costPerPiece, prixVente = result.advisedPrice)
-        }
+    fun inputOf(recette: Recette, lignes: List<LigneRecette>, user: Utilisateur?) = CostCalculator.RecipeInput(
+        portions = recette.nombreParts,
+        targetMarginPercent = BigDecimal(recette.margeVoulue.toString()),
+        lines = lignes.map(::lineOf),
+        hidden = CostCalculator.HiddenCosts(
+            packagingPerPortionMillimes = recette.emballageParPartMillimes,
+            energyPerBatchMillimes = recette.gazParLotMillimes,
+            laborPerBatchMillimes = recette.mainOeuvreParLotMillimes,
+            fixedPerPortionMillimes = fixedPerPortion(user)
+        ),
+        sellingPriceMillimes = recette.prixVenteMillimes
+    )
 
-        db.withTransaction {
-            for (recette in updated) db.recetteDao().modifier(recette)
-        }
-        return updated.size
-    }
+    fun compute(
+        recette: Recette,
+        lignes: List<LigneRecette>,
+        ingredientsById: Map<Long, Ingredient>,
+        user: Utilisateur? = null
+    ): CostCalculator.RecipeCost =
+        CostCalculator.compute(inputOf(recette, lignes, user), ingredientsById.mapValues { priceOf(it.value) })
 }

@@ -43,8 +43,8 @@ class HomeActivity : BaseActivity() {
         b.actionNewRecipe.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
         b.actionScan.setOnClickListener { startActivity(Intent(this, ScanActivity::class.java)) }
         b.actionAddIngredient.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java)) }
-        b.figRecipes.setOnClickListener { BottomNav.open(this, BottomNav.Tab.RECIPES) }
-        b.figIngredients.setOnClickListener { BottomNav.open(this, BottomNav.Tab.INGREDIENTS) }
+        b.figRecipes.setOnClickListener { BottomNav.open(this, BottomNav.Tab.RECIPES, BottomNav.Tab.HOME) }
+        b.figIngredients.setOnClickListener { BottomNav.open(this, BottomNav.Tab.INGREDIENTS, BottomNav.Tab.HOME) }
         b.figAttention.setOnClickListener { b.root.post { b.alertsBlock.requestRectangleOnScreen(android.graphics.Rect(0, 0, b.alertsBlock.width, b.alertsBlock.height)) } }
         b.btnMoreAlerts.setOnClickListener { showAllAlerts = !showAllAlerts; lastSummary?.let { renderAlerts(it) } }
 

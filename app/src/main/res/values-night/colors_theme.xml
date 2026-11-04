@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Mode sombre : mêmes teintes, assombries à partir du brun (fonds) ou éclaircies (vert, rouge) pour le contraste. -->
+<!-- Mode sombre : brun très profond (pas de noir pur), encre crème, safran un peu éclairci.
+     Contrastes sur hb_bg : encre 15:1, encre douce 9:1, safran texte 8:1. -->
 <resources>
-    <color name="hb_bg">#1C1411</color>
-    <color name="hb_surface">#271D19</color>
-    <color name="hb_surface_alt">@color/brun</color>
-    <color name="hb_ink">@color/creme</color>
-    <color name="hb_ink_soft">@color/caramel</color>
-    <color name="hb_hint">#A8968F</color>
-    <color name="hb_line">@color/brun_leger</color>
-    <color name="hb_accent">@color/safran</color>
-    <color name="hb_on_accent">@color/brun</color>
-    <color name="hb_accent_ink">@color/safran</color>
+    <color name="hb_bg">#16110E</color>
+    <color name="hb_surface">#201814</color>
+    <color name="hb_surface_alt">#2E241F</color>
+    <color name="hb_paper">#251D18</color>
+    <color name="hb_ink">#F2E8DA</color>
+    <color name="hb_ink_soft">#C5B3A2</color>
+    <color name="hb_hint">#9C8B7F</color>
+    <color name="hb_line">#3A2E27</color>
+    <color name="hb_line_strong">#5A4A3E</color>
+    <color name="hb_accent">#F5993A</color>
+    <color name="hb_on_accent">#241608</color>
+    <color name="hb_accent_ink">#F6A85A</color>
+    <color name="hb_accent_soft">#3D2814</color>
     <color name="hb_good">#8CC590</color>
-    <color name="hb_good_bg">#1F2E20</color>
+    <color name="hb_good_bg">#1C2A1D</color>
     <color name="hb_bad">#F08A8A</color>
-    <color name="hb_bad_bg">#3A1D1D</color>
+    <color name="hb_bad_bg">#381C1B</color>
+    <color name="hb_slate">#1C2320</color>
+    <color name="hb_slate_line">#3A4640</color>
+    <color name="hb_chalk">#EDE8DD</color>
+    <color name="hb_chalk_soft">#A3A79D</color>
+    <color name="hb_chalk_accent">#F7A94F</color>
     <color name="hb_scrim">#CC000000</color>
 </resources>

@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_photo"
-                android:fontFamily="serif"
+                android:fontFamily="@font/hb_sans_bold"
                 android:gravity="center"
                 android:importantForAccessibility="no"
                 android:textColor="@color/hb_accent_ink"

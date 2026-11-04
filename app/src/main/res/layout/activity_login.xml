@@ -26,23 +26,23 @@
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:background="@drawable/bg_logo"
-                android:fontFamily="serif"
+                android:fontFamily="@font/hb_sans_bold"
                 android:gravity="center"
                 android:importantForAccessibility="no"
                 android:text="@string/logo_mark"
                 android:textColor="@color/hb_on_accent"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/sp_3"
-                android:fontFamily="serif"
+                android:fontFamily="@font/hb_sans_bold"
                 android:text="@string/app_name_display"
                 android:textColor="@color/hb_ink"
                 android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
         </LinearLayout>
 
         <TextView

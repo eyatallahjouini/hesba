@@ -28,6 +28,7 @@ abstract class BaseActivity : AppCompatActivity() {
     open val requiresSession: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Transitions.install(this)
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         if (requiresSession && !session.isLoggedIn()) {
@@ -48,6 +49,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     private fun applyInsets(root: View) {
+        Transitions.markTarget(this)
         val left = root.paddingLeft
         val right = root.paddingRight
         val top = root.paddingTop

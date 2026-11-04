@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DotLeaderView">
+        <attr name="dotColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="RollingNumberView">
+        <attr name="android:textAppearance" />
+    </declare-styleable>
+    <declare-styleable name="ReceiptLayout">
+        <attr name="edgeTop" format="boolean" />
+        <attr name="edgeBottom" format="boolean" />
+    </declare-styleable>
+</resources>

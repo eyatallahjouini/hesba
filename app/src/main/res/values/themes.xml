@@ -37,12 +37,22 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
+        <!-- police par défaut et échelle typographique Material → styles Hesba -->
+        <item name="android:fontFamily">@font/hb_sans</item>
+        <item name="fontFamily">@font/hb_sans</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Hesba.Display</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Hesba.Title</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Hesba.Title</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Hesba.Subtitle</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Hesba.Body</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Hesba.Body</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Hesba.Caption</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Hesba.Label</item>
         <item name="materialButtonStyle">@style/Widget.Hesba.Button</item>
         <item name="materialButtonOutlinedStyle">@style/Widget.Hesba.Button.Outlined</item>
         <item name="borderlessButtonStyle">@style/Widget.Hesba.Button.Text</item>
         <item name="textInputStyle">@style/Widget.Hesba.TextInput</item>
         <item name="chipStyle">@style/Widget.Hesba.Chip</item>
-        <item name="bottomNavigationStyle">@style/Widget.Hesba.BottomNav</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Hesba.Dialog</item>
         <item name="checkboxStyle">@style/Widget.Hesba.CheckBox</item>
         <item name="snackbarStyle">@style/Widget.Hesba.Snackbar</item>

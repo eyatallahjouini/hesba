@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Barre du bas partagée : Accueil, Mes recettes, Ingrédients, Profil (voir BottomNav.kt) -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <View style="@style/Hesba.Divider" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:menu="@menu/menu_bottom_nav"
-        app:paddingBottomSystemWindowInsets="false" />
-</merge>
+<!-- Barre du bas partagée : Accueil, Mes recettes, Ingrédients, Profil (voir BottomNav.kt et NavBar.kt) -->
+<com.example.hesba.ui.widget.NavBar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNav"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />

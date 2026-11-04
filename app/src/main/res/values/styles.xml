@@ -104,29 +104,6 @@
         <item name="chipMinTouchTargetSize">@dimen/touch</item>
     </style>
 
-    <!-- Barre du bas -->
-    <style name="Widget.Hesba.BottomNav" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:background">@color/hb_surface</item>
-        <item name="backgroundTint">@color/hb_surface</item>
-        <item name="android:elevation">0dp</item>
-        <item name="elevation">0dp</item>
-        <item name="itemIconTint">@color/hb_nav_item</item>
-        <item name="itemTextColor">@color/hb_nav_item</item>
-        <item name="itemActiveIndicatorStyle">@style/Widget.Hesba.BottomNav.Indicator</item>
-        <item name="labelVisibilityMode">labeled</item>
-        <item name="itemTextAppearanceActive">@style/TextAppearance.Hesba.NavLabel.Active</item>
-        <item name="itemTextAppearanceInactive">@style/TextAppearance.Hesba.NavLabel</item>
-    </style>
-    <style name="Widget.Hesba.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/hb_surface_alt</item>
-    </style>
-    <style name="TextAppearance.Hesba.NavLabel" parent="TextAppearance.Material3.LabelMedium">
-        <item name="android:textSize">12sp</item>
-    </style>
-    <style name="TextAppearance.Hesba.NavLabel.Active">
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
     <!-- Mise en page -->
     <style name="Hesba.Divider">
         <item name="android:layout_width">match_parent</item>

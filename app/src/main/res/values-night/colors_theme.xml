@@ -24,5 +24,6 @@
     <color name="hb_chalk">#EDE8DD</color>
     <color name="hb_chalk_soft">#A3A79D</color>
     <color name="hb_chalk_accent">#F7A94F</color>
+    <color name="hb_chalk_bad">#F4A097</color>
     <color name="hb_scrim">#CC000000</color>
 </resources>

@@ -1,61 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Ligne d'ardoise : « Farine ········ 1,200 DT », puis conditionnement / rendement / recettes et prix au kg. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="@dimen/row_min"
+    android:orientation="vertical"
+    android:paddingTop="14dp"
+    android:paddingBottom="12dp">
 
     <LinearLayout
-        android:id="@+id/row"
-        style="@style/Hesba.Row"
-        android:clickable="true"
-        android:focusable="true">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:ellipsize="end"
+            android:fontFamily="@font/hb_sans_medium"
+            android:maxLines="1"
+            android:maxWidth="@dimen/slate_name_max"
+            android:textColor="@color/hb_chalk"
+            android:textSize="17sp" />
+
+        <com.example.hesba.ui.widget.DotLeaderView
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            app:dotColor="@color/hb_chalk_soft" />
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Hesba.Money"
+            android:textColor="@color/hb_chalk_accent"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/details"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Hesba.Caption"
+            android:textColor="@color/hb_chalk_soft" />
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textAppearance="@style/TextAppearance.Hesba.Label"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFeatureSettings="tnum"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
-        </LinearLayout>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/unitPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/sp_3"
-            android:gravity="end"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Hesba.Money" />
-
-            <TextView
-                android:id="@+id/unitPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFeatureSettings="tnum"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
-        </LinearLayout>
+            android:fontFamily="@font/hb_mono"
+            android:textColor="@color/hb_chalk_soft"
+            android:textSize="12sp" />
     </LinearLayout>
-
-    <View style="@style/Hesba.Divider" />
 </LinearLayout>

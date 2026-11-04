@@ -21,6 +21,9 @@ import com.example.hesba.domain.Money
 import com.example.hesba.domain.TextNormalizer
 import com.example.hesba.ui.BaseActivity
 import com.example.hesba.ui.Fmt
+import com.example.hesba.ui.Hairline
+import com.example.hesba.ui.Motion
+import com.example.hesba.ui.Transitions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -32,6 +35,7 @@ class IngredientsActivity : BaseActivity() {
     private lateinit var b: ActivityIngredientsBinding
     private val query = MutableStateFlow("")
     private val adapter = Adapter()
+    private val entered = Motion.Flag()
 
     data class Row(val ingredient: Ingredient, val usedIn: Int)
 
@@ -44,7 +48,8 @@ class IngredientsActivity : BaseActivity() {
 
         b.list.layoutManager = LinearLayoutManager(this)
         b.list.adapter = adapter
-        b.btnAdd.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java)) }
+        b.list.addItemDecoration(Hairline(this, R.color.hb_slate_line))
+        b.btnAdd.setOnClickListener { Transitions.open(this, b.btnAdd, Intent(this, NouvelIngredientActivity::class.java), "add_ingredient") }
         b.search.editSearch.setHint(R.string.search_ingredients_hint)
         b.search.editSearch.doAfterTextChanged {
             query.value = it?.toString().orEmpty()
@@ -70,11 +75,10 @@ class IngredientsActivity : BaseActivity() {
     private fun show(total: Int, rows: List<Row>, q: String) {
         b.txtCount.text = if (q.isBlank()) resources.getQuantityString(R.plurals.ingredients_count, total, total)
         else resources.getQuantityString(R.plurals.results_count, rows.size, rows.size)
-        adapter.submitList(rows)
+        adapter.submitList(rows) { if (rows.isNotEmpty()) Motion.enterOnce(b.list, entered) }
         val empty = rows.isEmpty()
         b.empty.root.visibility = if (empty) View.VISIBLE else View.GONE
-        b.list.visibility = if (empty) View.GONE else View.VISIBLE
-        b.columns.visibility = if (empty) View.INVISIBLE else View.VISIBLE
+        b.slate.visibility = if (empty) View.GONE else View.VISIBLE
         if (!empty) return
         if (total == 0) {
             b.empty.emptyIcon.setImageResource(R.drawable.ic_ingredients)
@@ -119,15 +123,17 @@ class IngredientsActivity : BaseActivity() {
             v.details.text = parts.joinToString(" · ")
             if (i.prixMillimes == null) {
                 v.price.setText(R.string.price_missing)
-                v.price.setTextColor(getColor(R.color.hb_bad))
+                v.price.setTextColor(getColor(R.color.hb_chalk_bad))
                 v.unitPrice.text = ""
             } else {
                 v.price.text = Fmt.money(ctx, i.prixMillimes)
-                v.price.setTextColor(getColor(R.color.hb_ink))
+                v.price.setTextColor(getColor(R.color.hb_chalk_accent))
                 v.unitPrice.text = normalizedPrice(ctx, i)
             }
+            v.row.contentDescription = listOf(i.nom, v.price.text, v.details.text, v.unitPrice.text).filter { it.isNotBlank() }.joinToString(", ")
+            v.row.transitionName = null
             v.row.setOnClickListener {
-                startActivity(Intent(ctx, NouvelIngredientActivity::class.java).putExtra(NouvelIngredientActivity.EXTRA_INGREDIENT_ID, i.id))
+                Transitions.open(ctx, v.row, Intent(ctx, NouvelIngredientActivity::class.java).putExtra(NouvelIngredientActivity.EXTRA_INGREDIENT_ID, i.id), "ingredient_${i.id}")
             }
         }
     }

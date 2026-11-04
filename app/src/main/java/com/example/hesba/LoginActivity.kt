@@ -2,92 +2,60 @@ package com.example.hesba
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.inputmethod.EditorInfo
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.example.hesba.auth.AuthRepository
 import com.example.hesba.auth.AuthResult
 import com.example.hesba.auth.SessionManager
-import com.example.hesba.data.HesbaDatabase
+import com.example.hesba.databinding.ActivityLoginBinding
+import com.example.hesba.ui.BaseActivity
 import kotlinx.coroutines.launch
 
-class LoginActivity : AppCompatActivity() {
+/** Connexion à un compte local, ou essai sans compte (données gardées sur le téléphone sous l'identifiant -1). */
+class LoginActivity : BaseActivity() {
+
+    override val requiresSession = false
+    private lateinit var b: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        val session = SessionManager(this)
-
-        // Si déjà connecté (avec un compte ou en mode invité déjà initialisé), rediriger directement
         if (session.isLoggedIn()) {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            goHome()
             return
         }
+        b = ActivityLoginBinding.inflate(layoutInflater)
+        setScreen(b.root)
 
-        val repo = AuthRepository(HesbaDatabase.getInstance(this).utilisateurDao())
+        val auth = AuthRepository(db.utilisateurDao())
+        b.editEmail.doAfterTextChanged { b.tilEmail.error = null }
+        b.editPassword.doAfterTextChanged { b.tilPassword.error = null }
+        b.editPassword.setOnEditorActionListener { _, action, _ ->
+            if (action == EditorInfo.IME_ACTION_DONE) { b.btnLogin.performClick(); true } else false
+        }
 
-        val etEmail = findViewById<EditText>(R.id.editEmail)
-        val etPassword = findViewById<EditText>(R.id.editPassword)
-        val btnLogin = findViewById<Button>(R.id.btnLogin)
-        val btnNoAccount = findViewById<Button>(R.id.btnNoAccount)
-
-        // 1. Connexion avec Compte Utilisateur
-        btnLogin.setOnClickListener {
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString().trim()
-
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
+        b.btnLogin.setOnClickListener {
+            b.btnLogin.isEnabled = false
             lifecycleScope.launch {
-                when (val r = repo.login(email, password)) {
-                    is AuthResult.Success -> {
-                        // Enregistre l'ID réel de l'utilisateur dans SharedPreferences
-                        session.saveUser(r.userId)
-                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                        finish()
+                when (val r = auth.login(b.editEmail.text.toString(), b.editPassword.text.toString())) {
+                    is AuthResult.Success -> { session.saveUser(r.userId); goHome() }
+                    is AuthResult.Error -> {
+                        b.btnLogin.isEnabled = true
+                        val field = if (r.field == AuthResult.Field.EMAIL) b.tilEmail else b.tilPassword
+                        field.error = getString(r.message)
                     }
-                    is AuthResult.Error ->
-                        Toast.makeText(this@LoginActivity, r.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
-        // 2. Mode Essai sans Compte (Invité)
-        btnNoAccount.setOnClickListener {
-            // Sauvegarde de l'ID invité (-1L) dans SessionManager
+        b.btnCreateAccount.setOnClickListener { startActivity(Intent(this, RegisterActivity::class.java)) }
+        b.btnNoAccount.setOnClickListener {
             session.saveUser(SessionManager.ID_UTILISATEUR_INVITE)
-
-            Toast.makeText(this, "Mode essai activé", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            goHome()
         }
+    }
 
-        // 3. Navigation vers Inscription
-        findViewById<TextView>(R.id.txtCreateAccount).setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
-        }
-
-        // 4. Mot de passe oublié
-        findViewById<TextView>(R.id.txtForgot).setOnClickListener {
-            Toast.makeText(this, "Fonctionnalité bientôt disponible", Toast.LENGTH_SHORT).show()
-        }
+    private fun goHome() {
+        startActivity(Intent(this, HomeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+        finish()
     }
 }

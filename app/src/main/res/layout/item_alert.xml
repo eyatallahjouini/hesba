@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Alerte de l'Accueil : pastille d'icône, titre, explication, valeur alignée à la fin -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/alertRow"
+        style="@style/Hesba.Row"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:id="@+id/alertIcon"
+            android:layout_width="@dimen/icon"
+            android:layout_height="@dimen/icon"
+            android:layout_marginEnd="@dimen/sp_4"
+            android:importantForAccessibility="no"
+            app:tint="@color/hb_bad" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/alertTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Hesba.Label" />
+
+            <TextView
+                android:id="@+id/alertBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/alertValue"
+            style="@style/Hesba.Tag.Bad"
+            android:layout_marginStart="@dimen/sp_3" />
+    </LinearLayout>
+
+    <View style="@style/Hesba.Divider" />
+</LinearLayout>

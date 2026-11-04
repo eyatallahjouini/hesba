@@ -1,113 +1,140 @@
 package com.example.hesba
-import android.util.Log
+
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.example.hesba.auth.AuthRepository
+import com.example.hesba.auth.AuthResult
+import com.example.hesba.auth.PasswordHasher
 import com.example.hesba.data.HesbaDatabase
+import com.example.hesba.data.HesbaRepository
+import com.example.hesba.data.HesbaRepository.IngredientSave
 import com.example.hesba.data.Ingredient
 import com.example.hesba.data.LigneRecette
+import com.example.hesba.data.PrixHistorique
 import com.example.hesba.data.Recette
-import com.example.hesba.data.Utilisateur
+import com.example.hesba.domain.HomeSummary
+import com.example.hesba.domain.WhatIf
+import com.example.hesba.domain.invoice.IngredientMatcher
+import com.example.hesba.domain.invoice.InvoiceParser
+import com.example.hesba.domain.invoice.InvoiceReview
+import com.example.hesba.domain.invoice.MatchCandidate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/** Parcours complets sur une vraie base Room (en mémoire) : compte → ingrédient → recette → facture → alerte. */
 @RunWith(AndroidJUnit4::class)
 class BaseDonneesTest {
 
     private lateinit var db: HesbaDatabase
-    private val tag = "HESBA_TEST"
-    private val tables = listOf("utilisateur", "ingredient", "recette", "ligne_recette", "vente")
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
     fun creerBase() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        // Base temporaire en mémoire : la vraie hesba.db n'est jamais touchée
         db = Room.inMemoryDatabaseBuilder(context, HesbaDatabase::class.java).build()
     }
 
     @After
-    fun fermerBase() {
-        db.close()
-    }
+    fun fermerBase() = db.close()
 
-    private fun compter(table: String): Int {
-        db.openHelper.readableDatabase.query("SELECT COUNT(*) FROM $table").use { c ->
-            c.moveToFirst()
-            return c.getInt(0)
-        }
+    @Test
+    fun motDePasseSaleEtHache() {
+        val h1 = PasswordHasher.hash("secret-123")
+        val h2 = PasswordHasher.hash("secret-123")
+        assertNotEquals(h1, h2)                          // sel différent à chaque fois
+        assertFalse(h1.contains("secret"))
+        assertTrue(PasswordHasher.verify("secret-123", h1))
+        assertFalse(PasswordHasher.verify("secret-124", h1))
+        assertFalse(PasswordHasher.verify("x", "pas-un-hash"))
     }
 
     @Test
-    fun les5TablesExistent() {
-        val noms = mutableListOf<String>()
-        db.openHelper.readableDatabase.query(
-            "SELECT name FROM sqlite_master WHERE type='table' " +
-                    "AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'android_%' " +
-                    "AND name != 'room_master_table'"
-        ).use { c -> while (c.moveToNext()) noms.add(c.getString(0)) }
+    fun parcoursCompletCompteIngredientRecetteFactureAlerte() = runBlocking {
+        // 1. compte
+        val auth = AuthRepository(db.utilisateurDao())
+        assertTrue(auth.inscrire("Yasmine", "Pâtisserie Yasmine", "court", "12345678", "domicile", true) is AuthResult.Error)
+        val r = auth.inscrire("Yasmine", "Pâtisserie Yasmine", "Yasmine@Test.tn", "12345678", "domicile", true) as AuthResult.Success
+        assertTrue(auth.login("yasmine@test.tn", "12345678") is AuthResult.Success)
+        assertTrue(auth.login("yasmine@test.tn", "mauvais!") is AuthResult.Error)
+        val repo = HesbaRepository(db, r.userId)
 
-        Log.d(tag, "Tables trouvées : $noms")
-        assertEquals(tables.toSet(), noms.toSet())
+        // 2. ingrédients (doublon refusé, insensible aux accents)
+        val farine = (repo.saveIngredient(null, Ingredient(nom = "Farine", unite = "g", quantiteEmballage = 1000.0, prixMillimes = 1200)) as IngredientSave.Saved).id
+        val beurre = (repo.saveIngredient(null, Ingredient(nom = "Beurre", unite = "g", quantiteEmballage = 250.0, prixMillimes = 3500)) as IngredientSave.Saved).id
+        assertTrue(repo.saveIngredient(null, Ingredient(nom = "FARÏNE", unite = "g", quantiteEmballage = 1.0, prixMillimes = 1)) is IngredientSave.Duplicate)
+
+        // 3. recette : prix pratiqué 1,500 → marge 52,5 %
+        val gateau = repo.saveRecipe(
+            null, Recette(nom = "Gâteau", nombreParts = 8, margeVoulue = 40.0, prixVenteMillimes = 1500),
+            listOf(LigneRecette(recetteId = 0, ingredientId = farine, quantite = 0.5, unite = "kg"), LigneRecette(recetteId = 0, ingredientId = beurre, quantite = 250.0, unite = "g"))
+        )
+        assertEquals(513L, db.recetteDao().parId(gateau)!!.coutParPartMillimes)   // (600 + 3500) ÷ 8 = 512,5 → 513
+
+        // 4. simulateur : calcul seulement, la base ne change pas
+        val ws = repo.snapshot()
+        val sim = WhatIf.simulate(ws, beurre, 6000)
+        assertEquals(825L, sim[0].after.costPerPortionMillimes)
+        assertEquals(3500L, db.ingredientDao().parId(beurre)!!.prixMillimes)
+
+        // 5. facture : lecture → vérification → application en une transaction
+        val invoice = InvoiceParser.parse(listOf("Beurre doux 250 g 4 5,200 20,800", "Farine 25 kg 1 32,500 32,500"))
+        val matcher = IngredientMatcher(ws.ingredients.map { MatchCandidate(it.id, it.nom) }, emptyList())
+        val options = InvoiceReview.Options(null, false, null, false)
+        val lines = InvoiceReview.initial(invoice, matcher, ws.ingredientsById, options)
+        val updates = lines.filter { it.action == InvoiceReview.Action.ACCEPT }.map {
+            HesbaRepository.PriceUpdate(it.ingredientId!!, InvoiceReview.evaluate(it, ws.ingredientsById[it.ingredientId], options).newPriceMillimes!!)
+        }
+        assertEquals(2, updates.size)
+        val result = repo.applyPrices(updates, PrixHistorique.SOURCE_FACTURE)
+        assertEquals(2, result.updatedIngredients)
+        assertEquals(5200L, db.ingredientDao().parId(beurre)!!.prixMillimes)
+        assertEquals(2, db.prixHistoriqueDao().tout(r.userId).first().size)
+        val impact = result.impacts.single()
+        assertEquals(513L, impact.before.costPerPortionMillimes)
+        assertEquals(1300L, db.ingredientDao().parId(farine)!!.prixMillimes)    // 32,500 ÷ 25 kg
+        assertEquals(731L, impact.after.costPerPortionMillimes)        // (650 + 5200) ÷ 8 = 731,25
+        assertFalse(impact.fallsBelowTarget)                           // marge (1500 − 731) ÷ 1500 = 51,3 % : reste au-dessus de 40 %
+        assertEquals(731L, db.recetteDao().parId(gateau)!!.coutParPartMillimes)
+
+        // 6. Accueil : la hausse de prix apparaît dans les alertes
+        val summary = HomeSummary.build(repo.snapshot(), db.prixHistoriqueDao().tout(r.userId).first())
+        assertTrue(summary.alerts.any { it is HomeSummary.Alert.PriceChanged && it.ingredient.id == beurre })
+
+        // 7. un ingrédient utilisé ne peut pas être supprimé
+        assertEquals(listOf("Gâteau"), repo.deleteIngredient(db.ingredientDao().parId(beurre)!!).map { it.nom })
+
+        // 8. duplication : nouvelle recette avec les mêmes lignes
+        val copy = repo.duplicateRecipe(gateau, "Gâteau (copie)")!!
+        assertEquals(2, db.ligneRecetteDao().listePour(copy).size)
     }
 
     @Test
-    fun ajouterAfficherSupprimer() {
-        runBlocking {
-            // 1. ÉTAT INITIAL : tout est vide
-            tables.forEach { assertEquals("$it doit être vide", 0, compter(it)) }
+    fun margeSousLObjectifDeclencheUneAlerte() = runBlocking {
+        val repo = HesbaRepository(db, -1)
+        val pain = (repo.saveIngredient(null, Ingredient(nom = "Pain", unite = "piece", quantiteEmballage = 1.0, prixMillimes = 250)) as IngredientSave.Saved).id
+        val id = repo.saveRecipe(null, Recette(nom = "Sandwich", nombreParts = 1, margeVoulue = 50.0, prixVenteMillimes = 600), listOf(LigneRecette(recetteId = 0, ingredientId = pain, quantite = 1.0, unite = "piece")))
+        val r = repo.applyPrices(listOf(HesbaRepository.PriceUpdate(pain, 400)), PrixHistorique.SOURCE_FACTURE)
+        val impact = r.impacts.single { it.recette.id == id }
+        assertTrue(impact.fallsBelowTarget)                            // 58,3 % → 33,3 % sous l'objectif de 50 %
+        val summary = HomeSummary.build(repo.snapshot(), emptyList())
+        assertTrue(summary.alerts.first() is HomeSummary.Alert.BelowTarget)
+    }
 
-            // 2. AJOUT
-            db.utilisateurDao().inserer(
-                Utilisateur(
-                    prenom = "Test", email = "test@hesba.tn", motDePasseHash = "hash",
-                    activite = "Pâtisserie", politiqueConfidentialiteAcceptee = true
-                )
-            )
-            val farineId = db.ingredientDao().inserer(
-                Ingredient(nom = "Farine", unite = "g", quantiteEmballage = 1000.0, prixPaye = 1.5)
-            )
-            val recetteId = db.recetteDao().inserer(
-                Recette(nom = "Gâteau", nombreParts = 8, margeVoulue = 30.0)
-            )
-            db.ligneRecetteDao().inserer(
-                LigneRecette(recetteId = recetteId, ingredientId = farineId, quantite = 250.0, unite = "g")
-            )
-            // Pas encore de VenteDao : insertion directe en SQL
-            db.openHelper.writableDatabase.execSQL(
-                "INSERT INTO vente (recetteId, nomRecette, quantite, prixVenteUnitaire, coutUnitaire, date) " +
-                        "VALUES ($recetteId, 'Gâteau', 2, 5.0, 3.0, 0)"
-            )
-
-            // 3. AFFICHAGE (visible dans Logcat, filtre : HESBA_TEST)
-            val ingredients = db.ingredientDao().tous().first()
-            val recettes = db.recetteDao().toutes().first()
-            val lignes = db.ligneRecetteDao().parRecette(recetteId).first()
-            Log.d(tag, "Ingrédients : $ingredients")
-            Log.d(tag, "Recettes : $recettes")
-            Log.d(tag, "Lignes : $lignes")
-            tables.forEach { Log.d(tag, "$it : ${compter(it)} ligne(s)") }
-
-            assertEquals(1, ingredients.size)
-            assertEquals(1, recettes.size)
-            assertEquals(1, lignes.size)
-            assertEquals(0.0015, ingredients[0].prixParUnite, 1e-9)
-            tables.forEach { assertEquals("$it doit avoir 1 ligne", 1, compter(it)) }
-
-            // 4. SUPPRESSION (dans l'ordre imposé par les clés étrangères)
-            db.ligneRecetteDao().supprimerParRecette(recetteId)
-            db.openHelper.writableDatabase.execSQL("DELETE FROM vente")
-            db.recetteDao().supprimer(recettes[0])
-            db.ingredientDao().supprimer(ingredients[0])
-            db.openHelper.writableDatabase.execSQL("DELETE FROM utilisateur")
-
-            // 5. RETOUR À L'ÉTAT INITIAL : tout est vide
-            tables.forEach { assertEquals("$it doit être vide", 0, compter(it)) }
-            Log.d(tag, "Retour à l'état initial : les 5 tables sont vides")
-        }
+    @Test
+    fun donneesDuModeEssaiRattacheesAuCompte() = runBlocking {
+        val guest = HesbaRepository(db, -1)
+        guest.saveIngredient(null, Ingredient(nom = "Sel", unite = "g", quantiteEmballage = 1000.0, prixMillimes = 500))
+        val user = (AuthRepository(db.utilisateurDao()).inscrire("A", "", "a@b.tn", "12345678", "domicile", true) as AuthResult.Success).userId
+        assertEquals(1, guest.transferGuestDataTo(user))
+        assertEquals(1, db.ingredientDao().listePour(user).size)
+        assertEquals(0, db.ingredientDao().listePour(-1).size)
     }
 }

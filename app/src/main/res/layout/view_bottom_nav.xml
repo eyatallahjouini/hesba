@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Barre du bas partagée : Recettes, Ingrédients, Profil (voir BottomNav.kt) -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/bottomNav" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:background="@color/white" android:elevation="8dp">
-  <LinearLayout android:id="@+id/navRecettes" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
-    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_recettes" android:importantForAccessibility="no" app:tint="@color/brun"/>
-    <TextView android:id="@+id/navRecettesLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Recettes" android:textColor="@color/brun" android:textSize="12sp"/>
-  </LinearLayout>
-  <LinearLayout android:id="@+id/navIngredients" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
-    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_ingredients" android:importantForAccessibility="no" app:tint="@color/brun"/>
-    <TextView android:id="@+id/navIngredientsLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Ingrédients" android:textColor="@color/brun" android:textSize="12sp"/>
-  </LinearLayout>
-  <LinearLayout android:id="@+id/navProfil" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:paddingTop="8dp" android:paddingBottom="8dp" android:clickable="true" android:focusable="true">
-    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_nav_profil" android:importantForAccessibility="no" app:tint="@color/brun"/>
-    <TextView android:id="@+id/navProfilLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Profil" android:textColor="@color/brun" android:textSize="12sp"/>
-  </LinearLayout>
-</LinearLayout>
+<!-- Barre du bas partagée : Accueil, Mes recettes, Ingrédients, Profil (voir BottomNav.kt) -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View style="@style/Hesba.Divider" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/menu_bottom_nav"
+        app:paddingBottomSystemWindowInsets="false" />
+</merge>

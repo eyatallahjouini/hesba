@@ -1,15 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-  <LinearLayout android:id="@+id/rowIngredient" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="12dp" android:paddingBottom="12dp" android:background="?android:attr/selectableItemBackground">
-    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-      <TextView android:id="@+id/txtIngredientName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ingrédient" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
-      <TextView android:id="@+id/txtIngredientUnit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 kg" android:textColor="@color/brun_clair" android:textSize="14sp"/>
-      <TextView android:id="@+id/txtUpdated" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="▲ Prix mis à jour" android:textColor="@color/rouge" android:textSize="13sp" android:textStyle="bold"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/row"
+        style="@style/Hesba.Row"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.Hesba.Label"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFeatureSettings="tnum"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sp_3"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Hesba.Money" />
+
+            <TextView
+                android:id="@+id/unitPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFeatureSettings="tnum"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+        </LinearLayout>
     </LinearLayout>
-    <TextView android:id="@+id/txtPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="0,00 dt" android:textColor="@color/brun" android:textSize="18sp" android:textStyle="bold" android:fontFamily="serif"/>
-    <!-- mini boutons d'action -->
-    <ImageButton android:id="@+id/btnEditIngredient" android:layout_width="36dp" android:layout_height="36dp" android:layout_marginStart="12dp" android:background="@drawable/bg_circle" android:backgroundTint="@color/caramel_clair" android:src="@drawable/ic_action_edit" android:scaleType="fitCenter" android:padding="9dp" app:tint="@color/safran_texte" android:contentDescription="Modifier"/>
-    <ImageButton android:id="@+id/btnDeleteIngredient" android:layout_width="36dp" android:layout_height="36dp" android:layout_marginStart="8dp" android:background="@drawable/bg_circle" android:backgroundTint="@color/rouge_clair" android:src="@drawable/ic_action_delete" android:scaleType="fitCenter" android:padding="9dp" app:tint="@color/rouge" android:contentDescription="Supprimer"/>
-  </LinearLayout>
-  <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/caramel"/>
+
+    <View style="@style/Hesba.Divider" />
 </LinearLayout>

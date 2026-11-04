@@ -1,375 +1,378 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Même ordre que activity_nouvelle_recette (Aya) : retour + titre, photo, nom, parts, marge, ingrédients, bouton.
-     Avec en plus la carte des résultats (coût du lot, coût par part, prix conseillé). Couleurs : palette Hesba. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/creme"
     android:orientation="vertical">
 
-  <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="0dp"
-      android:layout_weight="1"
-      android:clipToPadding="false"
-      android:fillViewport="true">
+    <include layout="@layout/view_top_bar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/gutter"
+            android:paddingEnd="@dimen/gutter"
+            android:paddingBottom="@dimen/sp_5">
+
+            <!-- Photo facultative -->
+            <FrameLayout
+                android:id="@+id/photoZone"
+                android:layout_width="match_parent"
+                android:layout_height="132dp"
+                android:background="@drawable/bg_photo"
+                android:clickable="true"
+                android:contentDescription="@string/cd_choose_photo"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/imgPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtPhotoHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/sp_2"
+                    android:gravity="center"
+                    android:text="@string/compose_photo_hint"
+                    android:textAppearance="@style/TextAppearance.Hesba.Caption"
+                    app:drawableTint="@color/hb_accent_ink"
+                    app:drawableTopCompat="@drawable/ic_photo_add" />
+
+                <TextView
+                    android:id="@+id/txtPhotoChange"
+                    style="@style/Hesba.Tag"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="@dimen/sp_2"
+                    android:text="@string/compose_photo_change"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_4"
+                android:hint="@string/field_recipe_name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editName"
+                    style="@style/Widget.Hesba.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPortions"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_3"
+                    android:layout_marginEnd="@dimen/sp_2"
+                    android:layout_weight="1"
+                    android:hint="@string/field_portions"
+                    app:helperText="@string/helper_portions">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPortions"
+                        style="@style/Widget.Hesba.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:inputType="number"
+                        android:maxLength="5" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPrep"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_3"
+                    android:layout_marginStart="@dimen/sp_2"
+                    android:layout_weight="1"
+                    android:hint="@string/field_prep_time"
+                    app:helperText="@string/helper_optional"
+                    app:suffixText="@string/unit_minutes">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPrep"
+                        style="@style/Widget.Hesba.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:inputType="number"
+                        android:maxLength="4" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Ingrédients -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/section_ingredients" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compose_lines_note"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+            <LinearLayout
+                android:id="@+id/listLines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_2"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/txtLinesError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_2"
+                android:accessibilityLiveRegion="polite"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption"
+                android:textColor="@color/hb_bad"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddLine"
+                style="@style/Widget.Hesba.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:text="@string/action_add_ingredient_line"
+                app:icon="@drawable/ic_add" />
+
+            <!-- Coûts cachés -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/section_hidden_costs" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compose_hidden_note"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPackaging"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:hint="@string/field_packaging"
+                app:helperText="@string/helper_packaging"
+                app:suffixText="@string/currency_short">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editPackaging"
+                    style="@style/Widget.Hesba.EditText.Money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilEnergy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:hint="@string/field_energy"
+                app:helperText="@string/helper_energy"
+                app:suffixText="@string/currency_short">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editEnergy"
+                    style="@style/Widget.Hesba.EditText.Money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilLabor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:hint="@string/field_labor"
+                app:helperText="@string/helper_labor"
+                app:suffixText="@string/currency_short">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editLabor"
+                    style="@style/Widget.Hesba.EditText.Money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLaborEstimate"
+                style="@style/Widget.Hesba.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtFixedNote"
+                style="@style/Hesba.Note"
+                android:layout_marginTop="@dimen/sp_3"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption"
+                android:textColor="@color/hb_ink"
+                android:visibility="gone" />
+
+            <!-- Marge et prix -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/section_margin_price" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilMargin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/sp_2"
+                    android:layout_weight="2"
+                    android:hint="@string/field_target_margin"
+                    app:suffixText="@string/percent_sign">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editMargin"
+                        style="@style/Widget.Hesba.EditText.Money"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLength="5" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sp_2"
+                    android:layout_weight="3"
+                    android:hint="@string/field_selling_price"
+                    app:suffixText="@string/currency_short">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPrice"
+                        style="@style/Widget.Hesba.EditText.Money"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtPriceHelp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_2"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUseSuggested"
+                style="@style/Widget.Hesba.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Récapitulatif fixe en bas : les chiffres restent toujours visibles pendant la saisie -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/rule"
+        android:background="@color/hb_ink" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/hb_surface"
         android:orientation="vertical"
-        android:padding="20dp">
-
-      <!-- 1. Retour + titre -->
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:gravity="center_vertical"
-          android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/btnBack"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="@drawable/bg_back"
-            android:clickable="true"
-            android:contentDescription="Retour"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="‹"
-            android:textColor="@color/brun"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:orientation="vertical">
-
-          <TextView
-              android:id="@+id/txtRecipeName"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:fontFamily="serif"
-              android:text="Nouvelle recette"
-              android:textColor="@color/brun"
-              android:textSize="24sp"
-              android:textStyle="bold" />
-
-          <TextView
-              android:id="@+id/txtComposeSubtitle"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="Composer la recette"
-              android:textColor="@color/brun_clair"
-              android:textSize="14sp" />
-        </LinearLayout>
-      </LinearLayout>
-
-      <!-- 2. Photo facultative : appui = choisir une image dans la galerie -->
-      <FrameLayout
-          android:id="@+id/photoZone"
-          android:layout_width="match_parent"
-          android:layout_height="160dp"
-          android:layout_marginTop="18dp"
-          android:background="@drawable/bg_dashed"
-          android:clickable="true"
-          android:contentDescription="Ajouter une photo"
-          android:focusable="true">
-
-        <ImageView
-            android:id="@+id/imgRecipePhoto"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:importantForAccessibility="no"
-            android:scaleType="centerCrop"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/photoPlaceholder"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-
-          <ImageView
-              android:layout_width="32dp"
-              android:layout_height="32dp"
-              android:importantForAccessibility="no"
-              android:src="@android:drawable/ic_menu_camera"
-              app:tint="@color/brun_clair" />
-
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="6dp"
-              android:text="Ajouter une photo"
-              android:textColor="@color/brun"
-              android:textSize="14sp"
-              android:textStyle="bold" />
-
-          <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
-              android:background="@drawable/bg_chip"
-              android:paddingStart="10dp"
-              android:paddingTop="2dp"
-              android:paddingEnd="10dp"
-              android:paddingBottom="2dp"
-              android:text="Facultatif"
-              android:textColor="@color/brun_clair"
-              android:textSize="12sp" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/txtChangePhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="10dp"
-            android:background="@drawable/bg_chip"
-            android:paddingStart="10dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="4dp"
-            android:text="Changer la photo"
-            android:textColor="@color/brun"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
-      </FrameLayout>
-
-      <!-- 3. Nom de la recette -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="18dp"
-          android:text="Nom de la recette"
-          android:textColor="@color/brun"
-          android:textSize="14sp"
-          android:textStyle="bold" />
-
-      <EditText
-          android:id="@+id/editRecipeName"
-          android:layout_width="match_parent"
-          android:layout_height="52dp"
-          android:layout_marginTop="6dp"
-          android:background="@drawable/bg_input"
-          android:hint="Nom de ta recette"
-          android:inputType="textCapSentences"
-          android:maxLines="1"
-          android:paddingStart="16dp"
-          android:paddingEnd="16dp"
-          android:textColor="@color/brun"
-          android:textColorHint="@color/gris_hint"
-          android:textSize="16sp" />
-
-      <!-- 4. Nombre de parts -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="16dp"
-          android:text="Nombre de parts"
-          android:textColor="@color/brun"
-          android:textSize="14sp"
-          android:textStyle="bold" />
-
-      <EditText
-          android:id="@+id/editYield"
-          android:layout_width="match_parent"
-          android:layout_height="52dp"
-          android:layout_marginTop="6dp"
-          android:background="@drawable/bg_input"
-          android:hint="Combien de parts obtiens-tu ?"
-          android:inputType="number"
-          android:maxLines="1"
-          android:paddingStart="16dp"
-          android:paddingEnd="16dp"
-          android:textColor="@color/brun"
-          android:textColorHint="@color/gris_hint"
-          android:textSize="16sp" />
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="12dp"
-          android:text="Temps de préparation (minutes)"
-          android:textColor="@color/brun"
-          android:textSize="14sp"
-          android:textStyle="bold" />
-
-      <EditText
-          android:id="@+id/editPrepTime"
-          android:layout_width="match_parent"
-          android:layout_height="52dp"
-          android:layout_marginTop="6dp"
-          android:background="@drawable/bg_input"
-          android:hint="Ex: 30 (30 min par défaut)"
-          android:inputType="number"
-          android:paddingStart="16dp"
-          android:paddingEnd="16dp"
-          android:textColor="@color/brun"
-          android:textColorHint="@color/gris_hint"
-          android:textSize="16sp" />
-      <!-- 5. Marge souhaitée (%) -->
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="16dp"
-          android:text="Marge souhaitée (%)"
-          android:textColor="@color/brun"
-          android:textSize="14sp"
-          android:textStyle="bold" />
-
-      <EditText
-          android:id="@+id/editMargin"
-          android:layout_width="match_parent"
-          android:layout_height="52dp"
-          android:layout_marginTop="6dp"
-          android:background="@drawable/bg_input"
-          android:hint="Ex: 40"
-          android:inputType="numberDecimal"
-          android:maxLines="1"
-          android:paddingStart="16dp"
-          android:paddingEnd="16dp"
-          android:text="40"
-          android:textColor="@color/brun"
-          android:textColorHint="@color/gris_hint"
-          android:textSize="16sp" />
-
-      <!-- 6. Ingrédients choisis + quantité -->
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="18dp"
-          android:background="@drawable/bg_card"
-          android:orientation="vertical"
-          android:padding="18dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ingrédients"
-            android:textColor="@color/brun"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtNoIngredient"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Aucun ingrédient ajouté. Appuie sur « + Ajouter un ingrédient »."
-            android:textColor="@color/brun_clair"
-            android:textSize="15sp" />
-
-        <LinearLayout
-            android:id="@+id/listLines"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-        <TextView
-            android:id="@+id/btnAddIngredient"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"
-            android:text="+ Ajouter un ingrédient"
-            android:textColor="@color/safran_texte"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-      </LinearLayout>
-
-      <!-- Résultats calculés en direct -->
-      <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="16dp"
-          android:background="@drawable/bg_card_dark"
-          android:orientation="vertical"
-          android:padding="22dp">
+        android:paddingStart="@dimen/gutter"
+        android:paddingTop="@dimen/sp_3"
+        android:paddingEnd="@dimen/gutter"
+        android:paddingBottom="@dimen/sp_3">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:baselineAligned="true"
             android:orientation="horizontal">
 
-          <TextView
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:text="Coût du lot"
-              android:textColor="@color/caramel"
-              android:textSize="14sp" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-          <TextView
-              android:id="@+id/txtBatchCost"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="0,00 dt"
-              android:textColor="@color/creme"
-              android:textSize="14sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_cost_per_portion"
+                    android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+                <TextView
+                    android:id="@+id/txtPerPortion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Hesba.Money.Large"
+                    android:textSize="28sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_batch_cost"
+                    android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+                <TextView
+                    android:id="@+id/txtBatch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Hesba.Money" />
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
-            android:id="@+id/txtPieceLabel"
-            android:layout_width="wrap_content"
+            android:id="@+id/txtSummaryLine"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Coût par part"
-            android:textColor="@color/caramel"
-            android:textSize="14sp" />
+            android:layout_marginTop="2dp"
+            android:fontFeatureSettings="tnum"
+            android:textAppearance="@style/TextAppearance.Hesba.Caption" />
 
-        <TextView
-            android:id="@+id/txtCostPerPiece"
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="serif"
-            android:text="0,00 dt"
-            android:textColor="@color/creme"
-            android:textSize="44sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtAdvisedPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Prix conseillé : 0,00 dt"
-            android:textColor="@color/jaune_energie"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtMostExpensive"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Ingrédient le plus cher : —"
-            android:textColor="@color/caramel"
-            android:textSize="14sp" />
-      </LinearLayout>
-
-      <!-- 7. Bouton principal -->
-      <Button
-          android:id="@+id/btnSaveRecipe"
-          android:layout_width="match_parent"
-          android:layout_height="56dp"
-          android:layout_marginTop="18dp"
-          android:backgroundTint="@color/safran"
-          android:text="Enregistrer la recette"
-          android:textAllCaps="false"
-          android:textColor="@color/brun"
-          android:textSize="16sp"
-          android:textStyle="bold"
-          app:cornerRadius="16dp" />
+            android:layout_marginTop="@dimen/sp_3"
+            android:text="@string/action_save_recipe" />
     </LinearLayout>
-  </ScrollView>
 </LinearLayout>

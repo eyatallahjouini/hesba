@@ -1,238 +1,267 @@
 package com.example.hesba
 
+import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.Gravity
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.example.hesba.auth.SessionManager
-import com.example.hesba.data.HesbaDatabase
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.hesba.data.HesbaRepository.IngredientSave
 import com.example.hesba.data.Ingredient
-import com.google.android.material.button.MaterialButtonToggleGroup
-import kotlinx.coroutines.flow.first
+import com.example.hesba.data.PrixHistorique
+import com.example.hesba.databinding.ActivityNouvelIngredientBinding
+import com.example.hesba.databinding.ItemLedgerBinding
+import com.example.hesba.domain.MeasureUnit
+import com.example.hesba.domain.Money
+import com.example.hesba.domain.NumberParser
+import com.example.hesba.domain.UnitConverter
+import com.example.hesba.ui.BaseActivity
+import com.example.hesba.ui.Dialogs
+import com.example.hesba.ui.Fmt
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
-import java.util.Locale
+import java.math.BigDecimal
 
-class NouvelIngredientActivity : AppCompatActivity() {
+/**
+ * Ajouter / modifier un ingrédient (écran d'Aya, repris) :
+ * prix de l'emballage, rendement utilisable, autres noms, historique des prix, recettes qui l'utilisent.
+ */
+class NouvelIngredientActivity : BaseActivity() {
 
-    private lateinit var etNom: EditText
-    private lateinit var etQuantite: EditText
-    private lateinit var etPrix: EditText
-    private lateinit var tvPrixCalcul: TextView
-    private lateinit var btnEnregistrer: Button
-    private lateinit var session: SessionManager
+    companion object {
+        const val EXTRA_INGREDIENT_ID = "EXTRA_INGREDIENT_ID"
+        const val EXTRA_NAME = "name"
+        const val EXTRA_RETURN = "return"   // renvoie l'id créé à l'écran appelant
+    }
 
-    private var uniteChoisie = "kg" // Unité affichée à l'utilisateur ("kg", "l", "piece")
-
-    // Mode « Modifier » : ouvert depuis la page Ingrédients avec EXTRA_INGREDIENT_ID
-    private var ingredientAModifier: Ingredient? = null
+    private lateinit var b: ActivityNouvelIngredientBinding
+    private var existing: Ingredient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_nouvel_ingredient)
-
-        session = SessionManager(this)
-
-        etNom = findViewById(R.id.etNomIngredient)
-        etQuantite = findViewById(R.id.etQuantite)
-        etPrix = findViewById(R.id.etPrix)
-        tvPrixCalcul = findViewById(R.id.tvPrixUnitaireCalcul)
-        btnEnregistrer = findViewById(R.id.btnEnregistrer)
-
-        val btnBack = findViewById<ImageButton>(R.id.btnBack)
-        btnBack?.setOnClickListener { finish() }
-
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                calculerPrixUnitaire()
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        }
-        etQuantite.addTextChangedListener(textWatcher)
-        etPrix.addTextChangedListener(textWatcher)
-
-        val btnKg = findViewById<Button>(R.id.btnKg)
-        val btnLitre = findViewById<Button>(R.id.btnLitre)
-        val btnPiece = findViewById<Button>(R.id.btnPiece)
-
-        btnKg?.setOnClickListener {
-            uniteChoisie = "kg"
-            calculerPrixUnitaire()
-        }
-        btnLitre?.setOnClickListener {
-            uniteChoisie = "l"
-            calculerPrixUnitaire()
-        }
-        btnPiece?.setOnClickListener {
-            uniteChoisie = "piece"
-            calculerPrixUnitaire()
+        if (isFinishing) return
+        b = ActivityNouvelIngredientBinding.inflate(layoutInflater)
+        setScreen(b.root)
+        val id = intent.getLongExtra(EXTRA_INGREDIENT_ID, 0L)
+        setTitleText(getString(if (id > 0) R.string.ingredient_title_edit else R.string.ingredient_title_new))
+        if (savedInstanceState == null) {
+            intent.getStringExtra(EXTRA_NAME)?.let { b.editName.setText(it) }
+            b.editYield.setText("100")
         }
 
-        btnEnregistrer.setOnClickListener { enregistrerIngredient() }
+        listOf(b.editQuantity, b.editPrice, b.editYield).forEach { it.doAfterTextChanged { clearErrors(); live() } }
+        b.editName.doAfterTextChanged { b.tilName.error = null }
+        b.groupUnit.setOnCheckedStateChangeListener { _, _ -> updateQuantityHint(); live() }
+        b.btnSave.setOnClickListener { save() }
+        b.btnDelete.setOnClickListener { askDelete() }
+        b.btnAddSynonym.setOnClickListener { addSynonym() }
+        updateQuantityHint()
+        live()
 
-        val idAModifier = intent.getLongExtra("EXTRA_INGREDIENT_ID", 0L)
-        if (idAModifier > 0L) chargerPourModification(idAModifier)
+        if (id > 0) lifecycleScope.launch {
+            val ing = db.ingredientDao().parId(id)
+            if (ing == null || ing.utilisateurId != repo.userId) { snack(R.string.error_ingredient_not_found); finish(); return@launch }
+            existing = ing
+            if (savedInstanceState == null) fill(ing)
+            b.btnDelete.visibility = View.VISIBLE
+            b.blockSynonyms.visibility = View.VISIBLE
+            follow(ing.id)
+        }
     }
 
-    // Remplit le formulaire avec l'ingrédient existant (g -> kg, ml -> L)
-    private fun chargerPourModification(id: Long) {
+    private fun fill(i: Ingredient) {
+        b.editName.setText(i.nom)
+        val q = BigDecimal(i.quantiteEmballage.toString())
+        val (chip, shown) = when {
+            i.unite == "g" && q >= BigDecimal(1000) -> R.id.unitKg to UnitConverter.fromBase(q, MeasureUnit.KG, null)!!
+            i.unite == "g" -> R.id.unitG to q
+            i.unite == "ml" && q >= BigDecimal(1000) -> R.id.unitL to UnitConverter.fromBase(q, MeasureUnit.L, null)!!
+            i.unite == "ml" -> R.id.unitMl to q
+            else -> R.id.unitPiece to q
+        }
+        b.groupUnit.check(chip)
+        b.editQuantity.setText(Fmt.inputNumber(this, shown.toDouble()))
+        b.editPrice.setText(Fmt.inputAmount(this, i.prixMillimes))
+        b.editYield.setText(Fmt.inputNumber(this, i.rendementPourcent))
+        live()
+    }
+
+    /** Synonymes, historique et utilisation, mis à jour en direct. */
+    private fun follow(id: Long) {
         lifecycleScope.launch {
-            val db = HesbaDatabase.getInstance(this@NouvelIngredientActivity)
-            val ingredient = db.ingredientDao().parId(id)
-            if (ingredient == null) {
-                afficherToast("Ingrédient introuvable")
-                finish()
-                return@launch
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    repo.synonyms().collect { list ->
+                        b.groupSynonyms.removeAllViews()
+                        list.filter { it.ingredientId == id }.forEach { s ->
+                            b.groupSynonyms.addView(Chip(this@NouvelIngredientActivity).apply {
+                                text = s.texte
+                                isCloseIconVisible = true
+                                closeIconContentDescription = getString(R.string.cd_remove_synonym, s.texte)
+                                setOnCloseIconClickListener { lifecycleScope.launch { repo.deleteSynonym(s) } }
+                            })
+                        }
+                    }
+                }
+                launch {
+                    db.prixHistoriqueDao().pourIngredient(id).collect { showHistory(it) }
+                }
+                launch {
+                    repo.workspace().collect { ws ->
+                        val used = ws.recipesUsing(id)
+                        b.blockUsage.visibility = if (used.isEmpty()) View.GONE else View.VISIBLE
+                        b.txtUsageTitle.text = resources.getQuantityString(R.plurals.used_in, used.size, used.size)
+                        b.txtUsage.text = used.joinToString(" · ") { it.nom }
+                    }
+                }
             }
-            ingredientAModifier = ingredient
-            findViewById<TextView>(R.id.tvTitle)?.text = "Modifier l'ingrédient"
-
-            val (uniteAffichee, boutonId, quantiteAffichee) = when (ingredient.unite) {
-                "g" -> Triple("kg", R.id.btnKg, ingredient.quantiteEmballage / 1000)
-                "ml" -> Triple("l", R.id.btnLitre, ingredient.quantiteEmballage / 1000)
-                else -> Triple("piece", R.id.btnPiece, ingredient.quantiteEmballage)
-            }
-            uniteChoisie = uniteAffichee
-            findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupUnite)?.check(boutonId)
-
-            etNom.setText(ingredient.nom)
-            etQuantite.setText(nombre(quantiteAffichee))
-            etPrix.setText(nombre(ingredient.prixPaye))
-            calculerPrixUnitaire()
         }
     }
 
-    private fun nombre(valeur: Double): String =
-        if (valeur % 1.0 == 0.0) valeur.toLong().toString()
-        else String.format(Locale.US, "%.3f", valeur).trimEnd('0').trimEnd('.')
-
-    private fun calculerPrixUnitaire() {
-        val qte = etQuantite.text.toString().replace(",", ".").trim().toDoubleOrNull() ?: 0.0
-        val prix = etPrix.text.toString().replace(",", ".").trim().toDoubleOrNull() ?: 0.0
-
-        // kg -> prix par gramme, l -> prix par millilitre, piece -> prix par pièce
-        val (facteur, libelle) = when (uniteChoisie) {
-            "kg" -> 1000.0 to "g"
-            "l" -> 1000.0 to "ml"
-            else -> 1.0 to "pièce"
-        }
-
-        if (qte > 0 && prix > 0) {
-            val prixParUnite = prix / (qte * facteur)
-            tvPrixCalcul.text = String.format(Locale.FRANCE, "%.4f dt / %s", prixParUnite, libelle)
-        } else {
-            tvPrixCalcul.text = String.format(Locale.FRANCE, "0,0000 dt / %s", libelle)
+    private fun showHistory(entries: List<PrixHistorique>) {
+        b.blockHistory.visibility = if (entries.isEmpty()) View.GONE else View.VISIBLE
+        b.listHistory.removeAllViews()
+        entries.take(12).forEach { h ->
+            val v = ItemLedgerBinding.inflate(LayoutInflater.from(this), b.listHistory, false)
+            v.ledgerLabel.text = Fmt.date(this, h.date)
+            val source = when (h.source) {
+                PrixHistorique.SOURCE_FACTURE -> getString(R.string.source_invoice)
+                PrixHistorique.SOURCE_SIMULATION -> getString(R.string.source_simulation)
+                else -> getString(R.string.source_manual)
+            }
+            v.ledgerDetail.text = getString(R.string.history_detail, source, Fmt.money(this, h.ancienPrixMillimes), Fmt.money(this, h.nouveauPrixMillimes))
+            v.ledgerDetail.visibility = View.VISIBLE
+            val pct = com.example.hesba.domain.HomeSummary.percentChange(h)
+            v.ledgerValue.text = pct?.let { Fmt.signedPercent(this, it) } ?: ""
+            v.ledgerValue.setTextColor(getColor(if ((pct?.signum() ?: 0) > 0) R.color.hb_bad else R.color.hb_good))
+            b.listHistory.addView(v.root)
         }
     }
 
-    private fun enregistrerIngredient() {
-        val nom = etNom.text.toString().trim()
-        val qteSaisie = etQuantite.text.toString().replace(",", ".").trim().toDoubleOrNull() ?: 0.0
-        val prix = etPrix.text.toString().replace(",", ".").trim().toDoubleOrNull() ?: 0.0
+    // ---------- saisie ----------
 
-        if (nom.isEmpty() || qteSaisie <= 0 || prix <= 0) {
-            afficherToast("Veuillez remplir tous les champs correctement")
+    private fun unit(): MeasureUnit = when (b.groupUnit.checkedChipId) {
+        R.id.unitG -> MeasureUnit.G
+        R.id.unitL -> MeasureUnit.L
+        R.id.unitMl -> MeasureUnit.ML
+        R.id.unitPiece -> MeasureUnit.PIECE
+        else -> MeasureUnit.KG
+    }
+
+    private fun updateQuantityHint() {
+        b.tilQuantity.suffixText = Fmt.unitLabel(this, unit().code)
+    }
+
+    private fun quantityBase(): BigDecimal? {
+        val q = NumberParser.parseOrNull(b.editQuantity.text?.toString()) ?: return null
+        if (q.signum() <= 0) return null
+        return UnitConverter.toBase(q, unit(), unit().base!!, null)
+    }
+
+    private fun yieldPct(): BigDecimal? = NumberParser.parseOrNull(b.editYield.text?.toString())
+
+    private fun live() {
+        val qty = quantityBase()
+        val price = b.editPrice.text?.toString()?.let { Money.parseMillimes(it) }
+        val y = yieldPct() ?: BigDecimal(100)
+        val base = unit().base!!
+        val unitPrice = if (qty != null && y.signum() > 0 && y <= BigDecimal(100)) CostCalculator.unitPrice(price, qty, y) else null
+        if (unitPrice == null) {
+            b.txtLive.setText(R.string.ingredient_live_empty)
             return
         }
+        val (factor, label) = when (base) { "g" -> 1000 to "kg"; "ml" -> 1000 to "l"; else -> 1 to "piece" }
+        val per = Money.roundMillimes(unitPrice.multiply(BigDecimal(factor)))
+        b.txtLive.text = if (y < BigDecimal(100)) {
+            val usable = qty!!.multiply(y).divide(BigDecimal(100))
+            getString(
+                R.string.ingredient_live_yield,
+                Fmt.baseQuantity(this, qty, base), Fmt.baseQuantity(this, usable, base), Fmt.money(this, per), Fmt.unitLabel(this, label)
+            )
+        } else getString(R.string.ingredient_live, Fmt.money(this, per), Fmt.unitLabel(this, label))
+    }
 
-        // Conversion en unité de base : 1 kg -> 1000 g, 1 l -> 1000 ml
-        val (quantiteBase, uniteBase) = when (uniteChoisie) {
-            "kg" -> qteSaisie * 1000 to "g"
-            "l" -> qteSaisie * 1000 to "ml"
-            else -> qteSaisie to "piece"
-        }
+    private fun clearErrors() {
+        b.tilQuantity.error = null; b.tilPrice.error = null; b.tilYield.error = null
+    }
 
-        val currentUserId = session.getUserId()
+    private fun save() {
+        val name = b.editName.text.toString().trim()
+        val qty = quantityBase()
+        val price = b.editPrice.text?.toString()?.let { Money.parseMillimes(it) }
+        val y = yieldPct()
+        var ok = true
+        if (name.isEmpty()) { b.tilName.error = getString(R.string.error_ingredient_name); ok = false }
+        if (qty == null) { b.tilQuantity.error = getString(R.string.error_quantity); ok = false }
+        if (price == null || price <= 0) { b.tilPrice.error = getString(R.string.error_price); ok = false }
+        if (y == null || y.signum() <= 0 || y > BigDecimal(100)) { b.tilYield.error = getString(R.string.error_yield); ok = false }
+        if (!ok) return
 
+        val draft = Ingredient(
+            nom = name, unite = unit().base!!, quantiteEmballage = qty!!.toDouble(),
+            prixMillimes = price, rendementPourcent = y!!.toDouble()
+        )
+        b.btnSave.isEnabled = false
         lifecycleScope.launch {
-            val db = HesbaDatabase.getInstance(this@NouvelIngredientActivity)
-
-            val ancien = ingredientAModifier
-            // Vérification des doublons uniquement parmi les ingrédients du MÊME utilisateur (ou invité)
-            val existeDeja = db.ingredientDao().tous().first().any {
-                it.nom.equals(nom, ignoreCase = true) &&
-                        it.id != ancien?.id &&
-                        it.utilisateurId == currentUserId
-            }
-
-            if (existeDeja) {
-                afficherToast("L'ingrédient '$nom' existe déjà dans votre stock !")
-                return@launch
-            }
-
-            if (ancien != null) {
-                modifierIngredient(db, ancien, nom, uniteBase, quantiteBase, prix)
-                return@launch
-            }
-
-            db.ingredientDao().inserer(
-                Ingredient(
-                    nom = nom,
-                    unite = uniteBase,
-                    quantiteEmballage = quantiteBase,
-                    prixPaye = prix,
-                    utilisateurId = currentUserId // Enregistrement avec l'ID de session courant
-                )
-            )
-
-            afficherToast("Ingrédient '$nom' ajouté avec succès !")
-
-            // On reste sur la page : champs vidés, prêt pour un autre ingrédient
-            etNom.text.clear()
-            etQuantite.text.clear()
-            etPrix.text.clear()
-            etNom.requestFocus()
-        }
-    }
-
-    // Mode « Modifier » : l'unité ne change pas si l'ingrédient est déjà dans une recette
-    private suspend fun modifierIngredient(
-        db: HesbaDatabase,
-        ancien: Ingredient,
-        nom: String,
-        uniteBase: String,
-        quantiteBase: Double,
-        prix: Double
-    ) {
-        if (uniteBase != ancien.unite) {
-            val utiliseDans = db.recetteDao().toutes().first().filter { recette ->
-                db.ligneRecetteDao().parRecette(recette.id).first().any { it.ingredientId == ancien.id }
-            }
-            if (utiliseDans.isNotEmpty()) {
-                afficherToast("Unité non modifiable : utilisé dans ${utiliseDans.joinToString { it.nom }}")
-                return
+            when (val r = repo.saveIngredient(existing, draft)) {
+                is IngredientSave.Duplicate -> {
+                    b.btnSave.isEnabled = true
+                    b.tilName.error = getString(R.string.error_ingredient_duplicate, r.existing.nom)
+                }
+                is IngredientSave.UnitLocked -> {
+                    b.btnSave.isEnabled = true
+                    Dialogs.info(this@NouvelIngredientActivity, getString(R.string.dialog_unit_locked_title), getString(R.string.dialog_unit_locked_body, r.recipes.joinToString { it.nom }))
+                }
+                is IngredientSave.Saved -> {
+                    if (intent.getBooleanExtra(EXTRA_RETURN, false)) {
+                        setResult(RESULT_OK, Intent().putExtra(EXTRA_INGREDIENT_ID, r.id))
+                        finish()
+                    } else if (existing == null) {
+                        snack(getString(R.string.ingredient_added, name))
+                        // on reste sur la page, prête pour l'ingrédient suivant (comportement d'Aya)
+                        b.editName.text?.clear(); b.editQuantity.text?.clear(); b.editPrice.text?.clear(); b.editYield.setText("100")
+                        b.btnSave.isEnabled = true
+                        b.editName.requestFocus()
+                    } else {
+                        if (r.recalculated > 0) Toasts.long(this@NouvelIngredientActivity, resources.getQuantityString(R.plurals.recalculated, r.recalculated, r.recalculated))
+                        finish()
+                    }
+                }
             }
         }
-
-        db.ingredientDao().modifier(
-            ancien.copy(
-                nom = nom,
-                unite = uniteBase,
-                quantiteEmballage = quantiteBase,
-                prixPaye = prix,
-                dateMiseAJour = System.currentTimeMillis()
-                // utilisateurId reste conservé via copy()
-            )
-        )
-        // prix ou quantité changés : les recettes qui l'utilisent sont recalculées
-        val nombreRecettes = RecipeCosting.refreshRecipesUsing(db, ancien.id, session.getUserId())
-        afficherToast(
-            if (nombreRecettes == 0) "Ingrédient '$nom' modifié"
-            else "Ingrédient '$nom' modifié · $nombreRecettes recette(s) recalculée(s)"
-        )
-        finish()
     }
 
-    private fun afficherToast(message: String) {
-        val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-        toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 150)
-        toast.show()
+    private fun addSynonym() {
+        val ing = existing ?: return
+        Dialogs.input(
+            this, getString(R.string.dialog_synonym_title, ing.nom), getString(R.string.field_synonym),
+            helper = getString(R.string.helper_synonym),
+            validate = { if (it.isBlank()) getString(R.string.error_required) else null }
+        ) { text -> lifecycleScope.launch { repo.learnSynonym(text, ing.id) } }
     }
+
+    private fun askDelete() {
+        val ing = existing ?: return
+        lifecycleScope.launch {
+            val used = repo.recipesUsing(ing.id)
+            if (used.isNotEmpty()) {
+                Dialogs.info(this@NouvelIngredientActivity, getString(R.string.dialog_delete_blocked_title), getString(R.string.dialog_delete_blocked_body, ing.nom, used.joinToString { it.nom }))
+                return@launch
+            }
+            Dialogs.confirm(this@NouvelIngredientActivity, getString(R.string.dialog_delete_ingredient_title, ing.nom), getString(R.string.dialog_delete_ingredient_body), R.string.action_delete, destructive = true) {
+                lifecycleScope.launch {
+                    val still = runCatching { repo.deleteIngredient(ing) }.getOrElse { listOf() }
+                    if (still.isNotEmpty()) snack(R.string.error_delete_used) else finish()
+                }
+            }
+        }
+    }
+}
+
+/** Message qui survit à la fermeture de l'écran (le Snackbar disparaîtrait avec lui). */
+object Toasts {
+    fun long(context: android.content.Context, message: CharSequence) =
+        android.widget.Toast.makeText(context.applicationContext, message, android.widget.Toast.LENGTH_LONG).show()
 }

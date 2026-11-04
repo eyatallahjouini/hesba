@@ -3,135 +3,79 @@ package com.example.hesba
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.RadioGroup
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.example.hesba.auth.AuthRepository
 import com.example.hesba.auth.AuthResult
 import com.example.hesba.auth.SessionManager
-import com.example.hesba.data.HesbaDatabase
+import com.example.hesba.data.HesbaRepository
+import com.example.hesba.databinding.ActivityRegisterBinding
+import com.example.hesba.ui.BaseActivity
 import kotlinx.coroutines.launch
 
-class RegisterActivity : AppCompatActivity() {
+/**
+ * Création d'un compte local. Les charges (loyer, employés…) se règlent ensuite dans le Profil.
+ * Si l'utilisateur essayait l'appli sans compte, ses données sont rattachées au nouveau compte.
+ */
+class RegisterActivity : BaseActivity() {
+
+    override val requiresSession = false
+    private lateinit var b: ActivityRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+        b = ActivityRegisterBinding.inflate(layoutInflater)
+        setScreen(b.root)
+        setTitleText("")
 
-        val repo = AuthRepository(HesbaDatabase.getInstance(this).utilisateurDao())
-        val session = SessionManager(this)
-
-        findViewById<View>(R.id.btnBack)?.setOnClickListener {
-            finish()
+        val auth = AuthRepository(db.utilisateurDao())
+        val guestRepo = HesbaRepository(db, SessionManager.ID_UTILISATEUR_INVITE)
+        lifecycleScope.launch {
+            if (guestRepo.guestDataCount() > 0) b.txtGuestTransfer.visibility = View.VISIBLE
         }
 
-        val etPrenom = findViewById<EditText>(R.id.editName)
-        val etEmail = findViewById<EditText>(R.id.editEmail)
-        val etPassword = findViewById<EditText>(R.id.editPassword)
-        val rgActivite = findViewById<RadioGroup>(R.id.rgActivity)
+        b.editName.doAfterTextChanged { b.tilName.error = null }
+        b.editEmail.doAfterTextChanged { b.tilEmail.error = null }
+        b.editPassword.doAfterTextChanged { b.tilPassword.error = null }
+        b.checkPrivacy.setOnCheckedChangeListener { _, _ -> b.txtPrivacyError.visibility = View.GONE }
 
-        // Champs dynamiques pour le Loyer et le Volume mensuel
-        val layoutRentField = findViewById<LinearLayout>(R.id.layoutRentField)
-        val editRent = findViewById<EditText>(R.id.editRent)
-        val editMonthlyVolume = findViewById<EditText>(R.id.editMonthlyVolume)
-
-        // Champs dynamiques pour les Employés
-        val layoutEmployeeFields = findViewById<LinearLayout>(R.id.layoutEmployeeFields)
-        val editEmpCount = findViewById<EditText>(R.id.editEmpCount)
-        val editEmpSalary = findViewById<EditText>(R.id.editEmpSalary)
-
-        val cbPolitique = findViewById<CheckBox>(R.id.checkPrivacy)
-        val btnRegister = findViewById<Button>(R.id.btnRegister)
-
-        findViewById<TextView>(R.id.txtLoginLink)?.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-        }
-
-        // Afficher ou masquer les sections dynamiques (Loyer/Volume et Employés) selon l'activité
-        rgActivite.setOnCheckedChangeListener { _, checkedId ->
-            val isLocal = (checkedId == R.id.rbLocalSolo || checkedId == R.id.rbLocalStaff)
-            layoutRentField.visibility = if (isLocal) View.VISIBLE else View.GONE
-            layoutEmployeeFields.visibility = if (checkedId == R.id.rbLocalStaff) View.VISIBLE else View.GONE
-        }
-
-        btnRegister.setOnClickListener {
-            val prenom = etPrenom.text.toString().trim()
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString()
-
-            val checkedId = rgActivite.checkedRadioButtonId
-            if (checkedId == -1) {
-                Toast.makeText(this, "Choisis ton activité", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Clés normalisées pour la base de données
-            val activiteCode = when (checkedId) {
-                R.id.rbHome -> "domicile"
-                R.id.rbLocalSolo -> "sans_employe"
-                R.id.rbLocalStaff -> "avec_employe"
+        b.btnRegister.setOnClickListener {
+            val activity = when (b.groupActivity.checkedChipId) {
+                R.id.chipSolo -> "sans_employe"
+                R.id.chipStaff -> "avec_employe"
                 else -> "domicile"
             }
-
-            val rentAmount = if (activiteCode != "domicile") {
-                editRent.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-            } else 0.0
-
-            val volumeMensuel = if (activiteCode != "domicile") {
-                editMonthlyVolume.text.toString().toIntOrNull() ?: 300
-            } else 300
-
-            val nbEmployes = if (activiteCode == "avec_employe") {
-                editEmpCount.text.toString().toIntOrNull() ?: 0
-            } else 0
-
-            val salaireEmploye = if (activiteCode == "avec_employe") {
-                editEmpSalary.text.toString().replace(',', '.').toDoubleOrNull() ?: 0.0
-            } else 0.0
-
-            if (activiteCode != "domicile" && rentAmount <= 0.0) {
-                Toast.makeText(this, "Indique le montant du loyer mensuel", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (activiteCode != "domicile" && volumeMensuel <= 0) {
-                Toast.makeText(this, "Indique une estimation du volume mensuel", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (activiteCode == "avec_employe" && nbEmployes <= 0) {
-                Toast.makeText(this, "Indique le nombre d'employés", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
+            b.btnRegister.isEnabled = false
             lifecycleScope.launch {
-                val r = repo.inscrire(
-                    prenom = prenom,
-                    email = email,
-                    motDePasse = password,
-                    activite = activiteCode,
-                    loyerMensuel = rentAmount,
-                    volumeMensuel = volumeMensuel,
-                    nombreEmployes = nbEmployes,
-                    salaireMoyenEmploye = salaireEmploye,
-                    politiqueAcceptee = cbPolitique.isChecked
+                val r = auth.inscrire(
+                    prenom = b.editName.text.toString(),
+                    nomCommerce = b.editBusiness.text.toString(),
+                    email = b.editEmail.text.toString(),
+                    motDePasse = b.editPassword.text.toString(),
+                    activite = activity,
+                    politiqueAcceptee = b.checkPrivacy.isChecked
                 )
-
                 when (r) {
                     is AuthResult.Success -> {
+                        val moved = guestRepo.transferGuestDataTo(r.userId)
                         session.saveUser(r.userId)
-                        startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
-                        finishAffinity()
+                        val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            .putExtra(HomeActivity.EXTRA_WELCOME, true)
+                            .putExtra(HomeActivity.EXTRA_MOVED, moved)
+                        startActivity(intent)
+                        finish()
                     }
                     is AuthResult.Error -> {
-                        Toast.makeText(this@RegisterActivity, r.message, Toast.LENGTH_SHORT).show()
+                        b.btnRegister.isEnabled = true
+                        val message = getString(r.message)
+                        when (r.field) {
+                            AuthResult.Field.NAME -> b.tilName.error = message
+                            AuthResult.Field.EMAIL -> b.tilEmail.error = message
+                            AuthResult.Field.PASSWORD -> b.tilPassword.error = message
+                            AuthResult.Field.PRIVACY -> b.txtPrivacyError.visibility = View.VISIBLE
+                            AuthResult.Field.NONE -> snack(message)
+                        }
                     }
                 }
             }

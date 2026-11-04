@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_top_bar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/gutter"
+            android:paddingEnd="@dimen/gutter"
+            android:paddingBottom="@dimen/sp_5">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRecipe"
+                style="@style/Widget.Hesba.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:text="@string/shopping_choose"
+                app:icon="@drawable/ic_recipes" />
+
+            <LinearLayout
+                android:id="@+id/blockQty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPortions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_4"
+                    android:hint="@string/shopping_portions">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPortions"
+                        style="@style/Widget.Hesba.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:inputType="number"
+                        android:maxLength="6" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/groupBatches"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_2"
+                    app:singleLine="true" />
+
+                <TextView
+                    style="@style/Hesba.Section"
+                    android:text="@string/shopping_to_buy" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/sp_1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/col_ingredient"
+                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/col_estimated_cost"
+                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                </LinearLayout>
+
+                <View style="@style/Hesba.Divider" />
+
+                <LinearLayout
+                    android:id="@+id/listItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/rule"
+                    android:background="@color/hb_ink" />
+
+                <LinearLayout style="@style/Hesba.LedgerRow">
+                    <TextView
+                        style="@style/Hesba.LedgerLabel"
+                        android:text="@string/shopping_total_used"
+                        android:textColor="@color/hb_ink" />
+                    <TextView
+                        android:id="@+id/txtTotal"
+                        style="@style/Hesba.LedgerValue"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Hesba.LedgerRow">
+                    <TextView
+                        style="@style/Hesba.LedgerLabel"
+                        android:text="@string/shopping_total_packages" />
+                    <TextView
+                        android:id="@+id/txtTotalPackages"
+                        style="@style/Hesba.LedgerValue" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtMissing"
+                    style="@style/Hesba.Note"
+                    android:layout_marginTop="@dimen/sp_3"
+                    android:background="@drawable/bg_note_bad"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_3"
+                    android:text="@string/shopping_note"
+                    android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+            </LinearLayout>
+
+            <include
+                android:id="@+id/empty"
+                layout="@layout/view_empty"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <View style="@style/Hesba.Divider" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnShare"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/gutter"
+        android:layout_marginTop="@dimen/sp_3"
+        android:layout_marginEnd="@dimen/gutter"
+        android:layout_marginBottom="@dimen/sp_3"
+        android:enabled="false"
+        android:text="@string/action_share_list"
+        app:icon="@drawable/ic_share" />
+</LinearLayout>

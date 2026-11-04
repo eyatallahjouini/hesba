@@ -1,11 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp" android:gravity="center_vertical">
-    <TextView android:id="@+id/txtIngredientName" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ingrédient" android:textColor="@color/brun" android:textSize="17sp" android:textStyle="bold"/>
-    <EditText android:id="@+id/editQty" android:layout_width="72dp" android:layout_height="44dp" android:background="@drawable/bg_input" android:paddingStart="8dp" android:paddingEnd="8dp" android:textColor="@color/brun" android:textColorHint="@color/gris_hint" android:textSize="16sp" android:inputType="numberDecimal" android:maxLines="1" android:hint="0" android:gravity="center"/>
-    <TextView android:id="@+id/txtUnit" android:layout_width="48dp" android:layout_height="wrap_content" android:layout_marginStart="6dp" android:text="g" android:textColor="@color/brun_clair" android:textSize="14sp"/>
-    <TextView android:id="@+id/txtLineCost" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0,00 dt" android:textColor="@color/brun" android:textSize="16sp" android:textStyle="bold" android:fontFamily="serif"/>
-    <!-- retirer cet ingrédient de la recette -->
-    <ImageButton android:id="@+id/btnRemoveLine" android:layout_width="30dp" android:layout_height="30dp" android:layout_marginStart="8dp" android:background="@drawable/bg_circle" android:backgroundTint="@color/rouge_clair" android:src="@drawable/ic_action_delete" android:scaleType="fitCenter" android:padding="7dp" app:tint="@color/rouge" android:contentDescription="Retirer de la recette"/>
-  </LinearLayout>
+<!-- Ligne de recette dans l'éditeur : nom + coût, puis quantité + unité, retirer -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/sp_2">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lineName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Hesba.Label" />
+
+            <TextView
+                android:id="@+id/lineInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lineCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sp_2"
+            android:textAppearance="@style/TextAppearance.Hesba.Money" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/lineRemove"
+            style="@style/Widget.Hesba.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_close"
+            app:iconSize="18dp"
+            app:iconTint="@color/hb_ink_soft" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/sp_3">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilQty"
+            style="@style/Widget.Hesba.TextInput"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/field_quantity">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/lineQty"
+                style="@style/Widget.Hesba.EditText.Money"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/lineUnit"
+            style="@style/Widget.Hesba.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sp_2"
+            android:minWidth="88dp"
+            android:paddingStart="@dimen/sp_3"
+            android:paddingEnd="@dimen/sp_3" />
+    </LinearLayout>
+
+    <View style="@style/Hesba.Divider" />
 </LinearLayout>

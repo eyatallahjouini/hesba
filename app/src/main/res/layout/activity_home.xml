@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/gutter"
+            android:paddingEnd="@dimen/gutter"
+            android:paddingBottom="@dimen/sp_5">
+
+            <!-- En-tête : date + nom du commerce -->
+            <TextView
+                android:id="@+id/txtDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_5"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+            <TextView
+                android:id="@+id/txtGreeting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:accessibilityHeading="true"
+                android:textAppearance="@style/TextAppearance.Hesba.Display" />
+
+            <!-- Premier usage : 3 étapes -->
+            <LinearLayout
+                android:id="@+id/firstUse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_5"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_first_title"
+                    android:textAppearance="@style/TextAppearance.Hesba.Title" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_2"
+                    android:text="@string/home_first_body"
+                    android:textAppearance="@style/TextAppearance.Hesba.Body.Soft" />
+
+                <include
+                    android:id="@+id/step1"
+                    layout="@layout/item_step" />
+
+                <include
+                    android:id="@+id/step2"
+                    layout="@layout/item_step" />
+
+                <include
+                    android:id="@+id/step3"
+                    layout="@layout/item_step" />
+            </LinearLayout>
+
+            <!-- Alertes en premier -->
+            <LinearLayout
+                android:id="@+id/alertsBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtAlertsTitle"
+                    style="@style/Hesba.Section"
+                    android:text="@string/home_alerts" />
+
+                <LinearLayout
+                    android:id="@+id/listAlerts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:id="@+id/txtNoAlert"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/sp_3"
+                    android:gravity="center_vertical"
+                    android:paddingTop="@dimen/sp_2"
+                    android:paddingBottom="@dimen/sp_2"
+                    android:text="@string/home_no_alert"
+                    android:textAppearance="@style/TextAppearance.Hesba.Body.Soft"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_check"
+                    app:drawableTint="@color/hb_good" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMoreAlerts"
+                    style="@style/Widget.Hesba.Button.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Actions rapides : bande de 3 touches, comme un clavier de caisse -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/home_actions" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_search"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/actionNewRecipe"
+                    style="@style/Hesba.QuickAction"
+                    android:text="@string/action_new_recipe"
+                    app:drawableTopCompat="@drawable/ic_recipes" />
+
+                <View
+                    android:layout_width="@dimen/hairline"
+                    android:layout_height="match_parent"
+                    android:background="@color/hb_line" />
+
+                <TextView
+                    android:id="@+id/actionScan"
+                    style="@style/Hesba.QuickAction"
+                    android:text="@string/action_scan_invoice"
+                    app:drawableTopCompat="@drawable/ic_scan" />
+
+                <View
+                    android:layout_width="@dimen/hairline"
+                    android:layout_height="match_parent"
+                    android:background="@color/hb_line" />
+
+                <TextView
+                    android:id="@+id/actionAddIngredient"
+                    style="@style/Hesba.QuickAction"
+                    android:text="@string/action_add_ingredient"
+                    app:drawableTopCompat="@drawable/ic_ingredients" />
+            </LinearLayout>
+
+            <!-- Chiffres clés -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/home_figures" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/figRecipes"
+                    style="@style/Hesba.Figure">
+
+                    <TextView
+                        android:id="@+id/txtFigRecipes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Hesba.Figure" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_fig_recipes"
+                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="@dimen/hairline"
+                    android:layout_height="match_parent"
+                    android:background="@color/hb_line" />
+
+                <LinearLayout
+                    android:id="@+id/figIngredients"
+                    style="@style/Hesba.Figure">
+
+                    <TextView
+                        android:id="@+id/txtFigIngredients"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Hesba.Figure" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_fig_ingredients"
+                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="@dimen/hairline"
+                    android:layout_height="match_parent"
+                    android:background="@color/hb_line" />
+
+                <LinearLayout
+                    android:id="@+id/figAttention"
+                    style="@style/Hesba.Figure">
+
+                    <TextView
+                        android:id="@+id/txtFigAttention"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Hesba.Figure" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_fig_attention"
+                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Outils -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/home_tools" />
+
+            <View style="@style/Hesba.Divider" />
+
+            <include
+                android:id="@+id/toolWhatIf"
+                layout="@layout/item_link" />
+
+            <include
+                android:id="@+id/toolShopping"
+                layout="@layout/item_link" />
+
+            <include
+                android:id="@+id/toolInsights"
+                layout="@layout/item_link" />
+
+            <include
+                android:id="@+id/toolInvoices"
+                layout="@layout/item_link" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <include layout="@layout/view_bottom_nav" />
+</LinearLayout>

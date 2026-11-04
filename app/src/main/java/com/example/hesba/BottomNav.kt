@@ -2,45 +2,52 @@ package com.example.hesba
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Typeface
-import android.view.View
-import android.widget.TextView
+import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.activity.addCallback
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-// Barre du bas partagée (layout/view_bottom_nav.xml) : Recettes, Ingrédients, Profil
+/**
+ * Barre du bas partagée (layout/view_bottom_nav.xml) : Accueil, Mes recettes, Ingrédients, Profil.
+ * Changer d'onglet remplace l'écran (pas de pile d'onglets) ; « retour » depuis un onglet ramène à l'Accueil,
+ * puis quitte l'appli depuis l'Accueil.
+ */
 object BottomNav {
 
-    enum class Tab { RECETTES, INGREDIENTS, PROFIL }
-
-    fun setup(activity: Activity, current: Tab) {
-        bind(activity, current, Tab.RECETTES, R.id.navRecettes, R.id.navRecettesLabel, RecettesActivity::class.java)
-        bind(activity, current, Tab.INGREDIENTS, R.id.navIngredients, R.id.navIngredientsLabel, IngredientsActivity::class.java)
-        bind(activity, current, Tab.PROFIL, R.id.navProfil, R.id.navProfilLabel, ProfilActivity::class.java)
+    enum class Tab(val itemId: Int, val target: Class<out Activity>) {
+        HOME(R.id.tab_home, HomeActivity::class.java),
+        RECIPES(R.id.tab_recipes, RecettesActivity::class.java),
+        INGREDIENTS(R.id.tab_ingredients, IngredientsActivity::class.java),
+        PROFILE(R.id.tab_profile, ProfilActivity::class.java)
     }
 
-    private fun bind(
-        activity: Activity,
-        current: Tab,
-        tab: Tab,
-        itemId: Int,
-        labelId: Int,
-        target: Class<out Activity>
-    ) {
-        val item = activity.findViewById<View>(itemId)
-        val label = activity.findViewById<TextView>(labelId)
-        if (tab == current) {
-            // onglet actif : fond safran + texte en gras, pas de clic
-            item.setBackgroundResource(R.drawable.bg_nav_active)
-            label.setTypeface(null, Typeface.BOLD)
-            item.setOnClickListener(null)
+    fun setup(activity: ComponentActivity, current: Tab) {
+        val nav = activity.findViewById<BottomNavigationView>(R.id.bottomNav)
+        nav.selectedItemId = current.itemId
+        nav.setOnItemSelectedListener { item ->
+            val tab = Tab.entries.first { it.itemId == item.itemId }
+            if (tab != current) open(activity, tab)
+            true
+        }
+        nav.setOnItemReselectedListener { }
+        if (current != Tab.HOME) {
+            activity.onBackPressedDispatcher.addCallback(activity) { open(activity, Tab.HOME) }
+        }
+    }
+
+    fun open(activity: Activity, tab: Tab) {
+        activity.startActivity(Intent(activity, tab.target).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
+        activity.finish()
+        noTransition(activity)
+    }
+
+    @Suppress("DEPRECATION")
+    fun noTransition(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= 34) {
+            activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, 0, 0)
+            activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0)
         } else {
-            item.background = null
-            label.setTypeface(null, Typeface.NORMAL)
-            item.setOnClickListener {
-                // on remplace la page actuelle : le bouton retour quitte l'appli au lieu d'empiler les onglets
-                val intent = Intent(activity, target).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                activity.startActivity(intent)
-                activity.finish()
-            }
+            activity.overridePendingTransition(0, 0)
         }
     }
 }

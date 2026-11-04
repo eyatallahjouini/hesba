@@ -1,146 +1,139 @@
 package com.example.hesba
 
+import android.content.Context
 import android.content.Intent
-import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.example.hesba.auth.SessionManager
-import com.example.hesba.data.HesbaDatabase
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.hesba.data.Ingredient
-import kotlinx.coroutines.flow.first
+import com.example.hesba.databinding.ActivityIngredientsBinding
+import com.example.hesba.databinding.ItemIngredientBinding
+import com.example.hesba.domain.Money
+import com.example.hesba.domain.TextNormalizer
+import com.example.hesba.ui.BaseActivity
+import com.example.hesba.ui.Fmt
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import java.util.Locale
+import java.math.BigDecimal
 
-// Onglet « Ingrédients » : liste des ingrédients et de leur prix d'achat
-class IngredientsActivity : AppCompatActivity() {
+/** Ingrédients : recherche en direct, prix payé, prix ramené au kg / L / pièce, nombre de recettes. */
+class IngredientsActivity : BaseActivity() {
 
-    private lateinit var session: SessionManager
+    private lateinit var b: ActivityIngredientsBinding
+    private val query = MutableStateFlow("")
+    private val adapter = Adapter()
+
+    data class Row(val ingredient: Ingredient, val usedIn: Int)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_ingredients)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        if (isFinishing) return
+        b = ActivityIngredientsBinding.inflate(layoutInflater)
+        setScreen(b.root)
         BottomNav.setup(this, BottomNav.Tab.INGREDIENTS)
 
-        session = SessionManager(this)
-
-        // Le formulaire d'ajout (NouvelIngredientActivity) : on l'ouvre sans le modifier
-        findViewById<View>(R.id.btnAddIngredient).setOnClickListener {
-            startActivity(Intent(this, NouvelIngredientActivity::class.java))
+        b.list.layoutManager = LinearLayoutManager(this)
+        b.list.adapter = adapter
+        b.btnAdd.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java)) }
+        b.search.editSearch.setHint(R.string.search_ingredients_hint)
+        b.search.editSearch.doAfterTextChanged {
+            query.value = it?.toString().orEmpty()
+            b.search.btnClear.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
         }
+        b.search.btnClear.setOnClickListener { b.search.editSearch.text.clear() }
 
-        val list = findViewById<LinearLayout>(R.id.listIngredients)
-
-        val db = HesbaDatabase.getInstance(this)
-        val currentUserId = session.getUserId()
-
-        // Écoute de la liste des ingrédients uniquement pour l'utilisateur courant (ou invité -1L)
         lifecycleScope.launch {
-            db.ingredientDao().getIngredientsParUtilisateur(currentUserId).collect { ingredients ->
-                show(list, ingredients)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(repo.workspace(), db.ingredientDao().usages(), query) { ws, usages, q -> Triple(ws, usages.associate { it.ingredientId to it.recettes }, q) }
+                    .collect { (ws, usages, q) ->
+                        val all = ws.ingredients.map { Row(it, usages[it.id] ?: 0) }
+                        val shown = if (q.isBlank()) all else {
+                            val words = TextNormalizer.tokens(q)
+                            all.filter { r -> val n = TextNormalizer.normalize(r.ingredient.nom); words.all { n.contains(it) } }
+                        }
+                        show(all.size, shown, q)
+                    }
             }
         }
     }
 
-    private fun show(list: LinearLayout, ingredients: List<Ingredient>) {
-        list.removeAllViews()
-        val count = ingredients.size
-        findViewById<TextView>(R.id.txtIngredientCount).text =
-            "$count ingrédient${if (count > 1) "s" else ""} · prix d'achat en dinars"
-        list.visibility = if (ingredients.isEmpty()) View.GONE else View.VISIBLE
-        findViewById<View>(R.id.txtNoIngredient).visibility = if (ingredients.isEmpty()) View.VISIBLE else View.GONE
-
-        val inflater = LayoutInflater.from(this)
-        for (ingredient in ingredients) {
-            val view = inflater.inflate(R.layout.item_ingredient, list, false)
-            view.findViewById<TextView>(R.id.txtIngredientName).text = ingredient.nom
-            view.findViewById<TextView>(R.id.txtIngredientUnit).text = packageLabel(ingredient)
-            view.findViewById<TextView>(R.id.txtUpdated).visibility = View.GONE
-            view.findViewById<TextView>(R.id.txtPrice).text = money(ingredient.prixPaye)
-            // Ligne ou crayon : modifier · Corbeille : supprimer
-            view.findViewById<View>(R.id.rowIngredient).setOnClickListener { openEdit(ingredient) }
-            view.findViewById<View>(R.id.btnEditIngredient).setOnClickListener { openEdit(ingredient) }
-            view.findViewById<View>(R.id.btnDeleteIngredient).setOnClickListener { askDelete(ingredient) }
-            list.addView(view)
-        }
-    }
-
-    // Ouvre la page en mode « Modifier »
-    private fun openEdit(ingredient: Ingredient) {
-        startActivity(
-            Intent(this, NouvelIngredientActivity::class.java)
-                .putExtra("EXTRA_INGREDIENT_ID", ingredient.id)
-        )
-    }
-
-    // La base refuse de supprimer un ingrédient utilisé (LigneRecette : RESTRICT) : on prévient avant
-    private fun askDelete(ingredient: Ingredient) {
-        lifecycleScope.launch {
-            val db = HesbaDatabase.getInstance(this@IngredientsActivity)
-            val usedIn = db.recetteDao().toutes().first().filter { recette ->
-                db.ligneRecetteDao().parRecette(recette.id).first().any { it.ingredientId == ingredient.id }
-            }
-            if (usedIn.isNotEmpty()) {
-                AlertDialog.Builder(this@IngredientsActivity)
-                    .setTitle("Suppression impossible")
-                    .setMessage(
-                        "« ${ingredient.nom} » est utilisé dans : ${usedIn.joinToString { it.nom }}.\n\n" +
-                                "Retire-le d'abord de ces recettes."
-                    )
-                    .setPositiveButton("OK", null)
-                    .show()
-                return@launch
-            }
-            AlertDialog.Builder(this@IngredientsActivity)
-                .setTitle("Supprimer « ${ingredient.nom} » ?")
-                .setMessage("Cette action est définitive.")
-                .setPositiveButton("Supprimer") { _, _ -> delete(ingredient) }
-                .setNegativeButton("Annuler", null)
-                .show()
-        }
-    }
-
-    private fun delete(ingredient: Ingredient) {
-        lifecycleScope.launch {
-            val db = HesbaDatabase.getInstance(this@IngredientsActivity)
-            try {
-                db.ingredientDao().supprimer(ingredient)
-                Toast.makeText(this@IngredientsActivity, "« ${ingredient.nom} » supprimé", Toast.LENGTH_SHORT).show()
-            } catch (e: SQLiteConstraintException) {
-                // Ajouté à une recette entre-temps
-                Toast.makeText(this@IngredientsActivity, "Utilisé dans une recette : suppression impossible", Toast.LENGTH_LONG).show()
+    private fun show(total: Int, rows: List<Row>, q: String) {
+        b.txtCount.text = if (q.isBlank()) resources.getQuantityString(R.plurals.ingredients_count, total, total)
+        else resources.getQuantityString(R.plurals.results_count, rows.size, rows.size)
+        adapter.submitList(rows)
+        val empty = rows.isEmpty()
+        b.empty.root.visibility = if (empty) View.VISIBLE else View.GONE
+        b.list.visibility = if (empty) View.GONE else View.VISIBLE
+        b.columns.visibility = if (empty) View.INVISIBLE else View.VISIBLE
+        if (!empty) return
+        if (total == 0) {
+            b.empty.emptyIcon.setImageResource(R.drawable.ic_ingredients)
+            b.empty.emptyTitle.setText(R.string.ingredients_empty_title)
+            b.empty.emptyBody.setText(R.string.ingredients_empty_body)
+            b.empty.emptyAction.setText(R.string.action_add_ingredient)
+            b.empty.emptyAction.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java)) }
+        } else {
+            b.empty.emptyIcon.setImageResource(R.drawable.ic_search)
+            b.empty.emptyTitle.text = getString(R.string.search_no_result_title, q.trim())
+            b.empty.emptyBody.setText(R.string.search_no_result_ingredient)
+            b.empty.emptyAction.text = getString(R.string.action_create_named, q.trim())
+            b.empty.emptyAction.setOnClickListener {
+                startActivity(Intent(this, NouvelIngredientActivity::class.java).putExtra(NouvelIngredientActivity.EXTRA_NAME, q.trim()))
             }
         }
     }
 
-    // 1000 g -> « 1 kg », 500 ml -> « 500 ml », 30 piece -> « 30 pièces »
-    private fun packageLabel(ingredient: Ingredient): String {
-        val q = ingredient.quantiteEmballage
-        return when (ingredient.unite) {
-            "g" -> if (q >= 1000) "${number(q / 1000)} kg" else "${number(q)} g"
-            "ml" -> if (q >= 1000) "${number(q / 1000)} L" else "${number(q)} ml"
-            else -> if (q > 1) "${number(q)} pièces" else "${number(q)} pièce"
+    companion object {
+        /** « 1,200 DT / kg » : prix ramené à 1 kg, 1 L ou 1 pièce, rendement compris. */
+        fun normalizedPrice(context: Context, i: Ingredient): String? {
+            val unitPrice = CostCalculator.unitPrice(i.prixMillimes, BigDecimal(i.quantiteEmballage.toString()), BigDecimal(i.rendementPourcent.toString())) ?: return null
+            val (factor, unit) = when (i.unite) { "g" -> 1000 to "kg"; "ml" -> 1000 to "l"; else -> 1 to "piece" }
+            val per = Money.roundMillimes(unitPrice.multiply(BigDecimal(factor)))
+            return context.getString(R.string.price_per_unit, Fmt.money(context, per), Fmt.unitLabel(context, unit))
         }
     }
 
-    private fun number(value: Double): String =
-        if (value % 1.0 == 0.0) value.toLong().toString()
-        else String.format(Locale.FRANCE, "%.2f", value).trimEnd('0').trimEnd(',')
+    private inner class Adapter : ListAdapter<Row, Holder>(Diff) {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = Holder(ItemIngredientBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        override fun onBindViewHolder(holder: Holder, position: Int) = holder.bind(getItem(position))
+    }
 
-    private fun money(value: Double) = String.format(Locale.FRANCE, "%.2f dt", value)
+    private inner class Holder(val v: ItemIngredientBinding) : RecyclerView.ViewHolder(v.root) {
+        fun bind(row: Row) {
+            val ctx = this@IngredientsActivity
+            val i = row.ingredient
+            v.name.text = i.nom
+            val parts = mutableListOf(Fmt.baseQuantity(ctx, i.quantiteEmballage, i.unite))
+            if (i.rendementPourcent < 100.0) parts += getString(R.string.yield_short, Fmt.number(ctx, i.rendementPourcent, 0))
+            parts += if (row.usedIn == 0) getString(R.string.used_in_none) else resources.getQuantityString(R.plurals.used_in, row.usedIn, row.usedIn)
+            v.details.text = parts.joinToString(" · ")
+            if (i.prixMillimes == null) {
+                v.price.setText(R.string.price_missing)
+                v.price.setTextColor(getColor(R.color.hb_bad))
+                v.unitPrice.text = ""
+            } else {
+                v.price.text = Fmt.money(ctx, i.prixMillimes)
+                v.price.setTextColor(getColor(R.color.hb_ink))
+                v.unitPrice.text = normalizedPrice(ctx, i)
+            }
+            v.row.setOnClickListener {
+                startActivity(Intent(ctx, NouvelIngredientActivity::class.java).putExtra(NouvelIngredientActivity.EXTRA_INGREDIENT_ID, i.id))
+            }
+        }
+    }
+
+    private object Diff : DiffUtil.ItemCallback<Row>() {
+        override fun areItemsTheSame(a: Row, b: Row) = a.ingredient.id == b.ingredient.id
+        override fun areContentsTheSame(a: Row, b: Row) = a == b
+    }
 }

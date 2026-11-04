@@ -2,237 +2,194 @@ package com.example.hesba
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Outline
 import android.os.Bundle
+import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewOutlineProvider
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.example.hesba.auth.SessionManager
-import com.example.hesba.data.HesbaDatabase
-import com.example.hesba.data.Ingredient
-import com.example.hesba.data.LigneRecette
-import com.example.hesba.data.Recette
-import com.example.hesba.data.Utilisateur
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.example.hesba.databinding.ActivityRecipesBinding
+import com.example.hesba.databinding.ItemRecipeBinding
+import com.example.hesba.domain.RecipeSearch
+import com.example.hesba.domain.Workspace
+import com.example.hesba.ui.BaseActivity
+import com.example.hesba.ui.Fmt
+import com.example.hesba.ui.RecipePhotos
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.util.Locale
+import java.math.BigDecimal
 
-// Onglet « Recettes » : liste des recettes enregistrées avec calcul dynamique selon le profil utilisateur
-class RecettesActivity : AppCompatActivity() {
+/** Mes recettes : recherche fixée en haut (en direct, sans accents ni casse, arabe), tri, états vides. */
+class RecettesActivity : BaseActivity() {
 
-    private lateinit var session: SessionManager
+    private lateinit var b: ActivityRecipesBinding
+    private val query = MutableStateFlow("")
+    private val sort = MutableStateFlow(RecipeSearch.Sort.NAME)
+    private val adapter = Adapter()
+    private val thumbs = LruCache<Long, Bitmap>(40)
+    private var total = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_recipes)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        if (isFinishing) return
+        b = ActivityRecipesBinding.inflate(layoutInflater)
+        setScreen(b.root)
+        BottomNav.setup(this, BottomNav.Tab.RECIPES)
+
+        b.list.layoutManager = LinearLayoutManager(this)
+        b.list.adapter = adapter
+        b.btnNew.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
+
+        b.search.editSearch.setHint(R.string.search_recipes_hint)
+        b.search.editSearch.doAfterTextChanged {
+            query.value = it?.toString().orEmpty()
+            b.search.btnClear.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
         }
-        BottomNav.setup(this, BottomNav.Tab.RECETTES)
-
-        session = SessionManager(this)
-
-        findViewById<View>(R.id.btnNewRecipe).setOnClickListener {
-            startActivity(Intent(this, ComposeRecipeActivity::class.java))
+        b.search.editSearch.setOnEditorActionListener { v, action, _ ->
+            if (action == EditorInfo.IME_ACTION_SEARCH) {
+                getSystemService(InputMethodManager::class.java).hideSoftInputFromWindow(v.windowToken, 0); true
+            } else false
         }
-
-        val list = findViewById<LinearLayout>(R.id.listRecipes)
-        val db = HesbaDatabase.getInstance(this)
-        val currentUserId = session.getUserId()
+        b.search.btnClear.setOnClickListener { b.search.editSearch.text.clear() }
+        b.groupSort.setOnCheckedStateChangeListener { _, ids ->
+            sort.value = when (ids.firstOrNull()) {
+                R.id.sortCost -> RecipeSearch.Sort.COST
+                R.id.sortMargin -> RecipeSearch.Sort.MARGIN
+                else -> RecipeSearch.Sort.NAME
+            }
+        }
 
         lifecycleScope.launch {
-            // Écoute combinée : Recettes + Ingrédients + Profil Utilisateur
-            combine(
-                db.recetteDao().getRecettesParUtilisateur(currentUserId),
-                db.ingredientDao().getIngredientsParUtilisateur(currentUserId),
-                db.utilisateurDao().parId(currentUserId)
-            ) { recettes, ingredients, user ->
-                Triple(recettes, ingredients, user)
-            }.collect { (recettes, ingredients, user) ->
-                show(db, list, recettes, ingredients, user)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(repo.workspace(), query, sort) { ws, q, s -> Triple(ws, q, s) }.collect { (ws, q, s) -> show(ws, q, s) }
             }
         }
     }
 
-    private suspend fun show(
-        db: HesbaDatabase,
-        list: LinearLayout,
-        recettes: List<Recette>,
-        ingredients: List<Ingredient>,
-        user: Utilisateur?
-    ) {
-        val ingredientsById = ingredients.associateBy { it.id }
-
-        // Calcul dynamique synchronisé avec les données du profil actuel
-        val results = recettes.map { recette ->
-            val lignes = db.ligneRecetteDao().parRecette(recette.id).first()
-            computeDynamicCostAndPrice(recette, lignes, ingredientsById, user)
+    private suspend fun show(ws: Workspace, q: String, s: RecipeSearch.Sort) {
+        val all = ws.recipes.map { RecipeSearch.Item(it, ws.cost(it)) }
+        total = all.size
+        val result = RecipeSearch.apply(all, q, s)
+        withContext(Dispatchers.IO) {
+            result.forEach { item -> if (thumbs.get(item.recette.id) == null) RecipePhotos.thumbnail(this@RecettesActivity, item.recette.id)?.let { thumbs.put(item.recette.id, it) } }
         }
+        b.txtCount.text = when {
+            q.isBlank() -> resources.getQuantityString(R.plurals.recipes_count, total, total)
+            else -> resources.getQuantityString(R.plurals.results_count, result.size, result.size)
+        }
+        adapter.submitList(result)
+        val empty = result.isEmpty()
+        b.empty.root.visibility = if (empty) View.VISIBLE else View.GONE
+        b.list.visibility = if (empty) View.GONE else View.VISIBLE
+        b.columns.visibility = if (empty) View.INVISIBLE else View.VISIBLE
+        b.groupSort.visibility = if (total < 2) View.GONE else View.VISIBLE
+        if (empty) {
+            b.empty.emptyIcon.setImageResource(if (total == 0) R.drawable.ic_recipes else R.drawable.ic_search)
+            if (total == 0) {
+                b.empty.emptyTitle.setText(R.string.recipes_empty_title)
+                b.empty.emptyBody.setText(if (ws.ingredients.isEmpty()) R.string.recipes_empty_no_ingredient else R.string.recipes_empty_body)
+                if (ws.ingredients.isEmpty()) {
+                    b.empty.emptyAction.setText(R.string.action_add_ingredient)
+                    b.empty.emptyAction.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java)) }
+                } else {
+                    b.empty.emptyAction.setText(R.string.action_new_recipe)
+                    b.empty.emptyAction.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
+                }
+            } else {
+                b.empty.emptyTitle.text = getString(R.string.search_no_result_title, q.trim())
+                b.empty.emptyBody.setText(R.string.search_no_result_body)
+                b.empty.emptyAction.setText(R.string.action_clear_search)
+                b.empty.emptyAction.setOnClickListener { b.search.editSearch.text.clear() }
+            }
+        }
+    }
 
-        val photos = withContext(Dispatchers.IO) { recettes.associate { it.id to loadThumbnail(it.id) } }
-        list.removeAllViews()
-        val count = recettes.size
-        findViewById<TextView>(R.id.txtRecipeCount).text =
-            if (count <= 1) "$count recette enregistrée" else "$count recettes enregistrées"
-        findViewById<View>(R.id.txtNoRecipe).visibility = if (count == 0) View.VISIBLE else View.GONE
-        list.visibility = if (count == 0) View.GONE else View.VISIBLE
+    override fun onResume() {
+        super.onResume()
+        thumbs.evictAll()   // une photo a pu changer dans l'éditeur
+    }
 
-        val inflater = LayoutInflater.from(this)
-        for ((recette, result) in recettes.zip(results)) {
-            val view = inflater.inflate(R.layout.item_recipe, list, false)
-            photos[recette.id]?.let { bitmap ->
-                view.findViewById<ImageView>(R.id.imgRecipePhoto).apply {
-                    setImageBitmap(bitmap)
-                    outlineProvider = CircleOutline
-                    clipToOutline = true
-                    visibility = View.VISIBLE
+    private inner class Adapter : ListAdapter<RecipeSearch.Item, Holder>(Diff) {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+            Holder(ItemRecipeBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+        override fun onBindViewHolder(holder: Holder, position: Int) = holder.bind(getItem(position))
+    }
+
+    private inner class Holder(val v: ItemRecipeBinding) : RecyclerView.ViewHolder(v.root) {
+        fun bind(item: RecipeSearch.Item) {
+            val ctx = this@RecettesActivity
+            val r = item.recette
+            val c = item.cost
+            v.name.text = r.nom
+            v.monogram.text = r.nom.trim().take(1).uppercase()
+            val photo = thumbs.get(r.id)
+            v.photo.visibility = if (photo != null) View.VISIBLE else View.GONE
+            if (photo != null) {
+                v.photo.setImageBitmap(photo)
+                v.photo.outlineProvider = Rounded
+                v.photo.clipToOutline = true
+            }
+            v.details.text = resources.getQuantityString(R.plurals.portions, r.nombreParts, r.nombreParts)
+            v.cost.text = Fmt.money(ctx, c.costPerPortionMillimes)
+            v.price.text = if (r.prixVenteMillimes != null) getString(R.string.list_price, Fmt.money(ctx, r.prixVenteMillimes))
+            else getString(R.string.list_no_price)
+
+            val target = BigDecimal(r.margeVoulue.toString())
+            val margin = c.realMarginPercent
+            v.tag.visibility = View.VISIBLE
+            when {
+                !c.isComplete -> {
+                    v.tag.setText(R.string.tag_incomplete)
+                    style(v, R.drawable.bg_tag, R.color.hb_ink)
+                }
+                margin == null -> v.tag.visibility = View.GONE
+                margin < target -> {
+                    v.tag.text = getString(R.string.tag_margin, Fmt.percent(ctx, margin))
+                    style(v, R.drawable.bg_tag_bad, R.color.hb_bad)
+                }
+                else -> {
+                    v.tag.text = getString(R.string.tag_margin, Fmt.percent(ctx, margin))
+                    style(v, R.drawable.bg_tag_good, R.color.hb_good)
                 }
             }
-            view.findViewById<TextView>(R.id.txtName).text = recette.nom
-            view.findViewById<TextView>(R.id.txtServings).text = "${recette.nombreParts} parts"
-
-            val margin = recette.margeVoulue.toInt()
-            val badge = view.findViewById<TextView>(R.id.txtMargin)
-            if (margin >= 20) {
-                badge.text = "▲ Marge $margin %"
-                badge.setBackgroundResource(R.drawable.bg_badge_green)
-                badge.setTextColor(getColor(R.color.vert))
-            } else {
-                badge.text = "▼ Marge $margin %"
-                badge.setBackgroundResource(R.drawable.bg_badge_red)
-                badge.setTextColor(getColor(R.color.rouge))
+            v.row.contentDescription = getString(
+                R.string.cd_recipe_row, r.nom, Fmt.money(ctx, c.costPerPortionMillimes),
+                if (margin != null) Fmt.percent(ctx, margin) else getString(R.string.value_missing)
+            )
+            v.row.setOnClickListener {
+                startActivity(Intent(ctx, RecipeDetailActivity::class.java).putExtra(RecipeDetailActivity.EXTRA_ID, r.id))
             }
+        }
 
-            // Affichage des prix calculés en parfaite harmonie avec ComposeRecipeActivity et ProfilActivity
-            view.findViewById<TextView>(R.id.txtCost).text = money(result.first)
-            view.findViewById<TextView>(R.id.txtPrice).text = money(result.second)
-
-            view.findViewById<View>(R.id.cardRecipe).setOnClickListener { openEdit(recette) }
-            view.findViewById<View>(R.id.btnEditRecipe).setOnClickListener { openEdit(recette) }
-            view.findViewById<View>(R.id.btnDeleteRecipe).setOnClickListener { askDelete(recette) }
-            list.addView(view)
+        private fun style(v: ItemRecipeBinding, bg: Int, color: Int) {
+            v.tag.setBackgroundResource(bg)
+            v.tag.setTextColor(getColor(color))
         }
     }
 
-    // Calcul dynamique miroir à celui de ComposeRecipeActivity
-    private fun computeDynamicCostAndPrice(
-        recette: Recette,
-        lignes: List<LigneRecette>,
-        ingredientsById: Map<Long, Ingredient>,
-        user: Utilisateur?
-    ): Pair<Double, Double> {
-        // 1. Si la recette ne contient aucun ingrédient, le coût et le prix sont 0,00 dt
-        if (lignes.isEmpty()) {
-            return Pair(0.0, 0.0)
-        }
-
-        // 2. Coût direct des ingrédients
-        val coutIngredientsBatch = lignes.sumOf { ligne ->
-            val ing = ingredientsById[ligne.ingredientId]
-            if (ing != null) {
-                val prixUnitaire = CostCalculator.pricePerUnit(ing.prixPaye, ing.quantiteEmballage)
-                CostCalculator.lineCost(ligne.quantite, prixUnitaire)
-            } else 0.0
-        }
-
-        // 3. Activité (par défaut "domicile" si l'utilisateur est null/non connecté)
-        val activite = user?.activite ?: "domicile"
-        val prepTimeMin = recette.tempsPreparationMinutes
-        val tempsHeures = prepTimeMin / 60.0
-
-        // 4. Calcul de la main-d'œuvre
-        val coutMainOeuvre = when (activite) {
-            "avec_employe" -> {
-                val nbEmp = if ((user?.nombreEmployes ?: 0) > 0) user!!.nombreEmployes else 1
-                val salaire = if ((user?.salaireMoyenEmploye ?: 0.0) > 0.0) user!!.salaireMoyenEmploye else 1200.0
-                CostCalculator.laborCost(nbEmp * salaire, 160.0, tempsHeures)
-            }
-            "sans_employe" -> CostCalculator.laborCost(1500.0, 160.0, tempsHeures)
-            else -> 0.0 // domicile
-        }
-
-        // 5. Charges fixes (Loyer) par part
-        val rent = user?.loyerMensuel ?: 0.0
-        val volumeMensuel = if ((user?.volumeMensuel ?: 0) > 0) user!!.volumeMensuel.toDouble() else 300.0
-
-        val chargesFixesPart = when (activite) {
-            "sans_employe", "avec_employe" -> {
-                if (rent > 0.0 && volumeMensuel > 0.0) {
-                    CostCalculator.fixedCostPerUnit(rent, volumeMensuel)
-                } else 0.0
-            }
-            else -> 0.0 // domicile
-        }
-
-        // 6. Coût complet par part et Prix de vente conseillé
-        val safePieces = if (recette.nombreParts > 0) recette.nombreParts.toDouble() else 1.0
-        val totalBatch = coutIngredientsBatch + coutMainOeuvre
-        val coutParPart = CostCalculator.costPerPiece(totalBatch, safePieces) + chargesFixesPart
-
-        val margeDecimale = recette.margeVoulue / 100.0
-        val prixVente = CostCalculator.sellingPriceHT(coutParPart, margeDecimale)
-
-        return Pair(coutParPart, prixVente)
+    private object Diff : DiffUtil.ItemCallback<RecipeSearch.Item>() {
+        override fun areItemsTheSame(a: RecipeSearch.Item, b: RecipeSearch.Item) = a.recette.id == b.recette.id
+        override fun areContentsTheSame(a: RecipeSearch.Item, b: RecipeSearch.Item) = a == b
     }
 
-    private fun openEdit(recette: Recette) {
-        startActivity(
-            Intent(this, ComposeRecipeActivity::class.java).putExtra("EXTRA_RECETTE_ID", recette.id)
-        )
-    }
-
-    private fun askDelete(recette: Recette) {
-        AlertDialog.Builder(this)
-            .setTitle("Supprimer « ${recette.nom} » ?")
-            .setMessage("La recette, ses ingrédients et sa photo seront supprimés. Tes ingrédients restent dans ta liste.")
-            .setPositiveButton("Supprimer") { _, _ -> delete(recette) }
-            .setNegativeButton("Annuler", null)
-            .show()
-    }
-
-    private fun delete(recette: Recette) {
-        lifecycleScope.launch {
-            HesbaDatabase.getInstance(this@RecettesActivity).recetteDao().supprimer(recette)
-            withContext(Dispatchers.IO) { photoFile(recette.id).delete() }
-            Toast.makeText(this@RecettesActivity, "« ${recette.nom} » supprimée", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun photoFile(recipeId: Long) = File(File(filesDir, "photos"), "recette_$recipeId.jpg")
-
-    private fun loadThumbnail(recipeId: Long): Bitmap? {
-        val file = photoFile(recipeId)
-        if (!file.exists()) return null
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        BitmapFactory.decodeFile(file.path, bounds)
-        var sample = 1
-        while (minOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= 150) sample *= 2
-        return BitmapFactory.decodeFile(file.path, BitmapFactory.Options().apply { inSampleSize = sample })
-    }
-
-    private object CircleOutline : ViewOutlineProvider() {
+    object Rounded : ViewOutlineProvider() {
         override fun getOutline(view: View, outline: Outline) {
-            outline.setOval(0, 0, view.width, view.height)
+            outline.setRoundRect(0, 0, view.width, view.height, view.resources.displayMetrics.density * 10)
         }
     }
-
-    private fun money(value: Double) = String.format(Locale.FRANCE, "%.2f dt", value)
 }

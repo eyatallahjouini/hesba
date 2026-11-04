@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "772bfe5727f4d25ecba670a6cb3faca2",
+    "identityHash": "f553715c258ca7a0759739b74db660c2",
     "entities": [
       {
         "tableName": "utilisateur",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `prenom` TEXT NOT NULL, `email` TEXT NOT NULL, `motDePasseHash` TEXT NOT NULL, `activite` TEXT NOT NULL, `nombreEmployes` INTEGER NOT NULL, `salaireMoyenEmploye` REAL NOT NULL, `loyerMensuel` REAL NOT NULL, `volumeMensuel` INTEGER NOT NULL, `dateCreation` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `prenom` TEXT NOT NULL, `email` TEXT NOT NULL, `motDePasseHash` TEXT NOT NULL, `activite` TEXT NOT NULL, `politiqueConfidentialiteAcceptee` INTEGER NOT NULL, `dateCreation` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -39,26 +39,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "nombreEmployes",
-            "columnName": "nombreEmployes",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "salaireMoyenEmploye",
-            "columnName": "salaireMoyenEmploye",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "loyerMensuel",
-            "columnName": "loyerMensuel",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "volumeMensuel",
-            "columnName": "volumeMensuel",
+            "fieldPath": "politiqueConfidentialiteAcceptee",
+            "columnName": "politiqueConfidentialiteAcceptee",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -89,7 +71,7 @@
       },
       {
         "tableName": "ingredient",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nom` TEXT NOT NULL, `unite` TEXT NOT NULL, `quantiteEmballage` REAL NOT NULL, `prixPaye` REAL NOT NULL, `dateMiseAJour` INTEGER NOT NULL, `utilisateurId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nom` TEXT NOT NULL, `unite` TEXT NOT NULL, `quantiteEmballage` REAL NOT NULL, `prixPaye` REAL NOT NULL, `dateMiseAJour` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -126,12 +108,6 @@
             "columnName": "dateMiseAJour",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "utilisateurId",
-            "columnName": "utilisateurId",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -143,7 +119,7 @@
       },
       {
         "tableName": "recette",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `utilisateurId` INTEGER NOT NULL, `nom` TEXT NOT NULL, `nombreParts` INTEGER NOT NULL, `margeVoulue` REAL NOT NULL, `coutParPart` REAL NOT NULL, `prixVente` REAL, `tempsPreparationMinutes` INTEGER NOT NULL, `dateCreation` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `utilisateurId` INTEGER NOT NULL, `nom` TEXT NOT NULL, `nombreParts` INTEGER NOT NULL, `margeVoulue` REAL NOT NULL, `coutParPart` REAL NOT NULL, `prixVente` REAL, `dateCreation` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -185,12 +161,6 @@
             "fieldPath": "prixVente",
             "columnName": "prixVente",
             "affinity": "REAL"
-          },
-          {
-            "fieldPath": "tempsPreparationMinutes",
-            "columnName": "tempsPreparationMinutes",
-            "affinity": "INTEGER",
-            "notNull": true
           },
           {
             "fieldPath": "dateCreation",
@@ -382,7 +352,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '772bfe5727f4d25ecba670a6cb3faca2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f553715c258ca7a0759739b74db660c2')"
     ]
   }
 }

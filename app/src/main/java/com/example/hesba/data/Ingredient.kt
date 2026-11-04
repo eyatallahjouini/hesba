@@ -1,19 +1,23 @@
 package com.example.hesba.data
+
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.hesba.auth.SessionManager
 
-@Entity(tableName = "ingredient")
+/**
+ * Matière première achetée.
+ * Prix de l'EMBALLAGE en millimes (ex. sac de 1000 g à 1,200 DT → quantiteEmballage = 1000, prixMillimes = 1200).
+ * rendementPourcent : part réellement utilisable (épluchage, os, pertes). 100 = aucune perte.
+ */
+@Entity(tableName = "ingredient", indices = [Index("utilisateurId")])
 data class Ingredient(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val utilisateurId: Long = SessionManager.ID_UTILISATEUR_INVITE,
     val nom: String,
-    val unite: String,                  // toujours "g", "ml" ou "piece"
+    val unite: String,                  // unité de base : "g", "ml" ou "piece"
     val quantiteEmballage: Double,      // en unité de base (1 kg = 1000 g)
-    val prixPaye: Double,
-    val dateMiseAJour: Long = System.currentTimeMillis(),
-    val utilisateurId: Long = SessionManager.ID_UTILISATEUR_INVITE
-) {
-    // Calculé, non stocké : 1000 g à 6,00 dt donne 0,006 dt/g
-    val prixParUnite: Double
-        get() = if (quantiteEmballage > 0) prixPaye / quantiteEmballage else 0.0
-}
+    val prixMillimes: Long?,            // null = prix pas encore connu
+    val rendementPourcent: Double = 100.0,
+    val dateMiseAJour: Long = System.currentTimeMillis()
+)

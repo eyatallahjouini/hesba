@@ -1,18 +1,28 @@
 package com.example.hesba.data
+
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+/**
+ * Base locale HESBA (SQLite via Room).
+ * v1 : base d'origine (prix en Double).
+ * v2 : montants en millimes entiers, rendement, coûts cachés, historique des prix, factures, synonymes.
+ * Jamais de fallbackToDestructiveMigration : chaque version a une migration testée (voir Migrations.kt).
+ */
 @Database(
     entities = [
         Utilisateur::class,
         Ingredient::class,
         Recette::class,
         LigneRecette::class,
-        Vente::class
+        Vente::class,
+        PrixHistorique::class,
+        Facture::class,
+        Synonyme::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class HesbaDatabase : RoomDatabase() {
@@ -21,17 +31,28 @@ abstract class HesbaDatabase : RoomDatabase() {
     abstract fun ingredientDao(): IngredientDao
     abstract fun recetteDao(): RecetteDao
     abstract fun ligneRecetteDao(): LigneRecetteDao
+    abstract fun prixHistoriqueDao(): PrixHistoriqueDao
+    abstract fun factureDao(): FactureDao
+    abstract fun synonymeDao(): SynonymeDao
+    abstract fun transfertDao(): TransfertDao
 
     companion object {
+        const val NAME = "hesba.db"
+
         @Volatile private var INSTANCE: HesbaDatabase? = null
 
         fun getInstance(context: Context): HesbaDatabase =
             INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    HesbaDatabase::class.java,
-                    "hesba.db"
-                ).build().also { INSTANCE = it }
+                INSTANCE ?: Room.databaseBuilder(context.applicationContext, HesbaDatabase::class.java, NAME)
+                    .addMigrations(*Migrations.ALL)
+                    .build()
+                    .also { INSTANCE = it }
             }
+
+        /** Ferme la base (restauration d'une sauvegarde). Le prochain getInstance la rouvre. */
+        fun closeInstance() = synchronized(this) {
+            INSTANCE?.close()
+            INSTANCE = null
+        }
     }
 }

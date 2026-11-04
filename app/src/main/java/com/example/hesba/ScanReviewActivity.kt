@@ -52,7 +52,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.math.BigDecimal
 
 /**
  * Facture lue → vérification ligne par ligne → confirmation → mise à jour en UNE transaction.
@@ -462,7 +461,4 @@ class ScanReviewActivity : BaseActivity() {
         startActivity(Intent(this, HomeActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
         finish()
     }
-
-    @Suppress("unused")
-    private fun bd(s: String) = BigDecimal(s)
 }

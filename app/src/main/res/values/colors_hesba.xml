@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Couleurs en plus de ta palette (safran, brun, creme, vert, rouge, caramel restent dans colors.xml) -->
+  <color name="brun_clair">#6D4C41</color>
+  <color name="brun_leger">#5A413B</color>
+  <color name="caramel_clair">#F6E4C8</color>
+  <color name="vert_clair">#E4F1E5</color>
+  <color name="rouge_clair">#FBE4E4</color>
+  <color name="safran_texte">#9A5200</color>
+  <color name="gris_hint">#8D7B76</color>
+  <color name="jaune_energie">#FFD54F</color>
+</resources>

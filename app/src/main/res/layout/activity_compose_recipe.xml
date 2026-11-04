@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_top_bar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/gutter"
+            android:paddingEnd="@dimen/gutter"
+            android:paddingBottom="@dimen/sp_5">
+
+            <!-- Photo facultative -->
+            <FrameLayout
+                android:id="@+id/photoZone"
+                android:layout_width="match_parent"
+                android:layout_height="132dp"
+                android:background="@drawable/bg_photo"
+                android:clickable="true"
+                android:contentDescription="@string/cd_choose_photo"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/imgPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtPhotoHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="@dimen/sp_2"
+                    android:gravity="center"
+                    android:text="@string/compose_photo_hint"
+                    android:textAppearance="@style/TextAppearance.Hesba.Caption"
+                    app:drawableTint="@color/hb_accent_ink"
+                    app:drawableTopCompat="@drawable/ic_photo_add" />
+
+                <TextView
+                    android:id="@+id/txtPhotoChange"
+                    style="@style/Hesba.Tag"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="@dimen/sp_2"
+                    android:text="@string/compose_photo_change"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_4"
+                android:hint="@string/field_recipe_name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editName"
+                    style="@style/Widget.Hesba.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPortions"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_3"
+                    android:layout_marginEnd="@dimen/sp_2"
+                    android:layout_weight="1"
+                    android:hint="@string/field_portions"
+                    app:helperText="@string/helper_portions">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPortions"
+                        style="@style/Widget.Hesba.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:inputType="number"
+                        android:maxLength="5" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPrep"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_3"
+                    android:layout_marginStart="@dimen/sp_2"
+                    android:layout_weight="1"
+                    android:hint="@string/field_prep_time"
+                    app:helperText="@string/helper_optional"
+                    app:suffixText="@string/unit_minutes">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPrep"
+                        style="@style/Widget.Hesba.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:inputType="number"
+                        android:maxLength="4" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Ingrédients -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/section_ingredients" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compose_lines_note"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+            <LinearLayout
+                android:id="@+id/listLines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_2"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/txtLinesError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_2"
+                android:accessibilityLiveRegion="polite"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption"
+                android:textColor="@color/hb_bad"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddLine"
+                style="@style/Widget.Hesba.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:text="@string/action_add_ingredient_line"
+                app:icon="@drawable/ic_add" />
+
+            <!-- Coûts cachés -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/section_hidden_costs" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/compose_hidden_note"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPackaging"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:hint="@string/field_packaging"
+                app:helperText="@string/helper_packaging"
+                app:suffixText="@string/currency_short">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editPackaging"
+                    style="@style/Widget.Hesba.EditText.Money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilEnergy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:hint="@string/field_energy"
+                app:helperText="@string/helper_energy"
+                app:suffixText="@string/currency_short">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editEnergy"
+                    style="@style/Widget.Hesba.EditText.Money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilLabor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:hint="@string/field_labor"
+                app:helperText="@string/helper_labor"
+                app:suffixText="@string/currency_short">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editLabor"
+                    style="@style/Widget.Hesba.EditText.Money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLaborEstimate"
+                style="@style/Widget.Hesba.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtFixedNote"
+                style="@style/Hesba.Note"
+                android:layout_marginTop="@dimen/sp_3"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption"
+                android:textColor="@color/hb_ink"
+                android:visibility="gone" />
+
+            <!-- Marge et prix -->
+            <TextView
+                style="@style/Hesba.Section"
+                android:text="@string/section_margin_price" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilMargin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/sp_2"
+                    android:layout_weight="2"
+                    android:hint="@string/field_target_margin"
+                    app:suffixText="@string/percent_sign">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editMargin"
+                        style="@style/Widget.Hesba.EditText.Money"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLength="5" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sp_2"
+                    android:layout_weight="3"
+                    android:hint="@string/field_selling_price"
+                    app:suffixText="@string/currency_short">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPrice"
+                        style="@style/Widget.Hesba.EditText.Money"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtPriceHelp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_2"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUseSuggested"
+                style="@style/Widget.Hesba.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Récapitulatif fixe en bas : les chiffres restent toujours visibles pendant la saisie -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/rule"
+        android:background="@color/hb_ink" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/hb_surface"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/gutter"
+        android:paddingTop="@dimen/sp_3"
+        android:paddingEnd="@dimen/gutter"
+        android:paddingBottom="@dimen/sp_3">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_cost_per_portion"
+                    android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+                <TextView
+                    android:id="@+id/txtPerPortion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Hesba.Money.Large"
+                    android:textSize="28sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_batch_cost"
+                    android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+                <TextView
+                    android:id="@+id/txtBatch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Hesba.Money" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtSummaryLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFeatureSettings="tnum"
+            android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_3"
+            android:text="@string/action_save_recipe" />
+    </LinearLayout>
+</LinearLayout>

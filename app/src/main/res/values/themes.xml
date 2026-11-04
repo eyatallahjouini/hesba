@@ -1,8 +1,66 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources>
+    <!-- Thème unique de HESBA, clair et sombre (les couleurs changent dans values-night/colors_theme.xml) -->
     <style name="Base.Theme.Hesba" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/hb_accent</item>
+        <item name="colorOnPrimary">@color/hb_on_accent</item>
+        <item name="colorPrimaryContainer">@color/hb_surface_alt</item>
+        <item name="colorOnPrimaryContainer">@color/hb_ink</item>
+        <item name="colorSecondary">@color/hb_accent_ink</item>
+        <item name="colorOnSecondary">@color/hb_bg</item>
+        <item name="colorSecondaryContainer">@color/hb_surface_alt</item>
+        <item name="colorOnSecondaryContainer">@color/hb_ink</item>
+        <item name="colorTertiary">@color/hb_accent_ink</item>
+        <item name="colorAccent">@color/hb_accent_ink</item>
+        <item name="colorControlActivated">@color/hb_accent_ink</item>
+        <item name="colorControlNormal">@color/hb_ink_soft</item>
+        <item name="colorError">@color/hb_bad</item>
+        <item name="colorOnError">@color/hb_bg</item>
+        <item name="android:colorBackground">@color/hb_bg</item>
+        <item name="colorOnBackground">@color/hb_ink</item>
+        <item name="colorSurface">@color/hb_surface</item>
+        <item name="colorOnSurface">@color/hb_ink</item>
+        <item name="colorSurfaceVariant">@color/hb_surface_alt</item>
+        <item name="colorOnSurfaceVariant">@color/hb_ink_soft</item>
+        <item name="colorSurfaceContainer">@color/hb_surface</item>
+        <item name="colorSurfaceContainerLow">@color/hb_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/hb_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/hb_surface_alt</item>
+        <!-- pas de teinte rosée Material sur les surfaces surélevées (barre du bas, dialogues) -->
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="colorOutline">@color/hb_line</item>
+        <item name="colorOutlineVariant">@color/hb_line</item>
+        <item name="android:windowBackground">@color/hb_bg</item>
+        <item name="android:textColorPrimary">@color/hb_ink</item>
+        <item name="android:textColorSecondary">@color/hb_ink_soft</item>
+        <item name="android:textColorHint">@color/hb_hint</item>
+        <item name="android:textColorHighlight">@color/hb_surface_alt</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <!-- police par défaut et échelle typographique Material → styles Hesba -->
+        <!-- police par défaut via le style des TextView (pas via android:fontFamily du thème,
+             qui passerait devant la police des textAppearance, ex. les montants en police ticket) -->
+        <item name="android:textViewStyle">@style/Widget.Hesba.TextView</item>
+        <item name="editTextStyle">@style/Widget.Hesba.EditTextBase</item>
+        <item name="android:editTextStyle">@style/Widget.Hesba.EditTextBase</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Hesba.Display</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Hesba.Title</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Hesba.Title</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.Hesba.Subtitle</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Hesba.Body</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Hesba.Body</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.Hesba.Caption</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.Hesba.Label</item>
+        <item name="materialButtonStyle">@style/Widget.Hesba.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Hesba.Button.Outlined</item>
+        <item name="borderlessButtonStyle">@style/Widget.Hesba.Button.Text</item>
+        <item name="textInputStyle">@style/Widget.Hesba.TextInput</item>
+        <item name="chipStyle">@style/Widget.Hesba.Chip</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Hesba.Dialog</item>
+        <item name="checkboxStyle">@style/Widget.Hesba.CheckBox</item>
+        <item name="snackbarStyle">@style/Widget.Hesba.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.Hesba.SnackbarText</item>
+        <item name="snackbarButtonStyle">@style/Widget.Hesba.SnackbarButton</item>
     </style>
 
     <style name="Theme.Hesba" parent="Base.Theme.Hesba" />

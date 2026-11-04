@@ -1,19 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
--->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ : les images de factures et le modèle OCR ne partent jamais dans la sauvegarde Google.
+     La base (recettes, prix) reste sauvegardée par Android si l'utilisateur l'a activé. -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <exclude domain="file" path="factures/" />
+        <exclude domain="file" path="ocr/" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude domain="file" path="ocr/" />
     </device-transfer>
-    -->
 </data-extraction-rules>

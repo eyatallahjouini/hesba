@@ -2,7 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Seule permission : la caméra, demandée au moment de scanner une facture (facultative). -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+
     <application
+        android:name=".HesbaApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,32 +18,54 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Hesba">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
-
+            android:theme="@style/Theme.Hesba">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity
-            android:name=".MesRecettesActivity"
-            android:exported="false" />
 
+        <activity android:name=".OnboardingActivity" android:exported="false" />
+        <activity android:name=".LoginActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".RegisterActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".HomeActivity" android:exported="false" />
+        <activity android:name=".RecettesActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".RecipeDetailActivity" android:exported="false" />
+        <activity android:name=".ComposeRecipeActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".IngredientsActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".NouvelIngredientActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ProfilActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".WhatIfActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ShoppingListActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".InsightsActivity" android:exported="false" />
+        <activity android:name=".InvoicesActivity" android:exported="false" />
+        <activity android:name=".ScanActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+        <activity android:name=".ScanReviewActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
 
-        <activity
-            android:name=".LoginActivity"
+        <!-- Partage des fiches PDF (cache privé uniquement) -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".NouvelleRecetteActivity"
-            android:exported="false" />
-        <activity
-            android:name=".NouvelIngredientActivity"
-            android:exported="false" />
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Langue choisie dans l'appli, mémorisée par AppCompat (Android 12 et moins) -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
     </application>
 
 </manifest>

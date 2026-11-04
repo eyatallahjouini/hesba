@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Typographie « Le Ticket »
+     - hb_sans : IBM Plex Sans Arabic (OFL), une seule famille pour le français, l'anglais et l'arabe.
+     - hb_mono : IBM Plex Mono (OFL) pour l'argent et le ticket : tous les chiffres ont la même chasse,
+       les montants s'alignent colonne par colonne. En arabe (font-ar/) elle devient Plex Sans Arabic,
+       dont les chiffres latins ont aussi tous la même chasse.
+     Les fichiers « _bold / _semibold / _medium » évitent le faux gras calculé par Android. -->
+<resources>
+    <style name="TextAppearance.Hesba.Display" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/hb_sans_bold</item>
+        <item name="fontFamily">@font/hb_sans_bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+    <style name="TextAppearance.Hesba.Title" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/hb_sans_bold</item>
+        <item name="fontFamily">@font/hb_sans_bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    <style name="TextAppearance.Hesba.Subtitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/hb_sans_semibold</item>
+        <item name="fontFamily">@font/hb_sans_semibold</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/hb_ink</item>
+    </style>
+    <!-- intitulé de section façon ticket : petites capitales espacées, police ticket -->
+    <style name="TextAppearance.Hesba.Section" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/hb_mono_medium</item>
+        <item name="fontFamily">@font/hb_mono_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/hb_accent_ink</item>
+    </style>
+    <style name="TextAppearance.Hesba.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/hb_sans</item>
+        <item name="fontFamily">@font/hb_sans</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+    <style name="TextAppearance.Hesba.Body.Soft">
+        <item name="android:textColor">@color/hb_ink_soft</item>
+    </style>
+    <!-- phrase d'ouverture de l'Accueil et du premier lancement -->
+    <style name="TextAppearance.Hesba.Lead" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/hb_sans_semibold</item>
+        <item name="fontFamily">@font/hb_sans_semibold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">@color/hb_ink</item>
+    </style>
+    <style name="TextAppearance.Hesba.Label" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/hb_sans_medium</item>
+        <item name="fontFamily">@font/hb_sans_medium</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/hb_ink</item>
+    </style>
+    <style name="TextAppearance.Hesba.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/hb_sans</item>
+        <item name="fontFamily">@font/hb_sans</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/hb_ink_soft</item>
+    </style>
+    <style name="TextAppearance.Hesba.Money" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/hb_mono_semibold</item>
+        <item name="fontFamily">@font/hb_mono_semibold</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+    <style name="TextAppearance.Hesba.Money.Small">
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.Hesba.Money.Large">
+        <item name="android:textSize">34sp</item>
+        <item name="android:letterSpacing">-0.04</item>
+    </style>
+    <style name="TextAppearance.Hesba.Figure">
+        <item name="android:fontFamily">@font/hb_mono_semibold</item>
+        <item name="fontFamily">@font/hb_mono_semibold</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:letterSpacing">-0.03</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+    <!-- lignes du ticket (fiche recette, scanner, premier lancement) -->
+    <style name="TextAppearance.Hesba.Ticket" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/hb_mono</item>
+        <item name="fontFamily">@font/hb_mono</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+    <style name="TextAppearance.Hesba.Ticket.Soft">
+        <item name="android:textColor">@color/hb_ink_soft</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="TextAppearance.Hesba.Ticket.Strong">
+        <item name="android:fontFamily">@font/hb_mono_semibold</item>
+        <item name="fontFamily">@font/hb_mono_semibold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.Hesba.Button" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/hb_sans_semibold</item>
+        <item name="fontFamily">@font/hb_sans_semibold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+</resources>

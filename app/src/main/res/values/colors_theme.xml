@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rôles de couleur HESBA (mode clair). Uniquement la palette existante (colors.xml, colors_hesba.xml). -->
+<resources>
+    <color name="hb_bg">@color/creme</color>
+    <color name="hb_surface">@color/white</color>
+    <color name="hb_surface_alt">@color/caramel_clair</color>
+    <color name="hb_ink">@color/brun</color>
+    <color name="hb_ink_soft">@color/brun_clair</color>
+    <color name="hb_hint">@color/gris_hint</color>
+    <color name="hb_line">@color/caramel</color>
+    <color name="hb_accent">@color/safran</color>
+    <color name="hb_on_accent">@color/brun</color>
+    <color name="hb_accent_ink">@color/safran_texte</color>
+    <color name="hb_good">@color/vert</color>
+    <color name="hb_good_bg">@color/vert_clair</color>
+    <color name="hb_bad">@color/rouge</color>
+    <color name="hb_bad_bg">@color/rouge_clair</color>
+    <color name="hb_scrim">#993E2723</color>
+</resources>

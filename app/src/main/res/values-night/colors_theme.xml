@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mode sombre : mêmes teintes, assombries à partir du brun (fonds) ou éclaircies (vert, rouge) pour le contraste. -->
+<resources>
+    <color name="hb_bg">#1C1411</color>
+    <color name="hb_surface">#271D19</color>
+    <color name="hb_surface_alt">@color/brun</color>
+    <color name="hb_ink">@color/creme</color>
+    <color name="hb_ink_soft">@color/caramel</color>
+    <color name="hb_hint">#A8968F</color>
+    <color name="hb_line">@color/brun_leger</color>
+    <color name="hb_accent">@color/safran</color>
+    <color name="hb_on_accent">@color/brun</color>
+    <color name="hb_accent_ink">@color/safran</color>
+    <color name="hb_good">#8CC590</color>
+    <color name="hb_good_bg">#1F2E20</color>
+    <color name="hb_bad">#F08A8A</color>
+    <color name="hb_bad_bg">#3A1D1D</color>
+    <color name="hb_scrim">#CC000000</color>
+</resources>

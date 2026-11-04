@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Composants HESBA. Peu d'arrondis (10 dp), pas de dégradés, pas d'ombres décoratives :
+     la hiérarchie vient de la typographie, des filets et de l'alignement. -->
+<resources>
+    <!-- parents implicites des styles « Hesba.* » et « TextAppearance.Hesba.* » -->
+    <style name="Hesba" />
+    <style name="TextAppearance.Hesba" parent="TextAppearance.Material3.BodyLarge" />
+
+    <!-- Boutons -->
+    <style name="Widget.Hesba.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/hb_button_bg</item>
+        <item name="android:textColor">@color/hb_on_accent</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Button</item>
+        <item name="cornerRadius">@dimen/radius_m</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="iconTint">@color/hb_on_accent</item>
+        <item name="iconPadding">8dp</item>
+        <item name="rippleColor">@color/hb_surface_alt</item>
+    </style>
+    <style name="Widget.Hesba.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Button</item>
+        <item name="strokeColor">@color/hb_line</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="cornerRadius">@dimen/radius_m</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="iconTint">@color/hb_ink</item>
+        <item name="iconPadding">8dp</item>
+    </style>
+    <style name="Widget.Hesba.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/hb_accent_ink</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Button</item>
+        <item name="android:minHeight">@dimen/touch</item>
+        <item name="iconTint">@color/hb_accent_ink</item>
+    </style>
+    <style name="Widget.Hesba.Button.Danger" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/hb_bad</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Button</item>
+        <item name="android:minHeight">@dimen/touch</item>
+        <item name="iconTint">@color/hb_bad</item>
+    </style>
+    <!-- bouton-icône 48 dp (barre du haut, actions de ligne) -->
+    <style name="Widget.Hesba.IconButton" parent="Widget.Material3.Button.IconButton">
+        <item name="iconTint">@color/hb_ink</item>
+        <item name="iconSize">22dp</item>
+        <item name="android:minWidth">@dimen/touch</item>
+        <item name="android:minHeight">@dimen/touch</item>
+    </style>
+
+    <!-- Champs -->
+    <style name="Widget.Hesba.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/hb_input_stroke</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_m</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_m</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_m</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_m</item>
+        <item name="boxBackgroundColor">@color/hb_surface</item>
+        <item name="hintTextColor">@color/hb_accent_ink</item>
+        <item name="android:textColorHint">@color/hb_ink_soft</item>
+        <item name="errorTextColor">@color/hb_bad</item>
+        <item name="boxStrokeErrorColor">@color/hb_bad</item>
+        <item name="errorIconTint">@color/hb_bad</item>
+        <item name="helperTextTextColor">@color/hb_ink_soft</item>
+        <item name="suffixTextColor">@color/hb_ink_soft</item>
+        <item name="prefixTextColor">@color/hb_ink_soft</item>
+        <item name="endIconTint">@color/hb_ink_soft</item>
+    </style>
+    <style name="Widget.Hesba.TextInput.Dropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeColor">@color/hb_input_stroke</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_m</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_m</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_m</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_m</item>
+        <item name="boxBackgroundColor">@color/hb_surface</item>
+        <item name="hintTextColor">@color/hb_accent_ink</item>
+        <item name="android:textColorHint">@color/hb_ink_soft</item>
+        <item name="endIconTint">@color/hb_ink_soft</item>
+    </style>
+    <style name="Widget.Hesba.EditText" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <!-- montant : chiffres tabulaires ; accepte , . et les chiffres arabes -->
+    <style name="Widget.Hesba.EditText.Money">
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:inputType">numberDecimal</item>
+        <item name="android:digits">0123456789.,٠١٢٣٤٥٦٧٨٩٫</item>
+        <item name="android:maxLength">12</item>
+    </style>
+
+    <!-- Puces de tri / de choix -->
+    <style name="Widget.Hesba.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/hb_chip_bg</item>
+        <item name="android:textColor">@color/hb_chip_text</item>
+        <item name="chipStrokeColor">@color/hb_ink</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="chipCornerRadius">@dimen/radius_s</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Label</item>
+        <item name="chipMinTouchTargetSize">@dimen/touch</item>
+    </style>
+
+    <!-- Barre du bas -->
+    <style name="Widget.Hesba.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/hb_surface</item>
+        <item name="backgroundTint">@color/hb_surface</item>
+        <item name="itemIconTint">@color/hb_nav_item</item>
+        <item name="itemTextColor">@color/hb_nav_item</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.Hesba.BottomNav.Indicator</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.Hesba.NavLabel.Active</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.Hesba.NavLabel</item>
+    </style>
+    <style name="Widget.Hesba.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/hb_surface_alt</item>
+    </style>
+    <style name="TextAppearance.Hesba.NavLabel" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="TextAppearance.Hesba.NavLabel.Active">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Mise en page -->
+    <style name="Hesba.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/hairline</item>
+        <item name="android:background">@color/hb_line</item>
+    </style>
+    <style name="Hesba.Section">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/sp_5</item>
+        <item name="android:layout_marginBottom">@dimen/sp_2</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Section</item>
+        <item name="android:accessibilityHeading">true</item>
+    </style>
+    <!-- ligne de liste cliquable : 64 dp minimum -->
+    <style name="Hesba.Row">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/row_min</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingTop">@dimen/sp_3</item>
+        <item name="android:paddingBottom">@dimen/sp_3</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+    <!-- ligne du « ticket » de coûts : libellé au début, montant à la fin -->
+    <style name="Hesba.LedgerRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:baselineAligned">true</item>
+    </style>
+    <style name="Hesba.LedgerLabel">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Body.Soft</item>
+    </style>
+    <style name="Hesba.LedgerValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Money</item>
+        <item name="android:textAlignment">viewEnd</item>
+        <item name="android:layout_marginStart">@dimen/sp_3</item>
+    </style>
+    <!-- encadré d'information : filet safran au début, pas de carte -->
+    <style name="Hesba.Note">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_note</item>
+        <item name="android:paddingStart">@dimen/sp_4</item>
+        <item name="android:paddingEnd">@dimen/sp_4</item>
+        <item name="android:paddingTop">@dimen/sp_3</item>
+        <item name="android:paddingBottom">@dimen/sp_3</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Body</item>
+    </style>
+    <style name="Hesba.Tag">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_tag</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Caption</item>
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+    <style name="Hesba.Tag.Bad">
+        <item name="android:background">@drawable/bg_tag_bad</item>
+        <item name="android:textColor">@color/hb_bad</item>
+    </style>
+    <style name="Hesba.Tag.Good">
+        <item name="android:background">@drawable/bg_tag_good</item>
+        <item name="android:textColor">@color/hb_good</item>
+    </style>
+
+    <!-- touche d'action rapide (Accueil) : icône au-dessus du libellé, 88 dp de haut -->
+    <style name="Hesba.QuickAction">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:minHeight">88dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">@dimen/sp_3</item>
+        <item name="android:paddingBottom">@dimen/sp_3</item>
+        <item name="android:paddingStart">@dimen/sp_1</item>
+        <item name="android:paddingEnd">@dimen/sp_1</item>
+        <item name="android:drawablePadding">@dimen/sp_2</item>
+        <item name="drawableTint">@color/hb_accent_ink</item>
+        <item name="android:textAppearance">@style/TextAppearance.Hesba.Label</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+    <!-- chiffre clé : grand nombre serif + légende -->
+    <style name="Hesba.Figure">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingStart">@dimen/sp_3</item>
+        <item name="android:paddingEnd">@dimen/sp_2</item>
+        <item name="android:paddingTop">@dimen/sp_1</item>
+        <item name="android:paddingBottom">@dimen/sp_1</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <!-- Dialogues -->
+    <style name="ThemeOverlay.Hesba.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/hb_accent_ink</item>
+        <item name="colorSurface">@color/hb_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/hb_surface</item>
+        <item name="colorOnSurface">@color/hb_ink</item>
+        <item name="colorOnSurfaceVariant">@color/hb_ink_soft</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearance.Hesba.Dialog</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/Hesba.DialogTitle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Hesba.Button.Text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Hesba.Button.Text</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.Hesba.Button.Text</item>
+    </style>
+    <style name="ShapeAppearance.Hesba.Dialog" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerSize">14dp</item>
+    </style>
+    <style name="Hesba.DialogTitle" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/hb_ink</item>
+    </style>
+
+    <style name="Widget.Hesba.CheckBox" parent="Widget.Material3.CompoundButton.CheckBox">
+        <item name="buttonTint">@color/hb_accent_ink</item>
+        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:minHeight">@dimen/touch</item>
+    </style>
+    <style name="Widget.Hesba.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="backgroundTint">@color/hb_ink</item>
+    </style>
+    <style name="Widget.Hesba.SnackbarText" parent="Widget.Material3.Snackbar.TextView">
+        <item name="android:textColor">@color/hb_bg</item>
+    </style>
+    <style name="Widget.Hesba.SnackbarButton" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/hb_accent</item>
+    </style>
+</resources>

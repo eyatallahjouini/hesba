@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Encadré d'information : fond teinté + filet safran de 3 dp au début de la ligne (côté droit en arabe) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape><solid android:color="@color/hb_surface_alt" /><corners android:radius="@dimen/radius_s" /></shape></item>
+    <item android:width="3dp" android:gravity="start"><shape><solid android:color="@color/hb_accent" /></shape></item>
+</layer-list>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_top_bar" />
+
+    <!-- Langue de la facture -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/gutter"
+        android:paddingEnd="@dimen/gutter">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sp_3"
+            android:text="@string/scan_language"
+            android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/groupLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:checkedChip="@id/langAuto"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/langAuto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:text="@string/scan_lang_auto" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/langFr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:text="@string/scan_lang_fr" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/langAr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:text="@string/scan_lang_ar" />
+        </com.google.android.material.chip.ChipGroup>
+    </LinearLayout>
+
+    <!-- Viseur -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/gutter"
+        android:layout_marginTop="@dimen/sp_3"
+        android:layout_marginEnd="@dimen/gutter"
+        android:layout_weight="1"
+        android:background="@drawable/bg_photo">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/cd_camera_preview"
+            app:scaleType="fillCenter" />
+
+        <View
+            android:id="@+id/frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/sp_4"
+            android:background="@drawable/bg_viewfinder"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/txtTip"
+            style="@style/Hesba.Tag"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="@dimen/sp_5"
+            android:text="@string/scan_tip" />
+
+        <!-- Caméra refusée ou absente -->
+        <LinearLayout
+            android:id="@+id/blockPermission"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_5"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_camera"
+                app:tint="@color/hb_accent_ink" />
+
+            <TextView
+                android:id="@+id/txtPermission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:gravity="center"
+                android:text="@string/scan_permission_body"
+                android:textAppearance="@style/TextAppearance.Hesba.Body" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPermission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_4"
+                android:text="@string/scan_permission_allow" />
+        </LinearLayout>
+
+        <!-- Lecture en cours -->
+        <LinearLayout
+            android:id="@+id/blockBusy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/hb_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorColor="@color/hb_accent_ink" />
+
+            <TextView
+                android:id="@+id/txtBusy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
+                android:accessibilityLiveRegion="polite"
+                android:textAppearance="@style/TextAppearance.Hesba.Body" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Commandes : galerie, déclencheur, PDF -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/gutter"
+        android:paddingTop="@dimen/sp_4"
+        android:paddingEnd="@dimen/gutter"
+        android:paddingBottom="@dimen/sp_4">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGallery"
+            style="@style/Widget.Hesba.Button.Text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/scan_gallery"
+            app:icon="@drawable/ic_gallery"
+            app:iconGravity="top" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCapture"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:contentDescription="@string/scan_capture"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+            android:padding="0dp"
+            app:cornerRadius="38dp"
+            app:icon="@drawable/ic_camera"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="32dp"
+            app:strokeColor="@color/hb_ink"
+            app:strokeWidth="3dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPdf"
+            style="@style/Widget.Hesba.Button.Text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/scan_pdf"
+            app:icon="@drawable/ic_file"
+            app:iconGravity="top" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/gutter"
+        android:paddingEnd="@dimen/gutter"
+        android:paddingBottom="@dimen/sp_3"
+        android:gravity="center"
+        android:text="@string/scan_privacy"
+        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+</LinearLayout>

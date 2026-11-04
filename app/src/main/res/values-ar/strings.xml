@@ -629,4 +629,5 @@
     <string name="list_suggested">مقترح</string>
     <string name="list_cost_line">%1$s · التكلفة %2$s للحصة</string>
     <string name="slate_title">أسعار السوق</string>
+    <string name="receipt_meta">%1$s · %2$s</string>
 </resources>

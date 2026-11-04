@@ -606,4 +606,5 @@
     <string name="list_suggested">conseillé</string>
     <string name="list_cost_line">%1$s · coût %2$s / part</string>
     <string name="slate_title">Prix du marché</string>
+    <string name="receipt_meta">%1$s · %2$s</string>
 </resources>

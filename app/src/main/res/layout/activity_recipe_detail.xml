@@ -59,6 +59,55 @@
                 android:fontFeatureSettings="tnum"
                 android:textAppearance="@style/TextAppearance.Hesba.Caption" />
 
+            <!-- Le ticket : détail du coût, « imprimé » à l'ouverture -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginTop="@dimen/sp_5"
+                android:background="@drawable/bg_printer_slot"
+                android:importantForAccessibility="no" />
+
+            <com.example.hesba.ui.widget.ReceiptLayout
+                android:id="@+id/receipt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sp_2"
+                android:layout_marginEnd="@dimen/sp_2"
+                android:paddingStart="@dimen/sp_4"
+                android:paddingTop="@dimen/sp_4"
+                android:paddingEnd="@dimen/sp_4"
+                android:paddingBottom="@dimen/sp_4">
+
+                <TextView
+                    android:id="@+id/receiptTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textAllCaps="true"
+                    android:textAppearance="@style/TextAppearance.Hesba.Ticket.Strong"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/receiptMeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.Hesba.Ticket.Soft" />
+
+                <com.example.hesba.ui.widget.DotLeaderView
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="@dimen/sp_3"
+                    android:layout_marginBottom="@dimen/sp_1" />
+
+                <LinearLayout
+                    android:id="@+id/listDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </com.example.hesba.ui.widget.ReceiptLayout>
+
             <TextView
                 android:id="@+id/txtIssues"
                 style="@style/Hesba.Note"
@@ -143,7 +192,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sp_3"
-                android:background="@drawable/bg_ticket"
+                android:background="@drawable/bg_advisor"
                 android:orientation="vertical"
                 android:padding="@dimen/sp_4">
 
@@ -180,14 +229,37 @@
                     app:trackColorActive="@color/hb_accent"
                     app:trackColorInactive="@color/hb_line" />
 
-                <LinearLayout style="@style/Hesba.LedgerRow">
-                    <TextView
-                        style="@style/Hesba.LedgerLabel"
-                        android:text="@string/advisor_price" />
-                    <TextView
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_3"
+                    android:text="@string/advisor_price"
+                    android:textAppearance="@style/TextAppearance.Hesba.Body.Soft" />
+
+                <LinearLayout
+                    android:id="@+id/advisorPriceRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:gravity="bottom|end"
+                    android:orientation="horizontal">
+
+                    <com.example.hesba.ui.widget.RollingNumberView
                         android:id="@+id/txtAdvisorPrice"
-                        style="@style/Hesba.LedgerValue"
-                        android:textSize="20sp" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.Hesba.Money.Large" />
+
+                    <TextView
+                        android:id="@+id/txtAdvisorCurrency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginBottom="6dp"
+                        android:importantForAccessibility="no"
+                        android:text="@string/currency_short"
+                        android:textAppearance="@style/TextAppearance.Hesba.Ticket.Soft"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/Hesba.LedgerRow">
@@ -221,22 +293,6 @@
                 style="@style/Hesba.Note"
                 android:layout_marginTop="@dimen/sp_3"
                 android:visibility="gone" />
-
-            <!-- Détail du coût -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/section_cost_detail" />
-
-            <LinearLayout
-                android:id="@+id/listDetail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_ticket"
-                android:orientation="vertical"
-                android:paddingStart="@dimen/sp_4"
-                android:paddingTop="@dimen/sp_3"
-                android:paddingEnd="@dimen/sp_4"
-                android:paddingBottom="@dimen/sp_3" />
 
             <!-- Actions -->
             <TextView

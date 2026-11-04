@@ -17,7 +17,9 @@ import com.example.hesba.ui.BaseActivity
 import com.example.hesba.ui.Dialogs
 import com.example.hesba.ui.Fmt
 import com.example.hesba.ui.RecipePdf
+import com.example.hesba.ui.Motion
 import com.example.hesba.ui.RecipePhotos
+import com.example.hesba.ui.widget.DotLeaderView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,6 +42,8 @@ class RecipeDetailActivity : BaseActivity() {
     private var current: Recette? = null
     private var ws: Workspace? = null
     private var advisorMargin: Int = -1
+    private var printed = false
+    private var advisorShown = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +63,12 @@ class RecipeDetailActivity : BaseActivity() {
         }
         b.btnDelete.setOnClickListener { askDelete() }
         b.btnEditPrice.setOnClickListener { editPrice() }
-        b.sliderMargin.addOnChangeListener { _, value, fromUser ->
-            if (fromUser) { advisorMargin = value.toInt(); renderAdvisor() }
+        b.sliderMargin.addOnChangeListener { slider, value, fromUser ->
+            if (fromUser && value.toInt() != advisorMargin) {
+                advisorMargin = value.toInt()
+                Motion.tick(slider)
+                renderAdvisor()
+            }
         }
         b.btnKeepMargin.setOnClickListener { keepMargin() }
 
@@ -146,7 +154,15 @@ class RecipeDetailActivity : BaseActivity() {
         val m = BigDecimal(advisorMargin)
         b.txtAdvisorMargin.text = Fmt.percent(this, m)
         val price = cost?.let { CostCalculator.suggestedPrice(it, m) }
-        b.txtAdvisorPrice.text = Fmt.money(this, price)
+        if (price != null) {
+            b.txtAdvisorPrice.setNumber(Fmt.amount(this, price), animate = advisorShown)
+            b.txtAdvisorCurrency.visibility = View.VISIBLE
+        } else {
+            b.txtAdvisorPrice.setNumber(getString(R.string.value_missing), animate = false)
+            b.txtAdvisorCurrency.visibility = View.GONE
+        }
+        b.advisorPriceRow.contentDescription = getString(R.string.advisor_price) + " " + Fmt.money(this, price)
+        advisorShown = true
         b.txtAdvisorProfit.text = if (price != null && cost != null) Fmt.money(this, price - cost) else getString(R.string.value_missing)
         val selling = r.prixVenteMillimes
         b.txtAdvisorEffect.text = when {
@@ -163,6 +179,8 @@ class RecipeDetailActivity : BaseActivity() {
     }
 
     private fun renderDetail(w: Workspace, r: Recette, cost: CostCalculator.RecipeCost) {
+        b.receiptTitle.text = r.nom
+        b.receiptMeta.text = getString(R.string.receipt_meta, resources.getQuantityString(R.plurals.portions, r.nombreParts, r.nombreParts), Fmt.date(this, System.currentTimeMillis()))
         b.listDetail.removeAllViews()
         fun row(label: String, detail: String?, value: String, strong: Boolean = false) {
             val v = ItemLedgerBinding.inflate(LayoutInflater.from(this), b.listDetail, false)
@@ -170,16 +188,16 @@ class RecipeDetailActivity : BaseActivity() {
             if (detail != null) { v.ledgerDetail.text = detail; v.ledgerDetail.visibility = View.VISIBLE }
             v.ledgerValue.text = value
             if (strong) {
-                v.ledgerLabel.setTextAppearance(R.style.TextAppearance_Hesba_Label)
-                v.ledgerValue.setTextAppearance(R.style.TextAppearance_Hesba_Money)
+                v.ledgerLabel.setTextAppearance(R.style.TextAppearance_Hesba_Ticket_Strong)
+                v.ledgerValue.setTextAppearance(R.style.TextAppearance_Hesba_Ticket_Strong)
             }
             b.listDetail.addView(v.root)
         }
-        fun rule() = b.listDetail.addView(View(this).apply {
-            layoutParams = android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimensionPixelSize(R.dimen.hairline)).apply {
+        // filet pointillé de ticket
+        fun rule() = b.listDetail.addView(DotLeaderView(this).apply {
+            layoutParams = android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimensionPixelSize(R.dimen.sp_2)).apply {
                 topMargin = resources.getDimensionPixelSize(R.dimen.sp_1); bottomMargin = resources.getDimensionPixelSize(R.dimen.sp_1)
             }
-            setBackgroundColor(getColor(R.color.hb_line))
         })
 
         for (lc in cost.lines) {
@@ -207,6 +225,8 @@ class RecipeDetailActivity : BaseActivity() {
         if (fixed > 0) row(getString(R.string.detail_fixed), getString(R.string.detail_fixed_sub), "+ " + Fmt.money(this, fixed))
         rule()
         row(getString(R.string.label_cost_per_portion), null, Fmt.money(this, cost.costPerPortionMillimes), strong = true)
+        b.receipt.contentDescription = null
+        if (!printed) { printed = true; b.receipt.print() }
     }
 
     // ---------- actions ----------

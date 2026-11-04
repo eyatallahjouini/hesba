@@ -77,5 +77,10 @@ Accueil, recherche/tri des recettes, détail de recette, coûts cachés, rendeme
 liste de courses, duplication, PDF, historique des prix, scanner de factures (OCR FR + AR), table de synonymes,
 langues FR/EN/AR, thème sombre, sauvegarde, tests de migration, tests financiers BigDecimal.
 
-## 7. Build de départ
+## 7. Fichier `hesba.db` à la racine du dépôt
+Suivi par git (commit af7b8cf d'Aya), 8 200 octets, **inutilisable** : il commence par `FF FE` (UTF-16),
+signe d'une copie via une redirection PowerShell. Ce n'est pas une base SQLite valide. Laissé en place
+(décision à prendre : le supprimer du dépôt).
+
+## 8. Build de départ
 `./gradlew assembleDebug testDebugUnitTest` sur l'état fusionné : **OK** (1 min 36 s).

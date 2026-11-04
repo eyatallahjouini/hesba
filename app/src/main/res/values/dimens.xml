@@ -17,4 +17,7 @@
     <dimen name="rule">2dp</dimen>
     <dimen name="icon">24dp</dimen>
     <dimen name="thumb">48dp</dimen>
+    <dimen name="add_square">64dp</dimen>
+    <!-- espace sous la dernière ligne d'une liste pour que le bouton carré ne la cache jamais -->
+    <dimen name="list_bottom_clearance">112dp</dimen>
 </resources>

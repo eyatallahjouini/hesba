@@ -568,4 +568,7 @@
         <item quantity="one">%1$d recipe falls below its target margin: %2$s</item>
         <item quantity="other">%1$d recipes fall below their target margin: %2$s</item>
     </plurals>
+    <string name="col_price">Selling price</string>
+    <string name="list_suggested">suggested</string>
+    <string name="list_cost_line">%1$s · cost %2$s / portion</string>
 </resources>

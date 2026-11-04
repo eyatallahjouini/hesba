@@ -25,6 +25,9 @@ import com.example.hesba.domain.RecipeSearch
 import com.example.hesba.domain.Workspace
 import com.example.hesba.ui.BaseActivity
 import com.example.hesba.ui.Fmt
+import com.example.hesba.ui.Hairline
+import com.example.hesba.ui.Motion
+import com.example.hesba.ui.Transitions
 import com.example.hesba.ui.RecipePhotos
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +45,7 @@ class RecettesActivity : BaseActivity() {
     private val adapter = Adapter()
     private val thumbs = LruCache<Long, Bitmap>(40)
     private var total = 0
+    private val entered = Motion.Flag()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +56,8 @@ class RecettesActivity : BaseActivity() {
 
         b.list.layoutManager = LinearLayoutManager(this)
         b.list.adapter = adapter
-        b.btnNew.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
+        b.list.addItemDecoration(Hairline(this))
+        b.btnNew.setOnClickListener { Transitions.open(this, b.btnNew, Intent(this, ComposeRecipeActivity::class.java), "add_recipe") }
 
         b.search.editSearch.setHint(R.string.search_recipes_hint)
         b.search.editSearch.doAfterTextChanged {
@@ -91,7 +96,7 @@ class RecettesActivity : BaseActivity() {
             q.isBlank() -> resources.getQuantityString(R.plurals.recipes_count, total, total)
             else -> resources.getQuantityString(R.plurals.results_count, result.size, result.size)
         }
-        adapter.submitList(result)
+        adapter.submitList(result) { if (result.isNotEmpty()) Motion.enterOnce(b.list, entered) }
         val empty = result.isEmpty()
         b.empty.root.visibility = if (empty) View.VISIBLE else View.GONE
         b.list.visibility = if (empty) View.GONE else View.VISIBLE
@@ -135,8 +140,8 @@ class RecettesActivity : BaseActivity() {
             val ctx = this@RecettesActivity
             val r = item.recette
             val c = item.cost
+            v.row.transitionName = null
             v.name.text = r.nom
-            v.monogram.text = r.nom.trim().take(1).uppercase()
             val photo = thumbs.get(r.id)
             v.photo.visibility = if (photo != null) View.VISIBLE else View.GONE
             if (photo != null) {
@@ -144,27 +149,51 @@ class RecettesActivity : BaseActivity() {
                 v.photo.outlineProvider = Rounded
                 v.photo.clipToOutline = true
             }
-            v.details.text = resources.getQuantityString(R.plurals.portions, r.nombreParts, r.nombreParts)
-            v.cost.text = Fmt.money(ctx, c.costPerPortionMillimes)
-            v.price.text = if (r.prixVenteMillimes != null) getString(R.string.list_price, Fmt.money(ctx, r.prixVenteMillimes))
-            else getString(R.string.list_no_price)
+
+            // prix de la carte : prix pratiqué, sinon prix conseillé (signalé comme tel)
+            val selling = c.sellingPriceMillimes
+            val suggested = c.suggestedPriceMillimes
+            when {
+                selling != null -> {
+                    v.price.text = Fmt.money(ctx, selling)
+                    v.price.setTextColor(getColor(R.color.hb_ink))
+                    v.priceNote.visibility = View.GONE
+                }
+                suggested != null && c.isComplete -> {
+                    v.price.text = Fmt.money(ctx, suggested)
+                    v.price.setTextColor(getColor(R.color.hb_ink_soft))
+                    v.priceNote.setText(R.string.list_suggested)
+                    v.priceNote.visibility = View.VISIBLE
+                }
+                else -> {
+                    v.price.setText(R.string.value_missing)
+                    v.price.setTextColor(getColor(R.color.hb_ink_soft))
+                    v.priceNote.visibility = View.GONE
+                }
+            }
+            v.details.text = getString(
+                R.string.list_cost_line,
+                resources.getQuantityString(R.plurals.portions, r.nombreParts, r.nombreParts),
+                Fmt.money(ctx, c.costPerPortionMillimes)
+            )
 
             val target = BigDecimal(r.margeVoulue.toString())
             val margin = c.realMarginPercent
-            v.tag.visibility = View.VISIBLE
             when {
                 !c.isComplete -> {
-                    v.tag.setText(R.string.tag_incomplete)
-                    style(v, R.drawable.bg_tag, R.color.hb_ink)
+                    v.margin.setText(R.string.tag_incomplete)
+                    v.margin.setTextColor(getColor(R.color.hb_bad))
+                    v.marginBar.set(null, target.toFloat())
                 }
-                margin == null -> v.tag.visibility = View.GONE
-                margin < target -> {
-                    v.tag.text = getString(R.string.tag_margin, Fmt.percent(ctx, margin))
-                    style(v, R.drawable.bg_tag_bad, R.color.hb_bad)
+                margin == null -> {
+                    v.margin.setText(R.string.list_no_price)
+                    v.margin.setTextColor(getColor(R.color.hb_ink_soft))
+                    v.marginBar.set(null, target.toFloat())
                 }
                 else -> {
-                    v.tag.text = getString(R.string.tag_margin, Fmt.percent(ctx, margin))
-                    style(v, R.drawable.bg_tag_good, R.color.hb_good)
+                    v.margin.text = getString(R.string.tag_margin, Fmt.percent(ctx, margin))
+                    v.margin.setTextColor(getColor(if (margin < target) R.color.hb_bad else R.color.hb_good))
+                    v.marginBar.set(margin.toFloat(), target.toFloat())
                 }
             }
             v.row.contentDescription = getString(
@@ -172,13 +201,8 @@ class RecettesActivity : BaseActivity() {
                 if (margin != null) Fmt.percent(ctx, margin) else getString(R.string.value_missing)
             )
             v.row.setOnClickListener {
-                startActivity(Intent(ctx, RecipeDetailActivity::class.java).putExtra(RecipeDetailActivity.EXTRA_ID, r.id))
+                Transitions.open(ctx, v.row, Intent(ctx, RecipeDetailActivity::class.java).putExtra(RecipeDetailActivity.EXTRA_ID, r.id), "recipe_${r.id}")
             }
-        }
-
-        private fun style(v: ItemRecipeBinding, bg: Int, color: Int) {
-            v.tag.setBackgroundResource(bg)
-            v.tag.setTextColor(getColor(color))
         }
     }
 
@@ -189,7 +213,7 @@ class RecettesActivity : BaseActivity() {
 
     object Rounded : ViewOutlineProvider() {
         override fun getOutline(view: View, outline: Outline) {
-            outline.setRoundRect(0, 0, view.width, view.height, view.resources.displayMetrics.density * 10)
+            outline.setRoundRect(0, 0, view.width, view.height, view.resources.displayMetrics.density * 8)
         }
     }
 }

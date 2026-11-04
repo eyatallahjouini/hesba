@@ -602,4 +602,7 @@
         <item quantity="many">%1$d recettes passent sous leur marge voulue : %2$s</item>
         <item quantity="other">%1$d recettes passent sous leur marge voulue : %2$s</item>
     </plurals>
+    <string name="col_price">Prix de vente</string>
+    <string name="list_suggested">conseillé</string>
+    <string name="list_cost_line">%1$s · coût %2$s / part</string>
 </resources>

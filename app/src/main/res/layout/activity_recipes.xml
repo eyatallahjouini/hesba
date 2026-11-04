@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Mes recettes : une carte de restaurant. En-tête fixe (titre, recherche, tri), liste, bouton carré d'ajout. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
@@ -14,41 +15,20 @@
         android:paddingStart="@dimen/gutter"
         android:paddingEnd="@dimen/gutter">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/txtCount"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sp_5"
-            android:gravity="bottom"
-            android:orientation="horizontal">
+            android:textAppearance="@style/TextAppearance.Hesba.Section" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:accessibilityHeading="true"
-                    android:text="@string/tab_recipes"
-                    android:textAppearance="@style/TextAppearance.Hesba.Display" />
-
-                <TextView
-                    android:id="@+id/txtCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.Hesba.Caption" />
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnNew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch"
-                android:text="@string/action_new"
-                app:icon="@drawable/ic_add" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:accessibilityHeading="true"
+            android:text="@string/tab_recipes"
+            android:textAppearance="@style/TextAppearance.Hesba.Display" />
 
         <include
             android:id="@+id/search"
@@ -92,30 +72,36 @@
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
-        <!-- en-tête de colonnes, aligné sur les montants des lignes -->
+        <!-- en-tête de colonnes de la carte -->
         <LinearLayout
             android:id="@+id/columns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sp_2"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/sp_1">
+            android:paddingBottom="6dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/col_recipe"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.Hesba.Section"
+                android:textColor="@color/hb_ink_soft" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/col_cost_portion"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:text="@string/col_price"
+                android:textAppearance="@style/TextAppearance.Hesba.Section"
+                android:textColor="@color/hb_ink_soft" />
         </LinearLayout>
 
-        <View style="@style/Hesba.Divider" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/rule"
+            android:background="@color/hb_ink" />
     </LinearLayout>
 
     <FrameLayout
@@ -130,12 +116,17 @@
             android:clipToPadding="false"
             android:paddingStart="@dimen/gutter"
             android:paddingEnd="@dimen/gutter"
-            android:paddingBottom="@dimen/sp_5" />
+            android:paddingBottom="@dimen/list_bottom_clearance" />
 
         <include
             android:id="@+id/empty"
             layout="@layout/view_empty"
             android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNew"
+            style="@style/Widget.Hesba.AddSquare"
+            android:contentDescription="@string/action_new_recipe" />
     </FrameLayout>
 
     <include layout="@layout/view_bottom_nav" />

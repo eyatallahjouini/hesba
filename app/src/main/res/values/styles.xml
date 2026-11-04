@@ -51,6 +51,33 @@
         <item name="android:minHeight">@dimen/touch</item>
     </style>
 
+    <!-- Bouton d'ajout signature : carré aux coins légèrement arrondis, fixé en bas à la fin (bas-gauche en arabe).
+         Il s'ouvre en formulaire par une transformation de conteneur (ui/Transitions.kt). -->
+    <style name="Widget.Hesba.AddSquare" parent="Widget.Material3.Button">
+        <item name="android:layout_width">@dimen/add_square</item>
+        <item name="android:layout_height">@dimen/add_square</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="android:layout_marginEnd">@dimen/gutter</item>
+        <item name="android:layout_marginBottom">@dimen/sp_5</item>
+        <item name="android:minWidth">@dimen/add_square</item>
+        <item name="android:minHeight">@dimen/add_square</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="icon">@drawable/ic_add</item>
+        <item name="iconSize">28dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconTint">@color/hb_on_accent</item>
+        <item name="backgroundTint">@color/hb_button_bg</item>
+        <item name="rippleColor">@color/hb_surface_alt</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">6dp</item>
+        <item name="android:outlineSpotShadowColor">@color/hb_ink</item>
+        <item name="android:outlineAmbientShadowColor">@color/hb_ink</item>
+    </style>
+
     <!-- Champs -->
     <style name="Widget.Hesba.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/hb_input_stroke</item>

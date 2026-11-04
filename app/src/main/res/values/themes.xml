@@ -25,6 +25,8 @@
         <item name="colorSurfaceContainerLow">@color/hb_surface</item>
         <item name="colorSurfaceContainerHigh">@color/hb_surface</item>
         <item name="colorSurfaceContainerHighest">@color/hb_surface_alt</item>
+        <!-- pas de teinte rosée Material sur les surfaces surélevées (barre du bas, dialogues) -->
+        <item name="elevationOverlayEnabled">false</item>
         <item name="colorOutline">@color/hb_line</item>
         <item name="colorOutlineVariant">@color/hb_line</item>
         <item name="android:windowBackground">@color/hb_bg</item>

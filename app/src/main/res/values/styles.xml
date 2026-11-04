@@ -20,7 +20,7 @@
         <item name="rippleColor">@color/hb_surface_alt</item>
     </style>
     <style name="Widget.Hesba.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:textColor">@color/hb_ink</item>
+        <item name="android:textColor">@color/hb_outlined_text</item>
         <item name="android:textAppearance">@style/TextAppearance.Hesba.Button</item>
         <item name="strokeColor">@color/hb_line</item>
         <item name="strokeWidth">1.5dp</item>
@@ -108,6 +108,8 @@
     <style name="Widget.Hesba.BottomNav" parent="Widget.Material3.BottomNavigationView">
         <item name="android:background">@color/hb_surface</item>
         <item name="backgroundTint">@color/hb_surface</item>
+        <item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>
         <item name="itemIconTint">@color/hb_nav_item</item>
         <item name="itemTextColor">@color/hb_nav_item</item>
         <item name="itemActiveIndicatorStyle">@style/Widget.Hesba.BottomNav.Indicator</item>

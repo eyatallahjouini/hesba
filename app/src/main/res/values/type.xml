@@ -4,6 +4,7 @@
 <resources>
     <style name="TextAppearance.Hesba.Display" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="android:fontFamily">serif</item>
+        <item name="fontFamily">serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">30sp</item>
         <item name="android:textColor">@color/hb_ink</item>
@@ -11,17 +12,20 @@
     </style>
     <style name="TextAppearance.Hesba.Title" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:fontFamily">serif</item>
+        <item name="fontFamily">serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/hb_ink</item>
     </style>
     <style name="TextAppearance.Hesba.Subtitle" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textSize">17sp</item>
         <item name="android:textColor">@color/hb_ink</item>
     </style>
     <style name="TextAppearance.Hesba.Section" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textSize">13sp</item>
         <item name="android:letterSpacing">0.06</item>
         <item name="android:textColor">@color/hb_accent_ink</item>
@@ -37,6 +41,7 @@
     </style>
     <style name="TextAppearance.Hesba.Label" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/hb_ink</item>
     </style>
@@ -47,6 +52,7 @@
     </style>
     <style name="TextAppearance.Hesba.Money" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textSize">17sp</item>
         <item name="android:textColor">@color/hb_ink</item>
         <item name="android:fontFeatureSettings">tnum</item>
@@ -61,6 +67,7 @@
     </style>
     <style name="TextAppearance.Hesba.Figure">
         <item name="android:fontFamily">serif</item>
+        <item name="fontFamily">serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">28sp</item>
         <item name="android:textColor">@color/hb_ink</item>
@@ -68,6 +75,7 @@
     </style>
     <style name="TextAppearance.Hesba.Button" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0.01</item>

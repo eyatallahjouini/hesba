@@ -43,6 +43,7 @@ import com.example.hesba.ocr.OcrRouter
 import com.example.hesba.ui.BaseActivity
 import com.example.hesba.ui.Dialogs
 import com.example.hesba.ui.Fmt
+import com.example.hesba.ui.Motion
 import com.example.hesba.ui.ImpactViews
 import com.example.hesba.ui.Picker
 import com.google.android.material.chip.Chip
@@ -85,6 +86,10 @@ class ScanReviewActivity : BaseActivity() {
         var supplier = ""
         var date = ""
         var thumbnail: Bitmap? = null
+        /** Image de la 1re page, montrée pendant la lecture. */
+        val preview = MutableStateFlow<Bitmap?>(null)
+        /** Les lignes trouvées ont-elles déjà été présentées une à une ? */
+        var linesRevealed = false
 
         private val db get() = HesbaDatabase.getInstance(getApplication())
         private val repo get() = HesbaRepository(db, SessionManager(getApplication()).getUserId())
@@ -99,6 +104,8 @@ class ScanReviewActivity : BaseActivity() {
                     val bitmaps = withContext(Dispatchers.IO) { files.mapNotNull { InvoiceImages.load(it) } }
                     if (bitmaps.isEmpty()) { state.value = State.Failed(R.string.review_error_image); return@launch }
                     thumbnail = Bitmap.createScaledBitmap(bitmaps[0], 240, (240f * bitmaps[0].height / bitmaps[0].width).toInt().coerceAtLeast(1), true)
+                    val pw = minOf(900, bitmaps[0].width)
+                    preview.value = Bitmap.createScaledBitmap(bitmaps[0], pw, (pw.toFloat() * bitmaps[0].height / bitmaps[0].width).toInt().coerceAtLeast(1), true)
                     val outcome = withContext(Dispatchers.Default) { router.read(bitmaps, lang) }
                     rawText = outcome.result.rows.joinToString("\n") { it.text }
                     if (rawText.count { it.isLetterOrDigit() } < 8) { state.value = State.Failed(R.string.review_error_no_text); return@launch }
@@ -215,9 +222,27 @@ class ScanReviewActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) { model.state.collect { render(it) } }
         }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                model.preview.collect { bmp ->
+                    if (bmp != null) b.imgScanning.setImageBitmap(bmp)
+                    renderScanStage(model.state.value)
+                }
+            }
+        }
+    }
+
+    /** Pendant la lecture : la facture et la ligne qui la parcourt ; elle s'arrête dès que l'OCR a fini. */
+    private fun renderScanStage(s: State) {
+        val reading = s is State.Reading && model.preview.value != null
+        b.scanStage.visibility = if (reading) View.VISIBLE else View.GONE
+        if (reading) b.scanLine.start() else b.scanLine.stop()
+        // l'indicateur classique reste pour l'enregistrement, et quand les animations sont coupées
+        b.progress.visibility = if (s is State.Saving || !reading || !b.scanLine.isRunning) View.VISIBLE else View.GONE
     }
 
     private fun render(s: State) {
+        renderScanStage(s)
         b.blockLoading.visibility = if (s is State.Reading || s is State.Saving) View.VISIBLE else View.GONE
         b.error.root.visibility = if (s is State.Failed) View.VISIBLE else View.GONE
         b.scrollReview.visibility = if (s is State.Ready) View.VISIBLE else View.GONE
@@ -271,6 +296,10 @@ class ScanReviewActivity : BaseActivity() {
             })
         }
         for (l in model.lines) b.listLines.addView(lineView(l, l.index in dup))
+        if (!model.linesRevealed && model.lines.isNotEmpty()) {
+            model.linesRevealed = true
+            for (i in 0 until b.listLines.childCount) Motion.riseIn(b.listLines.getChildAt(i), 120L + i * 90L, 14f)
+        }
         val ready = model.ready()
         b.btnConfirm.isEnabled = ready.isNotEmpty()
         b.btnConfirm.text = if (ready.isEmpty()) getString(R.string.review_confirm_none) else resources.getQuantityString(R.plurals.review_confirm, ready.size, ready.size)

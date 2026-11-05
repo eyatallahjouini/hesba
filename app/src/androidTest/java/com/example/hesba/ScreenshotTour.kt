@@ -102,7 +102,10 @@ class ScreenshotTour {
         shoot("11-recipes", RecettesActivity::class.java)
         shoot("12-recipe-detail", Intent(context, RecipeDetailActivity::class.java).putExtra(RecipeDetailActivity.EXTRA_ID, ids["cake"]!!), wait = 2500)
         shoot("13-recipe-detail-advisor", Intent(context, RecipeDetailActivity::class.java).putExtra(RecipeDetailActivity.EXTRA_ID, ids["cake"]!!), wait = 2500) { a ->
-            a.findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll)?.scrollTo(0, a.findViewById<android.view.View>(R.id.sliderMargin).top + 200)
+            val scroll = a.findViewById<androidx.core.widget.NestedScrollView>(R.id.scroll)
+            val slider = a.findViewById<android.view.View>(R.id.sliderMargin)
+            val r = android.graphics.Rect(); slider.getDrawingRect(r); scroll.offsetDescendantRectToMyCoords(slider, r)
+            scroll.scrollTo(0, r.top - 600)
         }
         shoot("14-compose", Intent(context, ComposeRecipeActivity::class.java).putExtra(ComposeRecipeActivity.EXTRA_RECETTE_ID, ids["croissant"]!!))
         shoot("20-ingredients", IngredientsActivity::class.java)
@@ -113,6 +116,31 @@ class ScreenshotTour {
         shoot("42-insights", InsightsActivity::class.java)
         shoot("43-invoices", InvoicesActivity::class.java)
         shoot("50-scan", ScanActivity::class.java)
+
+        // Scanner : une facture française dessinée ici, lue par le VRAI moteur OCR de l'appli (rien n'est simulé).
+        shoot("51-scan-reading", scanIntent(), wait = 250)
+        shoot("52-scan-review", scanIntent(), wait = 9000)
+    }
+
+    /** Image d'une facture simple (texte noir sur blanc), copiée à chaque fois : l'écran de vérification la prend en charge. */
+    private fun scanIntent(): Intent {
+        val lines = listOf(
+            "Moulin du Sahel SARL", "Tél : 73 123 456   MF 1234567/A", "Facture N° 2026-118        Date : 03/11/2026",
+            "Désignation      Qté    P.U     Montant",
+            "Farine fleur sac 25 kg   2   32,000   64,000", "Sucre 10 kg   1   18,500   18,500",
+            "Lait 1L   12   1,350   16,200", "Oeufs plateau 30 pcs  3  12,000  36,000",
+            "Total HT   134,700", "TVA 19 %   25,593", "Net à payer   160,293 DT"
+        )
+        val bmp = Bitmap.createBitmap(1240, 1754, Bitmap.Config.ARGB_8888)
+        val c = android.graphics.Canvas(bmp)
+        c.drawColor(android.graphics.Color.WHITE)
+        val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { color = android.graphics.Color.BLACK; textSize = 38f; typeface = android.graphics.Typeface.MONOSPACE }
+        lines.forEachIndexed { i, l -> c.drawText(l, 80f, 160f + i * 72f, paint) }
+        val f = File(context.cacheDir, "tour-invoice-${System.nanoTime()}.jpg")
+        f.outputStream().use { bmp.compress(Bitmap.CompressFormat.JPEG, 92, it) }
+        return Intent(context, ScanReviewActivity::class.java)
+            .putExtra(ScanReviewActivity.EXTRA_FILES, arrayOf(f.absolutePath))
+            .putExtra(ScanReviewActivity.EXTRA_LANGUAGE, "AUTO")
     }
 
     private fun shoot(name: String, cls: Class<out Activity>, wait: Long = 1800) = shoot(name, Intent(context, cls), wait)

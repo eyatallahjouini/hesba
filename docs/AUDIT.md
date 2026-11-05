@@ -79,8 +79,8 @@ langues FR/EN/AR, thème sombre, sauvegarde, tests de migration, tests financier
 
 ## 7. Fichier `hesba.db` à la racine du dépôt
 Suivi par git (commit af7b8cf d'Aya), 8 200 octets, **inutilisable** : il commence par `FF FE` (UTF-16),
-signe d'une copie via une redirection PowerShell. Ce n'est pas une base SQLite valide. Laissé en place
-(décision à prendre : le supprimer du dépôt).
+signe d'une copie via une redirection PowerShell. Ce n'est pas une base SQLite valide et l'appli ne l'utilise pas.
+**Supprimé du dépôt** (décision d'Eya, 2026-11-05).
 
 ## 8. Build de départ
 `./gradlew assembleDebug testDebugUnitTest` sur l'état fusionné : **OK** (1 min 36 s).

@@ -119,7 +119,12 @@ class ScreenshotTour {
 
         // Scanner : une facture française dessinée ici, lue par le VRAI moteur OCR de l'appli (rien n'est simulé).
         shoot("51-scan-reading", scanIntent(), wait = 250)
-        shoot("52-scan-review", scanIntent(), wait = 9000)
+        val t0 = SystemClock.elapsedRealtime()
+        shoot("52-scan-review", scanIntent(), wait = 500, until = { a ->
+            a.findViewById<android.view.View>(R.id.scrollReview).visibility == android.view.View.VISIBLE ||
+                a.findViewById<android.view.View>(R.id.error).visibility == android.view.View.VISIBLE
+        }, prepareDelay = 1800)
+        File(out, "52-scan-review-ocr-ms.txt").writeText("${SystemClock.elapsedRealtime() - t0}\n")
     }
 
     /** Image d'une facture simple (texte noir sur blanc), copiée à chaque fois : l'écran de vérification la prend en charge. */
@@ -145,11 +150,23 @@ class ScreenshotTour {
 
     private fun shoot(name: String, cls: Class<out Activity>, wait: Long = 1800) = shoot(name, Intent(context, cls), wait)
 
-    private fun shoot(name: String, intent: Intent, wait: Long = 1800, prepare: ((Activity) -> Unit)? = null) {
+    private fun shoot(
+        name: String, intent: Intent, wait: Long = 1800, until: ((Activity) -> Boolean)? = null,
+        prepareDelay: Long = 600, prepare: ((Activity) -> Unit)? = null
+    ) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         ActivityScenario.launch<Activity>(intent).use { scenario ->
             SystemClock.sleep(wait)
-            if (prepare != null) { scenario.onActivity(prepare); SystemClock.sleep(600) }
+            if (until != null) {
+                val deadline = SystemClock.elapsedRealtime() + 90_000
+                var ok = false
+                while (!ok && SystemClock.elapsedRealtime() < deadline) {
+                    scenario.onActivity { ok = until(it) }
+                    if (!ok) SystemClock.sleep(500)
+                }
+                SystemClock.sleep(prepareDelay)
+            }
+            if (prepare != null) { scenario.onActivity(prepare); SystemClock.sleep(prepareDelay) }
             instr.waitForIdleSync()
             val bmp = instr.uiAutomation.takeScreenshot() ?: return
             File(out, "$name.png").outputStream().use { bmp.compress(Bitmap.CompressFormat.PNG, 100, it) }

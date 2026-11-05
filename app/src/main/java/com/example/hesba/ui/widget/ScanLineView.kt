@@ -28,6 +28,10 @@ class ScanLineView @JvmOverloads constructor(context: Context, attrs: AttributeS
     private var y = 0f
     private var down = true
     private var animator: ValueAnimator? = null
+    private val area = android.graphics.RectF()
+
+    /** Zone de l'image affichée (coordonnées de cette vue) : la ligne ne sort pas de la facture. */
+    fun limitTo(rect: android.graphics.RectF) { area.set(rect); invalidate() }
 
     init { importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO }
 
@@ -61,15 +65,17 @@ class ScanLineView @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     override fun onDraw(canvas: Canvas) {
-        val h = height.toFloat()
-        val w = width.toFloat()
-        val py = y * h
+        if (area.isEmpty) area.set(0f, 0f, width.toFloat(), height.toFloat())
+        val py = area.top + y * area.height()
         // courte traînée derrière la ligne, dans le sens du mouvement
         val len = 36 * density
         val from = if (down) py - len else py + len
         trail.shader = LinearGradient(0f, from, 0f, py, ColorUtils.setAlphaComponent(accent, 0), ColorUtils.setAlphaComponent(accent, 70), Shader.TileMode.CLAMP)
-        canvas.drawRect(0f, minOf(from, py), w, maxOf(from, py), trail)
-        canvas.drawLine(0f, py, w, py, line)
+        canvas.save()
+        canvas.clipRect(area)
+        canvas.drawRect(area.left, minOf(from, py), area.right, maxOf(from, py), trail)
+        canvas.restore()
+        canvas.drawLine(area.left, py, area.right, py, line)
     }
 
     override fun onDetachedFromWindow() {

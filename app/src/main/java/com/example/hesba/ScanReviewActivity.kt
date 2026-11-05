@@ -225,7 +225,16 @@ class ScanReviewActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 model.preview.collect { bmp ->
-                    if (bmp != null) b.imgScanning.setImageBitmap(bmp)
+                    if (bmp != null) {
+                        b.imgScanning.setImageBitmap(bmp)
+                        b.imgScanning.post {
+                            val d = b.imgScanning.drawable ?: return@post
+                            val r = android.graphics.RectF(0f, 0f, d.intrinsicWidth.toFloat(), d.intrinsicHeight.toFloat())
+                            b.imgScanning.imageMatrix.mapRect(r)
+                            r.offset(b.imgScanning.paddingLeft.toFloat(), b.imgScanning.paddingTop.toFloat())
+                            b.scanLine.limitTo(r)
+                        }
+                    }
                     renderScanStage(model.state.value)
                 }
             }

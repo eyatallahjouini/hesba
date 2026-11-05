@@ -226,6 +226,7 @@
                     android:valueFrom="0"
                     android:valueTo="90"
                     app:labelBehavior="gone"
+                    app:tickVisible="false"
                     app:thumbColor="@color/hb_accent_ink"
                     app:trackColorActive="@color/hb_accent"
                     app:trackColorInactive="@color/hb_line" />

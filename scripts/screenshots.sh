@@ -24,7 +24,11 @@ restore() {
 trap restore EXIT
 
 for v in $VARIANTS; do
+  # garde-fou : l'émulateur grossit sur le disque ; on s'arrête avant de le remplir
+  FREE_MB=$(powershell -NoProfile -Command "[int]((Get-PSDrive C).Free/1MB)" | tr -d '\r')
+  if [ "${FREE_MB:-0}" -lt 1500 ]; then echo "ARRÊT : seulement ${FREE_MB} Mo libres sur C:"; exit 1; fi
   lang="${v%%:*}"; night="${v##*:}"; theme=$([ "$night" = 1 ] && echo dark || echo light)
+  echo "   (${FREE_MB} Mo libres)"
   echo "== $lang $theme"
   "$ADB" shell am instrument -w -e class com.example.hesba.ScreenshotTour -e lang "$lang" -e night "$night" \
     $PKG.test/androidx.test.runner.AndroidJUnitRunner | tail -3

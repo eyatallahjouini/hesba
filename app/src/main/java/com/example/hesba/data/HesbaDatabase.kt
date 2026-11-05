@@ -49,6 +49,13 @@ abstract class HesbaDatabase : RoomDatabase() {
                     .also { INSTANCE = it }
             }
 
+        /**
+         * Tests sur émulateur uniquement (visite d'écrans) : remplace la base par une base en mémoire,
+         * pour ne jamais toucher aux données réelles du téléphone. null = revenir à la vraie base.
+         */
+        @androidx.annotation.VisibleForTesting
+        fun replaceForTests(db: HesbaDatabase?) = synchronized(this) { INSTANCE = db }
+
         /** Ferme la base (restauration d'une sauvegarde). Le prochain getInstance la rouvre. */
         fun closeInstance() = synchronized(this) {
             INSTANCE?.close()

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Premier lancement : 1. l'histoire (phrases + ticket qui se remplit), 2. la langue, 3. le compte. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ===== 1. Histoire ===== -->
+    <LinearLayout
+        android:id="@+id/pageStory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/gutter"
+        android:paddingEnd="@dimen/gutter">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/hb_mono_semibold"
+                android:importantForAccessibility="no"
+                android:letterSpacing="0.2"
+                android:text="@string/app_name_display"
+                android:textAlignment="viewStart"
+                android:textColor="@color/hb_accent_ink"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSkip"
+                style="@style/Widget.Hesba.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/onb_skip"
+                android:textColor="@color/hb_ink_soft" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_4"
+            android:text="@string/onb_line1"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Hesba.Lead" />
+
+        <TextView
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_2"
+            android:text="@string/onb_line2"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Hesba.Lead"
+            android:textColor="@color/hb_accent_ink" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="288dp"
+                    android:layout_height="3dp"
+                    android:background="@drawable/bg_printer_slot"
+                    android:importantForAccessibility="no" />
+
+                <com.example.hesba.ui.widget.ReceiptLayout
+                    android:id="@+id/storyReceipt"
+                    android:layout_width="272dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/onb_receipt_cd"
+                    android:focusable="true"
+                    android:importantForAccessibility="yes"
+                    android:paddingStart="@dimen/sp_4"
+                    android:paddingTop="@dimen/sp_3"
+                    android:paddingEnd="@dimen/sp_4"
+                    android:paddingBottom="@dimen/sp_3">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:importantForAccessibility="no"
+                        android:text="@string/onb_receipt_title"
+                        android:textAllCaps="true"
+                        android:textAppearance="@style/TextAppearance.Hesba.Ticket.Strong"
+                        android:textSize="13sp" />
+
+                    <com.example.hesba.ui.widget.DotLeaderView
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="@dimen/sp_2"
+                        android:layout_marginBottom="@dimen/sp_1" />
+
+                    <LinearLayout
+                        android:id="@+id/storyLines"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="noHideDescendants"
+                        android:orientation="vertical" />
+
+                    <com.example.hesba.ui.widget.DotLeaderView
+                        android:id="@+id/storyRule"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="@dimen/sp_1"
+                        android:layout_marginBottom="@dimen/sp_1" />
+
+                    <LinearLayout
+                        android:id="@+id/storyTotals"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="noHideDescendants"
+                        android:orientation="vertical" />
+                </com.example.hesba.ui.widget.ReceiptLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/line3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/onb_line3"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Hesba.Lead" />
+
+        <LinearLayout
+            android:id="@+id/nextRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_4"
+            android:layout_marginBottom="@dimen/sp_5"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtHint"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/onb_hint_next"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNext"
+                style="@style/Widget.Hesba.AddSquare"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:elevation="0dp"
+                android:contentDescription="@string/onb_continue"
+                app:icon="@drawable/ic_arrow_forward" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ===== 2. Langue ===== -->
+    <LinearLayout
+        android:id="@+id/pageLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/gutter"
+        android:paddingEnd="@dimen/gutter"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_7"
+            android:accessibilityHeading="true"
+            android:text="@string/onb_lang_title"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Hesba.Lead" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_2"
+            android:text="@string/onb_lang_sub"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Hesba.Body.Soft" />
+
+        <LinearLayout
+            android:id="@+id/langOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_5"
+            android:orientation="vertical" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLangNext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/sp_5"
+            android:text="@string/onb_continue"
+            app:icon="@drawable/ic_arrow_forward"
+            app:iconGravity="textEnd" />
+    </LinearLayout>
+
+    <!-- ===== 3. Compte ===== -->
+    <LinearLayout
+        android:id="@+id/pageAccount"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/gutter"
+        android:paddingEnd="@dimen/gutter"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_7"
+            android:fontFamily="@font/hb_mono_semibold"
+            android:importantForAccessibility="no"
+            android:letterSpacing="0.2"
+            android:text="@string/app_name_display"
+            android:textColor="@color/hb_accent_ink"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_4"
+            android:accessibilityHeading="true"
+            android:text="@string/onb_account_title"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Hesba.Display" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_3"
+            android:text="@string/onb_account_body"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Hesba.Body.Soft"
+            android:textSize="16sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCreate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/onb_create" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
+            style="@style/Widget.Hesba.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sp_3"
+            android:layout_marginBottom="@dimen/sp_5"
+            android:text="@string/onb_login" />
+    </LinearLayout>
+</FrameLayout>

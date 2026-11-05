@@ -9,6 +9,7 @@ import androidx.core.os.LocaleListCompat
 object Settings {
     private const val PREFS = "reglages"
     private const val KEY_THEME = "theme"
+    private const val KEY_ONBOARDING = "onboarding_done"
 
     const val THEME_SYSTEM = "system"
     const val THEME_LIGHT = "light"
@@ -31,6 +32,13 @@ object Settings {
             }
         )
     }
+
+    /** Le premier lancement (histoire, langue, compte) n'est montré qu'une fois. */
+    fun onboardingDone(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_ONBOARDING, false)
+
+    fun setOnboardingDone(context: Context) =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit { putBoolean(KEY_ONBOARDING, true) }
 
     /** "" = langue du téléphone, sinon "fr", "en" ou "ar". AppCompat la mémorise (autoStoreLocales). */
     fun language(): String = AppCompatDelegate.getApplicationLocales().toLanguageTags().substringBefore('-')

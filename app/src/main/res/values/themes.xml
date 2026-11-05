@@ -38,8 +38,11 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- police par défaut et échelle typographique Material → styles Hesba -->
-        <item name="android:fontFamily">@font/hb_sans</item>
-        <item name="fontFamily">@font/hb_sans</item>
+        <!-- police par défaut via le style des TextView (pas via android:fontFamily du thème,
+             qui passerait devant la police des textAppearance, ex. les montants en police ticket) -->
+        <item name="android:textViewStyle">@style/Widget.Hesba.TextView</item>
+        <item name="editTextStyle">@style/Widget.Hesba.EditTextBase</item>
+        <item name="android:editTextStyle">@style/Widget.Hesba.EditTextBase</item>
         <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Hesba.Display</item>
         <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Hesba.Title</item>
         <item name="textAppearanceTitleLarge">@style/TextAppearance.Hesba.Title</item>

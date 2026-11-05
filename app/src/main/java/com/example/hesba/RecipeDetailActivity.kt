@@ -104,8 +104,7 @@ class RecipeDetailActivity : BaseActivity() {
 
     private fun render(w: Workspace, r: Recette) {
         val cost = w.cost(r)
-        setTitleText(r.nom)
-        b.txtName.text = r.nom
+        b.txtName.text = r.nom   // pas de titre dans la barre du haut : le nom est déjà en grand dessous
         b.txtCost.text = Fmt.money(this, cost.costPerPortionMillimes)
         b.txtCostSub.text = getString(R.string.detail_cost_sub, resources.getQuantityString(R.plurals.portions, r.nombreParts, r.nombreParts), Fmt.money(this, cost.batchMillimes))
 

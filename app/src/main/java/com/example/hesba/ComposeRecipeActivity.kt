@@ -87,13 +87,16 @@ class ComposeRecipeActivity : BaseActivity() {
         }
         b.btnAddLine.setOnClickListener { chooseIngredient() }
         b.btnSave.setOnClickListener { save() }
-        b.btnUseSuggested.setOnClickListener { lastSuggested?.let { setPrice(it) } }
+        b.btnUseSuggested.setOnClickListener { lastSuggested?.let { setPrice(it); recalculate() } }
         listOf(b.editPortions, b.editPrep, b.editPackaging, b.editEnergy, b.editLabor, b.editMargin).forEach {
             it.doAfterTextChanged { clearErrors(); recalculate() }
         }
         b.editName.doAfterTextChanged { b.tilName.error = null }
         b.editPrice.doAfterTextChanged {
-            if (!settingPrice) draft.priceTouched = !it.isNullOrBlank()
+            // prix écrit par le programme (prix conseillé, chargement) : pas de nouveau calcul ici,
+            // sinon setPrice → recalculate → setPrice… tournait sans fin (plantage StackOverflow)
+            if (settingPrice) return@doAfterTextChanged
+            draft.priceTouched = !it.isNullOrBlank()
             recalculate()
         }
 
@@ -261,7 +264,9 @@ class ComposeRecipeActivity : BaseActivity() {
         else getString(R.string.compose_suggested_none)
         b.btnUseSuggested.visibility = if (suggested != null && draft.priceTouched && suggested != recipe.prixVenteMillimes) View.VISIBLE else View.GONE
         b.btnUseSuggested.text = getString(R.string.action_use_price, Fmt.money(this, suggested))
-        if (!draft.priceTouched && suggested != null) setPrice(suggested)
+        // le prix suit le prix conseillé tant que l'utilisateur ne l'a pas saisi ; si le champ change, on recalcule
+        // une seule fois avec ce prix (au 2e passage le texte est identique, setPrice renvoie false)
+        if (!draft.priceTouched && suggested != null && setPrice(suggested)) { recalculate(); return }
 
         val real = cost.realMarginPercent
         b.txtSummaryLine.text = when {
@@ -280,10 +285,13 @@ class ComposeRecipeActivity : BaseActivity() {
         if (fixed > 0) b.txtFixedNote.text = getString(R.string.compose_fixed_note, Fmt.money(this, fixed))
     }
 
-    private fun setPrice(millimes: Long) {
+    /** Écrit le prix dans le champ sans déclencher l'écouteur. Renvoie true si le texte a changé. */
+    private fun setPrice(millimes: Long): Boolean {
+        val text = Fmt.inputAmount(this, millimes)
+        if (b.editPrice.text?.toString() == text) return false
         settingPrice = true
-        b.editPrice.setText(Fmt.inputAmount(this, millimes))
-        settingPrice = false
+        try { b.editPrice.setText(text) } finally { settingPrice = false }
+        return true
     }
 
     private fun clearErrors() {

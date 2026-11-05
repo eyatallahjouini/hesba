@@ -633,4 +633,32 @@
     <string name="lang_fr_hint">Interface en français</string>
     <string name="lang_en_hint">Interface en anglais</string>
     <string name="lang_ar_hint">Interface en arabe, de droite à gauche</string>
+    <plurals name="home_lead_attention">
+        <item quantity="one">%1$s recette demande ton attention.</item>
+        <item quantity="other">%1$s recettes demandent ton attention.</item>
+    </plurals>
+    <plurals name="home_lead_all_good">
+        <item quantity="one">Ta recette tient sa marge.</item>
+        <item quantity="other">Tes %1$s recettes tiennent leur marge.</item>
+    </plurals>
+    <string name="home_lead_first_ingredient">Commence par noter ton premier ingrédient et son prix.</string>
+    <string name="home_lead_first_recipe">Tes ingrédients sont prêts : compose ta première recette.</string>
+    <plurals name="home_fact_below">
+        <item quantity="one">%1$s sous l\'objectif de marge</item>
+        <item quantity="other">%1$s sous l\'objectif de marge</item>
+    </plurals>
+    <plurals name="home_fact_incomplete">
+        <item quantity="one">%1$s coût incomplet</item>
+        <item quantity="other">%1$s coûts incomplets</item>
+    </plurals>
+    <plurals name="home_fact_noprice">
+        <item quantity="one">%1$s sans prix de vente</item>
+        <item quantity="other">%1$s sans prix de vente</item>
+    </plurals>
+    <plurals name="home_fact_prices">
+        <item quantity="one">%1$s prix a changé ces 14 derniers jours</item>
+        <item quantity="other">%1$s prix ont changé ces 14 derniers jours</item>
+    </plurals>
+    <string name="home_header">%1$s · %2$s</string>
+    <string name="home_all_clear_body">Aucune marge sous l\'objectif, aucun prix manquant.</string>
 </resources>

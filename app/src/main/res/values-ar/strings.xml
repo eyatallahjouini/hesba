@@ -656,4 +656,56 @@
     <string name="lang_fr_hint">الواجهة بالفرنسية</string>
     <string name="lang_en_hint">الواجهة بالإنجليزية</string>
     <string name="lang_ar_hint">الواجهة بالعربية، من اليمين إلى اليسار</string>
+    <plurals name="home_lead_attention">
+        <item quantity="zero">لا وصفة تحتاج إلى انتباهك.</item>
+        <item quantity="one">وصفة واحدة تحتاج إلى انتباهك.</item>
+        <item quantity="two">وصفتان تحتاجان إلى انتباهك.</item>
+        <item quantity="few">%1$s وصفات تحتاج إلى انتباهك.</item>
+        <item quantity="many">%1$s وصفة تحتاج إلى انتباهك.</item>
+        <item quantity="other">%1$s وصفة تحتاج إلى انتباهك.</item>
+    </plurals>
+    <plurals name="home_lead_all_good">
+        <item quantity="zero">وصفاتك تحقق الهامش المطلوب.</item>
+        <item quantity="one">وصفتك تحقق الهامش المطلوب.</item>
+        <item quantity="two">وصفتاك تحققان الهامش المطلوب.</item>
+        <item quantity="few">وصفاتك الـ%1$s تحقق الهامش المطلوب.</item>
+        <item quantity="many">وصفاتك الـ%1$s تحقق الهامش المطلوب.</item>
+        <item quantity="other">وصفاتك الـ%1$s تحقق الهامش المطلوب.</item>
+    </plurals>
+    <string name="home_lead_first_ingredient">ابدأ بإضافة أول مكوّن وسعره.</string>
+    <string name="home_lead_first_recipe">مكوّناتك جاهزة: كوّن وصفتك الأولى.</string>
+    <plurals name="home_fact_below">
+        <item quantity="zero">%1$s دون هامش الهدف</item>
+        <item quantity="one">%1$s دون هامش الهدف</item>
+        <item quantity="two">%1$s دون هامش الهدف</item>
+        <item quantity="few">%1$s دون هامش الهدف</item>
+        <item quantity="many">%1$s دون هامش الهدف</item>
+        <item quantity="other">%1$s دون هامش الهدف</item>
+    </plurals>
+    <plurals name="home_fact_incomplete">
+        <item quantity="zero">%1$s تكلفة غير مكتملة</item>
+        <item quantity="one">%1$s تكلفة غير مكتملة</item>
+        <item quantity="two">%1$s تكلفة غير مكتملة</item>
+        <item quantity="few">%1$s تكاليف غير مكتملة</item>
+        <item quantity="many">%1$s تكلفة غير مكتملة</item>
+        <item quantity="other">%1$s تكلفة غير مكتملة</item>
+    </plurals>
+    <plurals name="home_fact_noprice">
+        <item quantity="zero">%1$s بلا سعر بيع</item>
+        <item quantity="one">%1$s بلا سعر بيع</item>
+        <item quantity="two">%1$s بلا سعر بيع</item>
+        <item quantity="few">%1$s بلا سعر بيع</item>
+        <item quantity="many">%1$s بلا سعر بيع</item>
+        <item quantity="other">%1$s بلا سعر بيع</item>
+    </plurals>
+    <plurals name="home_fact_prices">
+        <item quantity="zero">تغيّر %1$s سعر خلال الأيام الـ14 الأخيرة</item>
+        <item quantity="one">تغيّر سعر واحد خلال الأيام الـ14 الأخيرة</item>
+        <item quantity="two">تغيّر سعران خلال الأيام الـ14 الأخيرة</item>
+        <item quantity="few">تغيّرت %1$s أسعار خلال الأيام الـ14 الأخيرة</item>
+        <item quantity="many">تغيّر %1$s سعرًا خلال الأيام الـ14 الأخيرة</item>
+        <item quantity="other">تغيّر %1$s سعر خلال الأيام الـ14 الأخيرة</item>
+    </plurals>
+    <string name="home_header">%1$s · %2$s</string>
+    <string name="home_all_clear_body">لا هامش دون الهدف ولا سعر ناقص.</string>
 </resources>

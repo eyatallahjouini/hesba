@@ -599,4 +599,32 @@
     <string name="lang_fr_hint">Interface in French</string>
     <string name="lang_en_hint">Interface in English</string>
     <string name="lang_ar_hint">Interface in Arabic, right to left</string>
+    <plurals name="home_lead_attention">
+        <item quantity="one">%1$s recipe needs your attention.</item>
+        <item quantity="other">%1$s recipes need your attention.</item>
+    </plurals>
+    <plurals name="home_lead_all_good">
+        <item quantity="one">Your recipe is on target.</item>
+        <item quantity="other">All %1$s of your recipes are on target.</item>
+    </plurals>
+    <string name="home_lead_first_ingredient">Start by adding your first ingredient and its price.</string>
+    <string name="home_lead_first_recipe">Your ingredients are ready: put together your first recipe.</string>
+    <plurals name="home_fact_below">
+        <item quantity="one">%1$s below its target margin</item>
+        <item quantity="other">%1$s below their target margin</item>
+    </plurals>
+    <plurals name="home_fact_incomplete">
+        <item quantity="one">%1$s incomplete cost</item>
+        <item quantity="other">%1$s incomplete costs</item>
+    </plurals>
+    <plurals name="home_fact_noprice">
+        <item quantity="one">%1$s without a selling price</item>
+        <item quantity="other">%1$s without a selling price</item>
+    </plurals>
+    <plurals name="home_fact_prices">
+        <item quantity="one">%1$s price changed in the last 14 days</item>
+        <item quantity="other">%1$s prices changed in the last 14 days</item>
+    </plurals>
+    <string name="home_header">%1$s · %2$s</string>
+    <string name="home_all_clear_body">No margin below target, no missing price.</string>
 </resources>

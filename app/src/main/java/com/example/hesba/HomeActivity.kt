@@ -11,10 +11,12 @@ import com.example.hesba.databinding.ActivityHomeBinding
 import com.example.hesba.databinding.ItemAlertBinding
 import com.example.hesba.databinding.ItemLinkBinding
 import com.example.hesba.databinding.ItemStepBinding
+import com.example.hesba.domain.HomeHeadline
 import com.example.hesba.domain.HomeSummary
 import com.example.hesba.domain.HomeSummary.Alert
 import com.example.hesba.ui.BaseActivity
 import com.example.hesba.ui.Fmt
+import com.example.hesba.ui.Motion
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -31,6 +33,7 @@ class HomeActivity : BaseActivity() {
     private lateinit var b: ActivityHomeBinding
     private var showAllAlerts = false
     private var lastSummary: HomeSummary? = null
+    private var leadShown = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +42,6 @@ class HomeActivity : BaseActivity() {
         setScreen(b.root)
         BottomNav.setup(this, BottomNav.Tab.HOME)
 
-        b.txtDate.text = Fmt.date(this, System.currentTimeMillis())
         b.actionNewRecipe.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
         b.actionScan.setOnClickListener { startActivity(Intent(this, ScanActivity::class.java)) }
         b.actionAddIngredient.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java)) }
@@ -76,11 +78,14 @@ class HomeActivity : BaseActivity() {
 
     private fun render(firstName: String?, business: String?, s: HomeSummary) {
         lastSummary = s
-        b.txtGreeting.text = when {
+        val today = Fmt.date(this, System.currentTimeMillis())
+        val who = when {
             !business.isNullOrBlank() -> business
             !firstName.isNullOrBlank() -> getString(R.string.home_hello, firstName)
             else -> getString(R.string.home_hello_guest)
         }
+        b.txtHeader.text = getString(R.string.home_header, today, who)
+        renderLead(s)
         b.txtFigRecipes.text = Fmt.number(this, s.recipeCount.toBigDecimal(), 0)
         b.txtFigIngredients.text = Fmt.number(this, s.ingredientCount.toBigDecimal(), 0)
         b.txtFigAttention.text = Fmt.number(this, s.recipesNeedingAttention.toBigDecimal(), 0)
@@ -91,6 +96,40 @@ class HomeActivity : BaseActivity() {
         if (firstUse) renderSteps(s)
         b.alertsBlock.visibility = if (s.recipeCount == 0 && s.alerts.isEmpty()) View.GONE else View.VISIBLE
         renderAlerts(s)
+    }
+
+    /** Phrase d'ouverture : le nombre est mis en valeur (safran ou vert), le détail dessous. */
+    private fun renderLead(s: HomeSummary) {
+        fun n(v: Int) = Fmt.number(this, v.toBigDecimal(), 0)
+        val (text, number, color) = when (val lead = HomeHeadline.lead(s)) {
+            HomeHeadline.Lead.FirstIngredient -> Triple(getString(R.string.home_lead_first_ingredient), null, 0)
+            HomeHeadline.Lead.FirstRecipe -> Triple(getString(R.string.home_lead_first_recipe), null, 0)
+            is HomeHeadline.Lead.Attention -> Triple(resources.getQuantityString(R.plurals.home_lead_attention, lead.count, n(lead.count)), n(lead.count), R.color.hb_accent_ink)
+            is HomeHeadline.Lead.AllGood -> Triple(resources.getQuantityString(R.plurals.home_lead_all_good, lead.recipes, n(lead.recipes)), n(lead.recipes), R.color.hb_good)
+        }
+        val span = android.text.SpannableString(text)
+        val at = number?.let { text.indexOf(it) } ?: -1
+        if (at >= 0) span.setSpan(android.text.style.ForegroundColorSpan(getColor(color)), at, at + number!!.length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        if (b.txtLead.text.toString() != text) {
+            b.txtLead.text = span
+            if (!leadShown) Motion.riseIn(b.txtLead)
+        }
+        leadShown = true
+
+        val f = HomeHeadline.facts(s)
+        val parts = buildList {
+            if (f.belowTarget > 0) add(resources.getQuantityString(R.plurals.home_fact_below, f.belowTarget, n(f.belowTarget)))
+            if (f.incomplete > 0) add(resources.getQuantityString(R.plurals.home_fact_incomplete, f.incomplete, n(f.incomplete)))
+            if (f.noPrice > 0) add(resources.getQuantityString(R.plurals.home_fact_noprice, f.noPrice, n(f.noPrice)))
+            if (f.priceChanges > 0) add(resources.getQuantityString(R.plurals.home_fact_prices, f.priceChanges, n(f.priceChanges)))
+        }
+        val sub = when {
+            parts.isNotEmpty() -> parts.joinToString(" · ")
+            HomeHeadline.lead(s) is HomeHeadline.Lead.AllGood -> getString(R.string.home_all_clear_body)
+            else -> null
+        }
+        b.txtLeadSub.visibility = if (sub != null) View.VISIBLE else View.GONE
+        b.txtLeadSub.text = sub
     }
 
     private fun renderSteps(s: HomeSummary) {

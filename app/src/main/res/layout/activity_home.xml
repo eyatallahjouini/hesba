@@ -21,21 +21,36 @@
             android:paddingEnd="@dimen/gutter"
             android:paddingBottom="@dimen/sp_5">
 
-            <!-- En-tête : date + nom du commerce -->
+            <!-- En-tête : date · commerce, puis une vraie phrase construite à partir des données -->
             <TextView
-                android:id="@+id/txtDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_5"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
-
-            <TextView
-                android:id="@+id/txtGreeting"
+                android:id="@+id/txtHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/sp_5"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.Hesba.Section"
+                android:textColor="@color/hb_ink_soft" />
+
+            <TextView
+                android:id="@+id/txtLead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_3"
                 android:accessibilityHeading="true"
-                android:textAppearance="@style/TextAppearance.Hesba.Display" />
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.Hesba.Lead"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/txtLeadSub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_2"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.Hesba.Body.Soft"
+                android:visibility="gone" />
 
             <!-- Premier usage : 3 étapes -->
             <LinearLayout

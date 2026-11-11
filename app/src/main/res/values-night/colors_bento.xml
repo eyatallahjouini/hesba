@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Accueil en grille Bento (mode sombre) : brun presque noir, cartes un peu plus claires que le fond. -->
+<resources>
+    <color name="hb_bento_bg">#0F0B09</color>
+    <color name="hb_bento_card">#18130F</color>
+    <color name="hb_bento_line">#241D18</color>
+    <color name="hb_bento_ink">#EFE6DC</color>
+    <color name="hb_bento_ink_soft">#A8998B</color>
+    <color name="hb_bento_icon">#D29A6C</color>
+    <color name="hb_bento_label">#F0B47C</color>
+    <color name="hb_bento_ripple">#26EFE6DC</color>
+    <color name="hb_bento_hero">#271C14</color>
+    <color name="hb_bento_hero_soft">#BFA994</color>
+    <color name="hb_bento_ring_track">#3B2C20</color>
+    <color name="hb_bento_ring">#E9A05E</color>
+    <color name="hb_bento_ring_tick">#F3D2B0</color>
+    <color name="hb_bento_scan">#211912</color>
+    <color name="hb_bento_scan_soft">#B3A496</color>
+    <color name="hb_bento_scan_chip">#30251B</color>
+    <color name="hb_bento_scan_icon">#F0B47C</color>
+    <color name="hb_bento_bad">#281715</color>
+    <color name="hb_bento_bad_ink">#F2ADA1</color>
+    <color name="hb_bento_bad_icon">#D98A7D</color>
+    <color name="hb_bento_good">#141F16</color>
+    <color name="hb_bento_good_ink">#9FD3A3</color>
+    <color name="hb_bento_good_soft">#94B297</color>
+    <color name="hb_bento_pill">#2D2118</color>
+    <color name="hb_bento_avatar">#201914</color>
+    <color name="hb_bento_avatar_ink">#E5D6C6</color>
+</resources>

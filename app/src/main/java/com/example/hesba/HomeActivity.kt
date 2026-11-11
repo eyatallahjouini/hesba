@@ -1,39 +1,55 @@
 package com.example.hesba
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.hesba.databinding.ActivityHomeBinding
 import com.example.hesba.databinding.ItemAlertBinding
-import com.example.hesba.databinding.ItemLinkBinding
 import com.example.hesba.databinding.ItemStepBinding
+import com.example.hesba.domain.Greeting
+import com.example.hesba.domain.HomeDashboard
 import com.example.hesba.domain.HomeHeadline
 import com.example.hesba.domain.HomeSummary
 import com.example.hesba.domain.HomeSummary.Alert
+import com.example.hesba.domain.Workspace
 import com.example.hesba.ui.BaseActivity
 import com.example.hesba.ui.Fmt
 import com.example.hesba.ui.Motion
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-/** Accueil : alertes d'abord, actions rapides, chiffres clés, outils. Aucune vente ni bilan. */
+/**
+ * Accueil en grille Bento : une idée par carte (marge moyenne, scanner, recettes à corriger,
+ * dernier prix qui a bougé, une action à faire maintenant, meilleure marge, simulateur, courses).
+ * Tous les chiffres viennent des données réelles ; aucune vente ni bilan.
+ */
 class HomeActivity : BaseActivity() {
 
     companion object {
         const val EXTRA_WELCOME = "welcome"
         const val EXTRA_MOVED = "moved"
-        private const val MAX_ALERTS = 5
+        private const val STATE_ALERT = "alert_index"
+        private const val STATE_ALERTS_OPEN = "alerts_open"
     }
 
     private lateinit var b: ActivityHomeBinding
-    private var showAllAlerts = false
+    private var alertIndex = 0
+    private var alertsOpen = false
+    private var lastWs: Workspace? = null
     private var lastSummary: HomeSummary? = null
-    private var leadShown = false
+    private var entered = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,19 +57,21 @@ class HomeActivity : BaseActivity() {
         b = ActivityHomeBinding.inflate(layoutInflater)
         setScreen(b.root)
         BottomNav.setup(this, BottomNav.Tab.HOME)
+        alertIndex = savedInstanceState?.getInt(STATE_ALERT) ?: 0
+        alertsOpen = savedInstanceState?.getBoolean(STATE_ALERTS_OPEN) ?: false
 
-        b.actionNewRecipe.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
-        b.actionScan.setOnClickListener { startActivity(Intent(this, ScanActivity::class.java)) }
-        b.actionAddIngredient.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java)) }
-        b.figRecipes.setOnClickListener { BottomNav.open(this, BottomNav.Tab.RECIPES, BottomNav.Tab.HOME) }
-        b.figIngredients.setOnClickListener { BottomNav.open(this, BottomNav.Tab.INGREDIENTS, BottomNav.Tab.HOME) }
-        b.figAttention.setOnClickListener { b.root.post { b.alertsBlock.requestRectangleOnScreen(android.graphics.Rect(0, 0, b.alertsBlock.width, b.alertsBlock.height)) } }
-        b.btnMoreAlerts.setOnClickListener { showAllAlerts = !showAllAlerts; lastSummary?.let { renderAlerts(it) } }
-
-        tool(b.toolWhatIf, R.drawable.ic_simulate, R.string.tool_whatif, R.string.tool_whatif_sub, WhatIfActivity::class.java)
-        tool(b.toolShopping, R.drawable.ic_cart, R.string.tool_shopping, R.string.tool_shopping_sub, ShoppingListActivity::class.java)
-        tool(b.toolInsights, R.drawable.ic_trend_up, R.string.tool_insights, R.string.tool_insights_sub, InsightsActivity::class.java)
-        tool(b.toolInvoices, R.drawable.ic_invoice, R.string.tool_invoices, R.string.tool_invoices_sub, InvoicesActivity::class.java)
+        b.btnProfile.setOnClickListener { BottomNav.open(this, BottomNav.Tab.PROFILE, BottomNav.Tab.HOME) }
+        b.cardMargin.setOnClickListener { BottomNav.open(this, BottomNav.Tab.RECIPES, BottomNav.Tab.HOME) }
+        b.cardScan.setOnClickListener { startActivity(Intent(this, ScanActivity::class.java)) }
+        b.cardPrice.setOnClickListener { startActivity(Intent(this, InsightsActivity::class.java)) }
+        b.cardSimulator.setOnClickListener { startActivity(Intent(this, WhatIfActivity::class.java)) }
+        b.cardShopping.setOnClickListener { startActivity(Intent(this, ShoppingListActivity::class.java)) }
+        b.cardFix.setOnClickListener { toggleAlerts() }
+        b.btnNextAlert.setOnClickListener {
+            alertIndex++
+            Motion.tick(it)
+            renderTodo()
+        }
 
         if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_WELCOME, false)) {
             val moved = intent.getIntExtra(EXTRA_MOVED, 0)
@@ -64,75 +82,77 @@ class HomeActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 combine(repo.workspace(), repo.history(since)) { ws, h -> ws to HomeSummary.build(ws, h) }
-                    .collect { (ws, summary) -> render(ws.user?.prenom, ws.user?.nomCommerce, summary) }
+                    .collect { (ws, summary) -> render(ws, summary) }
             }
         }
     }
 
-    private fun tool(row: ItemLinkBinding, icon: Int, title: Int, sub: Int, target: Class<*>) {
-        row.icon.setImageResource(icon)
-        row.title.setText(title)
-        row.subtitle.setText(sub)
-        row.rowClick.setOnClickListener { startActivity(Intent(this, target)) }
+    override fun onResume() {
+        super.onResume()
+        // l'heure a pu changer depuis le dernier affichage (Bonjour → Bonsoir)
+        lastWs?.let { renderHeader(it) }
     }
 
-    private fun render(firstName: String?, business: String?, s: HomeSummary) {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(STATE_ALERT, alertIndex)
+        outState.putBoolean(STATE_ALERTS_OPEN, alertsOpen)
+    }
+
+    private fun render(ws: Workspace, s: HomeSummary) {
+        lastWs = ws
         lastSummary = s
-        val today = Fmt.date(this, System.currentTimeMillis())
-        val who = when {
-            !business.isNullOrBlank() -> business
-            !firstName.isNullOrBlank() -> getString(R.string.home_hello, firstName)
-            else -> getString(R.string.home_hello_guest)
-        }
-        b.txtHeader.text = getString(R.string.home_header, today, who)
-        renderLead(s)
-        b.txtFigRecipes.text = Fmt.number(this, s.recipeCount.toBigDecimal(), 0)
-        b.txtFigIngredients.text = Fmt.number(this, s.ingredientCount.toBigDecimal(), 0)
-        b.txtFigAttention.text = Fmt.number(this, s.recipesNeedingAttention.toBigDecimal(), 0)
-        b.txtFigAttention.setTextColor(getColor(if (s.recipesNeedingAttention > 0) R.color.hb_bad else R.color.hb_ink))
+        renderHeader(ws)
 
         val firstUse = s.ingredientCount == 0 || s.recipeCount == 0
         b.firstUse.visibility = if (firstUse) View.VISIBLE else View.GONE
-        if (firstUse) renderSteps(s)
-        b.alertsBlock.visibility = if (s.recipeCount == 0 && s.alerts.isEmpty()) View.GONE else View.VISIBLE
+        b.bento.visibility = if (firstUse) View.GONE else View.VISIBLE
+        if (firstUse) {
+            b.alertsBlock.visibility = View.GONE
+            renderFirstUse(s)
+            return
+        }
+
+        val d = HomeDashboard.build(ws, s)
+        renderMargin(d)
+        renderFix(s)
+        renderPrice(d)
+        renderTodo()
+        renderBest(d)
         renderAlerts(s)
+        enter(d)
     }
 
-    /** Phrase d'ouverture : le nombre est mis en valeur (safran ou vert), le détail dessous. */
-    private fun renderLead(s: HomeSummary) {
-        fun n(v: Int) = Fmt.number(this, v.toBigDecimal(), 0)
-        val (text, number, color) = when (val lead = HomeHeadline.lead(s)) {
-            HomeHeadline.Lead.FirstIngredient -> Triple(getString(R.string.home_lead_first_ingredient), null, 0)
-            HomeHeadline.Lead.FirstRecipe -> Triple(getString(R.string.home_lead_first_recipe), null, 0)
-            is HomeHeadline.Lead.Attention -> Triple(resources.getQuantityString(R.plurals.home_lead_attention, lead.count, n(lead.count)), n(lead.count), R.color.hb_accent_ink)
-            is HomeHeadline.Lead.AllGood -> Triple(resources.getQuantityString(R.plurals.home_lead_all_good, lead.recipes, n(lead.recipes)), n(lead.recipes), R.color.hb_good)
-        }
-        val span = android.text.SpannableString(text)
-        val at = number?.let { text.indexOf(it) } ?: -1
-        if (at >= 0) span.setSpan(android.text.style.ForegroundColorSpan(getColor(color)), at, at + number!!.length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        if (b.txtLead.text.toString() != text) {
-            b.txtLead.text = span
-            if (!leadShown) Motion.riseIn(b.txtLead)
-        }
-        leadShown = true
+    // ---------- en-tête ----------
 
-        val f = HomeHeadline.facts(s)
-        val parts = buildList {
-            if (f.belowTarget > 0) add(resources.getQuantityString(R.plurals.home_fact_below, f.belowTarget, n(f.belowTarget)))
-            if (f.incomplete > 0) add(resources.getQuantityString(R.plurals.home_fact_incomplete, f.incomplete, n(f.incomplete)))
-            if (f.noPrice > 0) add(resources.getQuantityString(R.plurals.home_fact_noprice, f.noPrice, n(f.noPrice)))
-            if (f.priceChanges > 0) add(resources.getQuantityString(R.plurals.home_fact_prices, f.priceChanges, n(f.priceChanges)))
-        }
-        val sub = when {
-            parts.isNotEmpty() -> parts.joinToString(" · ")
-            HomeHeadline.lead(s) is HomeHeadline.Lead.AllGood -> getString(R.string.home_all_clear_body)
-            else -> null
-        }
-        b.txtLeadSub.visibility = if (sub != null) View.VISIBLE else View.GONE
-        b.txtLeadSub.text = sub
+    private fun renderHeader(ws: Workspace) {
+        val user = ws.user
+        val business = user?.nomCommerce?.trim().orEmpty()
+        val firstName = user?.prenom?.trim().orEmpty()
+        val today = Fmt.date(this, System.currentTimeMillis())
+        b.txtHeader.text = if (business.isNotEmpty()) getString(R.string.home_header, today, business) else today
+
+        val hello = getString(
+            when (Greeting.period(Calendar.getInstance().get(Calendar.HOUR_OF_DAY))) {
+                Greeting.Period.MORNING -> R.string.greeting_morning
+                Greeting.Period.AFTERNOON -> R.string.greeting_afternoon
+                Greeting.Period.EVENING -> R.string.greeting_evening
+            }
+        )
+        b.txtGreeting.text = if (firstName.isNotEmpty()) getString(R.string.greeting_with_name, hello, firstName) else hello
+
+        val initial = (firstName.ifEmpty { business }).firstOrNull()?.uppercaseChar()
+        b.txtAvatar.text = initial?.toString().orEmpty()
+        b.imgAvatar.visibility = if (initial == null) View.VISIBLE else View.GONE
     }
 
-    private fun renderSteps(s: HomeSummary) {
+    // ---------- premier usage ----------
+
+    private fun renderFirstUse(s: HomeSummary) {
+        b.txtFirstLead.setText(
+            if (HomeHeadline.lead(s) == HomeHeadline.Lead.FirstIngredient) R.string.home_lead_first_ingredient
+            else R.string.home_lead_first_recipe
+        )
         step(b.step1, 1, R.string.step1_title, R.string.step1_body, R.string.action_add, s.ingredientCount > 0, true) {
             startActivity(Intent(this, NouvelIngredientActivity::class.java))
         }
@@ -156,15 +176,170 @@ class HomeActivity : BaseActivity() {
         v.stepRow.alpha = if (done) 0.6f else 1f
     }
 
+    // ---------- cartes ----------
+
+    private fun renderMargin(d: HomeDashboard) {
+        val avg = d.averageMargin
+        if (avg == null) {
+            b.txtMargin.text = getString(R.string.value_missing)
+            b.txtMarginSub.setText(R.string.bento_margin_none)
+            b.ringMargin.set(null, null, animate = false)
+            b.cardMargin.contentDescription = getString(R.string.bento_margin_label) + ", " + getString(R.string.bento_margin_none)
+            return
+        }
+        val target = d.averageTarget
+        showNumber(b.txtMargin, avg) { Fmt.percent(this, it) }
+        b.txtMarginSub.text = resources.getQuantityString(R.plurals.bento_margin_sub, d.pricedCount, Fmt.percent(this, target), count(d.pricedCount))
+        b.ringMargin.set(avg.toFloat(), target?.toFloat(), animate = !entered)
+        b.cardMargin.contentDescription = getString(R.string.cd_bento_margin, Fmt.percent(this, avg), Fmt.percent(this, target))
+    }
+
+    private fun renderFix(s: HomeSummary) {
+        val n = s.recipesNeedingAttention
+        b.txtFixCount.text = Fmt.number(this, n.toBigDecimal(), 0)
+        val bad = n > 0
+        b.txtFixLabel.setText(if (bad) R.string.bento_fix_label else R.string.bento_fix_none)
+        b.cardFix.setBackgroundResource(if (bad) R.drawable.bg_bento_bad else R.drawable.bg_bento_good)
+        val ink = getColor(if (bad) R.color.hb_bento_bad_ink else R.color.hb_bento_good_ink)
+        b.txtFixCount.setTextColor(ink)
+        b.txtFixLabel.setTextColor(ink)
+        b.imgFix.setImageResource(if (bad) R.drawable.ic_alert else R.drawable.ic_check)
+        b.imgFix.setColorFilter(getColor(if (bad) R.color.hb_bento_bad_icon else R.color.hb_bento_good_ink))
+        b.cardFix.isClickable = s.alerts.isNotEmpty()
+        b.cardFix.contentDescription = b.txtFixCount.text.toString() + " " + b.txtFixLabel.text
+    }
+
+    private fun renderPrice(d: HomeDashboard) {
+        val pc = d.topPriceChange
+        if (pc == null) {
+            b.txtPriceName.setText(R.string.bento_prices_title)
+            b.txtPriceDelta.visibility = View.GONE
+            b.txtPriceFrom.text = getString(R.string.bento_prices_stable, count(HomeSummary.RECENT_DAYS))
+            return
+        }
+        b.txtPriceName.text = pc.ingredient.nom
+        b.txtPriceFrom.text = getString(R.string.alert_price_changed,
+            Fmt.money(this, pc.entry.ancienPrixMillimes), Fmt.money(this, pc.entry.nouveauPrixMillimes), Fmt.relative(pc.entry.date))
+        val pct = pc.percent
+        b.txtPriceDelta.visibility = if (pct == null) View.GONE else View.VISIBLE
+        if (pct != null) {
+            b.txtPriceDelta.text = Fmt.signedPercent(this, pct)
+            b.txtPriceDelta.setTextColor(getColor(if (pct.signum() > 0) R.color.hb_bento_bad_ink else R.color.hb_bento_good_ink))
+        }
+    }
+
+    /** Une alerte à la fois, la plus importante d'abord ; « 1 / n › » passe à la suivante. */
+    private fun renderTodo() {
+        val ws = lastWs ?: return
+        val alerts = lastSummary?.alerts.orEmpty()
+        if (alerts.isEmpty()) {
+            b.txtTodoTitle.setText(R.string.bento_todo_none_title)
+            b.txtTodoBody.setText(R.string.bento_todo_none_body)
+            b.layoutTodoPath.visibility = View.GONE
+            b.btnTodo.visibility = View.GONE
+            b.btnNextAlert.visibility = View.GONE
+            b.cardTodo.isClickable = false
+            return
+        }
+        val i = Math.floorMod(alertIndex, alerts.size)
+        alertIndex = i
+        b.btnNextAlert.visibility = if (alerts.size > 1) View.VISIBLE else View.GONE
+        b.btnNextAlert.text = getString(R.string.bento_todo_pager, count(i + 1), count(alerts.size)) +
+            if (b.root.layoutDirection == View.LAYOUT_DIRECTION_RTL) "  ‹" else "  ›"
+        b.btnNextAlert.contentDescription = getString(R.string.cd_bento_next, count(i + 1), count(alerts.size))
+        b.btnTodo.visibility = View.VISIBLE
+        b.cardTodo.isClickable = true
+
+        when (val a = alerts[i]) {
+            is Alert.BelowTarget -> {
+                b.txtTodoTitle.text = a.recette.nom
+                b.layoutTodoPath.visibility = View.VISIBLE
+                b.txtTodoFrom.text = Fmt.percent(this, a.margin)
+                b.txtTodoTo.text = Fmt.percent(this, a.target)
+                b.txtTodoBody.text = getString(R.string.bento_todo_sold, Fmt.money(this, a.price), Fmt.money(this, a.cost))
+                todoAction(a.recette.id, ws.cost(a.recette).suggestedPriceMillimes?.takeIf { it != a.price })
+            }
+            is Alert.Incomplete -> {
+                b.txtTodoTitle.text = a.recette.nom
+                b.layoutTodoPath.visibility = View.GONE
+                b.txtTodoBody.text = getString(R.string.alert_incomplete, a.missing.joinToString())
+                todoAction(a.recette.id, null)
+            }
+            is Alert.NoSellingPrice -> {
+                b.txtTodoTitle.text = a.recette.nom
+                b.layoutTodoPath.visibility = View.GONE
+                b.txtTodoBody.text = getString(R.string.alert_no_price, Fmt.money(this, a.suggested))
+                todoAction(a.recette.id, a.suggested)
+            }
+            is Alert.PriceChanged -> {
+                b.txtTodoTitle.text = a.ingredient.nom
+                b.layoutTodoPath.visibility = View.GONE
+                b.txtTodoBody.text = getString(R.string.alert_price_changed,
+                    Fmt.money(this, a.entry.ancienPrixMillimes), Fmt.money(this, a.entry.nouveauPrixMillimes), Fmt.relative(a.entry.date))
+                b.btnTodo.setText(R.string.bento_todo_open)
+                val open = View.OnClickListener { openIngredient(a.ingredient.id) }
+                b.btnTodo.setOnClickListener(open)
+                b.cardTodo.setOnClickListener(open)
+            }
+        }
+    }
+
+    /** Bouton de la carte « à faire » : fixer le prix conseillé en un geste, sinon ouvrir la recette. */
+    private fun todoAction(recipeId: Long, suggested: Long?) {
+        b.cardTodo.setOnClickListener { openRecipe(recipeId) }
+        if (suggested == null) {
+            b.btnTodo.setText(R.string.bento_todo_open)
+            b.btnTodo.setOnClickListener { openRecipe(recipeId) }
+            return
+        }
+        val price = Fmt.money(this, suggested)
+        b.btnTodo.text = getString(R.string.bento_todo_set_price, price)
+        b.btnTodo.setOnClickListener { v ->
+            v.isEnabled = false
+            lifecycleScope.launch {
+                repo.setSellingPrice(recipeId, suggested)
+                Motion.confirm(v)
+                snack(getString(R.string.bento_price_applied, price))
+                v.isEnabled = true
+            }
+        }
+    }
+
+    private fun renderBest(d: HomeDashboard) {
+        val best = d.best
+        if (best == null) {
+            // aucune marge connue : la carte propose de composer une recette
+            b.txtBestLabel.setText(R.string.action_new_recipe)
+            b.txtBestValue.text = "+"
+            b.txtBestName.visibility = View.GONE
+            b.txtBestSub.text = getString(R.string.bento_new_recipe_sub)
+            b.cardBest.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
+            return
+        }
+        b.txtBestLabel.setText(R.string.bento_best_label)
+        showNumber(b.txtBestValue, best.margin) { Fmt.percent(this, it) }
+        b.txtBestName.visibility = View.VISIBLE
+        b.txtBestName.text = best.recette.nom
+        b.txtBestSub.text = getString(R.string.bento_best_sub, Fmt.money(this, best.priceMillimes), Fmt.money(this, best.costMillimes))
+        b.cardBest.setOnClickListener { openRecipe(best.recette.id) }
+    }
+
+    // ---------- liste complète des alertes (carte « à corriger ») ----------
+
+    private fun toggleAlerts() {
+        if (lastSummary?.alerts.isNullOrEmpty()) return
+        alertsOpen = !alertsOpen
+        lastSummary?.let { renderAlerts(it) }
+        if (alertsOpen) b.root.post { b.scroll.smoothScrollTo(0, b.alertsBlock.top) }
+    }
+
     private fun renderAlerts(s: HomeSummary) {
+        if (s.alerts.isEmpty()) alertsOpen = false
+        b.alertsBlock.visibility = if (alertsOpen) View.VISIBLE else View.GONE
+        if (!alertsOpen) return
+        b.txtAlertsTitle.text = getString(R.string.home_alerts_count, s.alerts.size)
         b.listAlerts.removeAllViews()
-        val visible = if (showAllAlerts) s.alerts else s.alerts.take(MAX_ALERTS)
-        b.txtNoAlert.visibility = if (s.alerts.isEmpty()) View.VISIBLE else View.GONE
-        b.txtAlertsTitle.text = if (s.alerts.isEmpty()) getString(R.string.home_alerts)
-        else getString(R.string.home_alerts_count, s.alerts.size)
-        for (alert in visible) b.listAlerts.addView(alertView(alert))
-        b.btnMoreAlerts.visibility = if (s.alerts.size > MAX_ALERTS) View.VISIBLE else View.GONE
-        b.btnMoreAlerts.text = if (showAllAlerts) getString(R.string.action_show_less) else getString(R.string.home_alerts_all, s.alerts.size)
+        for (alert in s.alerts) b.listAlerts.addView(alertView(alert))
     }
 
     private fun alertView(alert: Alert): View {
@@ -209,14 +384,59 @@ class HomeActivity : BaseActivity() {
                         v.alertValue.setBackgroundResource(R.drawable.bg_tag_good)
                     }
                 } else v.alertValue.visibility = View.GONE
-                v.alertRow.setOnClickListener {
-                    startActivity(Intent(this, NouvelIngredientActivity::class.java).putExtra(NouvelIngredientActivity.EXTRA_INGREDIENT_ID, alert.ingredient.id))
-                }
+                v.alertRow.setOnClickListener { openIngredient(alert.ingredient.id) }
             }
         }
         return v.root
     }
 
+    // ---------- mouvement ----------
+
+    /** Première apparition : les cartes montent l'une après l'autre, les chiffres comptent jusqu'à leur valeur. */
+    private fun enter(d: HomeDashboard) {
+        if (entered) return
+        entered = true
+        val cards = listOf(b.header, b.cardMargin, b.cardScan, b.cardFix, b.cardPrice, b.cardTodo, b.cardBest, b.cardSimulator, b.cardShopping)
+        cards.forEachIndexed { i, v -> Motion.riseIn(v, i * Motion.STAGGER, 10f) }
+        d.averageMargin?.let { countUp(b.txtMargin, it) }
+        d.best?.let { countUp(b.txtBestValue, it.margin) }
+    }
+
+    /** Pendant que le chiffre compte, la nouvelle valeur est gardée et affichée à la fin. */
+    private fun showNumber(view: TextView, value: BigDecimal, format: (BigDecimal) -> String) {
+        if ((view.getTag(R.id.txtMargin) as? ValueAnimator)?.isRunning == true) {
+            view.setTag(R.id.txtMarginSub, value)
+            return
+        }
+        view.text = format(value)
+    }
+
+    private fun countUp(view: TextView, end: BigDecimal) {
+        if (!Motion.enabled(this)) return
+        val animator = ValueAnimator.ofFloat(0f, end.toFloat())
+        animator.duration = 900
+        animator.interpolator = Motion.decelerate
+        animator.addUpdateListener {
+            view.text = Fmt.percent(this, BigDecimal((it.animatedValue as Float).toDouble()).setScale(1, RoundingMode.HALF_UP))
+        }
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                view.text = Fmt.percent(this@HomeActivity, view.getTag(R.id.txtMarginSub) as? BigDecimal ?: end)
+                view.setTag(R.id.txtMargin, null)
+                view.setTag(R.id.txtMarginSub, null)
+            }
+        })
+        view.setTag(R.id.txtMargin, animator)
+        animator.start()
+    }
+
+    private fun count(n: Int) = Fmt.number(this, n.toBigDecimal(), 0)
+
+    // ---------- navigation ----------
+
     private fun openRecipe(id: Long) =
         startActivity(Intent(this, RecipeDetailActivity::class.java).putExtra(RecipeDetailActivity.EXTRA_ID, id))
+
+    private fun openIngredient(id: Long) =
+        startActivity(Intent(this, NouvelIngredientActivity::class.java).putExtra(NouvelIngredientActivity.EXTRA_INGREDIENT_ID, id))
 }

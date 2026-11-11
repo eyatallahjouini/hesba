@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Accueil en grille Bento : des cartes arrondies de tailles différentes, une idée par carte.
+     Rangée = 78 dp, carte haute = 166 dp, espace 10 dp (dimens_bento.xml). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/hb_bento_bg"
     android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -17,42 +22,84 @@
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
             android:orientation="vertical"
-            android:paddingStart="@dimen/gutter"
-            android:paddingEnd="@dimen/gutter"
+            android:paddingStart="@dimen/sp_4"
+            android:paddingTop="@dimen/sp_5"
+            android:paddingEnd="@dimen/sp_4"
             android:paddingBottom="@dimen/sp_5">
 
-            <!-- En-tête : date · commerce, puis une vraie phrase construite à partir des données -->
-            <TextView
-                android:id="@+id/txtHeader"
+            <!-- En-tête : date · commerce, salutation selon l'heure, profil -->
+            <LinearLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_5"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.Hesba.Section"
-                android:textColor="@color/hb_ink_soft" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/txtLead"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_3"
-                android:accessibilityHeading="true"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.Hesba.Lead"
-                android:textSize="28sp" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txtLeadSub"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_2"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.Hesba.Body.Soft"
-                android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/txtHeader"
+                        style="@style/Hesba.Bento.Label"
+                        android:layout_width="match_parent"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/hb_bento_ink_soft" />
 
-            <!-- Premier usage : 3 étapes -->
+                    <TextView
+                        android:id="@+id/txtGreeting"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_1"
+                        android:accessibilityHeading="true"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/hb_sans_semibold"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/hb_bento_ink"
+                        android:textSize="26sp"
+                        tools:text="Bonsoir, Eya" />
+                </LinearLayout>
+
+                <!-- profil : initiale du prénom ou du commerce, sinon l'icône -->
+                <FrameLayout
+                    android:id="@+id/btnProfile"
+                    android:layout_width="@dimen/touch"
+                    android:layout_height="@dimen/touch"
+                    android:layout_marginStart="@dimen/sp_3"
+                    android:background="@drawable/bg_bento_avatar"
+                    android:clickable="true"
+                    android:contentDescription="@string/tab_profile"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/txtAvatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/hb_sans_semibold"
+                        android:gravity="center"
+                        android:importantForAccessibility="no"
+                        android:textColor="@color/hb_bento_avatar_ink"
+                        android:textSize="17sp"
+                        tools:text="E" />
+
+                    <ImageView
+                        android:id="@+id/imgAvatar"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_profile"
+                        android:visibility="gone"
+                        app:tint="@color/hb_bento_avatar_ink" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <!-- Premier usage : 3 étapes (la grille n'a pas encore de chiffres à montrer) -->
             <LinearLayout
                 android:id="@+id/firstUse"
                 android:layout_width="match_parent"
@@ -62,10 +109,10 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:id="@+id/txtFirstLead"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/home_first_title"
-                    android:textAppearance="@style/TextAppearance.Hesba.Title" />
+                    android:textAppearance="@style/TextAppearance.Hesba.Lead" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -87,12 +134,473 @@
                     layout="@layout/item_step" />
             </LinearLayout>
 
-            <!-- Alertes en premier -->
+            <!-- Grille Bento -->
+            <LinearLayout
+                android:id="@+id/bento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_4"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical">
+
+                <!-- 1 · Marge moyenne (toute la largeur, 2 rangées) -->
+                <LinearLayout
+                    android:id="@+id/cardMargin"
+                    style="@style/Hesba.Bento.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bento_tall"
+                    android:layout_weight="0"
+                    android:background="@drawable/bg_bento_hero"
+                    android:elevation="0dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Hesba.Bento.Label"
+                            android:text="@string/bento_margin_label" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/txtMargin"
+                            style="@style/Hesba.Bento.Big"
+                            tools:text="44,3 %" />
+
+                        <TextView
+                            android:id="@+id/txtMarginSub"
+                            style="@style/Hesba.Bento.Sub"
+                            android:layout_marginTop="@dimen/sp_1"
+                            android:textColor="@color/hb_bento_hero_soft"
+                            tools:text="objectif moyen 60 % · 4 recettes" />
+                    </LinearLayout>
+
+                    <com.example.hesba.ui.widget.MarginRingView
+                        android:id="@+id/ringMargin"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:layout_marginStart="@dimen/sp_3" />
+                </LinearLayout>
+
+                <!-- rangées 3-4 : scanner (haut) | à corriger + prix -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bento_tall"
+                    android:layout_marginTop="@dimen/bento_gap"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/cardScan"
+                        style="@style/Hesba.Bento.Card"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_bento_scan"
+                        android:elevation="0dp"
+                        android:orientation="vertical"
+                        android:padding="@dimen/bento_pad">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="@drawable/bg_bento_chip">
+
+                            <ImageView
+                                style="@style/Hesba.Bento.Icon"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_scan"
+                                app:tint="@color/hb_bento_scan_icon" />
+                        </FrameLayout>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            style="@style/Hesba.Bento.Title"
+                            android:text="@string/action_scan_invoice" />
+
+                        <TextView
+                            style="@style/Hesba.Bento.Sub"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/bento_scan_sub"
+                            android:textColor="@color/hb_bento_scan_soft" />
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="@dimen/bento_gap"
+                        android:layout_height="0dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clipChildren="false"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/cardFix"
+                            style="@style/Hesba.Bento.Card"
+                            android:layout_width="match_parent"
+                            android:layout_weight="0"
+                            android:background="@drawable/bg_bento_bad"
+                            android:elevation="0dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/txtFixCount"
+                                    style="@style/Hesba.Bento.Big"
+                                    android:textColor="@color/hb_bento_bad_ink"
+                                    android:textSize="26sp"
+                                    tools:text="4" />
+
+                                <TextView
+                                    android:id="@+id/txtFixLabel"
+                                    style="@style/Hesba.Bento.Sub"
+                                    android:textColor="@color/hb_bento_bad_ink"
+                                    tools:text="à corriger" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/imgFix"
+                                style="@style/Hesba.Bento.Icon"
+                                android:src="@drawable/ic_alert"
+                                app:tint="@color/hb_bento_bad_icon" />
+                        </LinearLayout>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/bento_gap" />
+
+                        <LinearLayout
+                            android:id="@+id/cardPrice"
+                            style="@style/Hesba.Bento.Card"
+                            android:layout_width="match_parent"
+                            android:layout_weight="0"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/txtPriceName"
+                                    style="@style/Hesba.Bento.Name"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    tools:text="Beurre" />
+
+                                <TextView
+                                    android:id="@+id/txtPriceDelta"
+                                    style="@style/Hesba.Bento.Mono"
+                                    android:layout_marginStart="@dimen/sp_2"
+                                    android:fontFamily="@font/hb_mono_medium"
+                                    android:textColor="@color/hb_bento_bad_ink"
+                                    tools:text="+12,8 %" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/txtPriceFrom"
+                                style="@style/Hesba.Bento.Mono"
+                                android:layout_width="match_parent"
+                                android:layout_marginTop="6dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textAlignment="viewStart"
+                                tools:text="3,900 → 4,400 DT" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- rangées 5-6 : une action à faire maintenant -->
+                <LinearLayout
+                    android:id="@+id/cardTodo"
+                    style="@style/Hesba.Bento.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/bento_gap"
+                    android:layout_weight="0"
+                    android:minHeight="@dimen/bento_tall"
+                    android:orientation="vertical"
+                    android:padding="@dimen/bento_pad">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/Hesba.Bento.Label"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/bento_todo_label" />
+
+                        <TextView
+                            android:id="@+id/btnNextAlert"
+                            style="@style/Hesba.Bento.Mono"
+                            android:layout_height="32dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:minWidth="@dimen/touch"
+                            android:paddingStart="@dimen/sp_2"
+                            android:paddingEnd="@dimen/sp_2"
+                            tools:text="1 / 4  ›" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtTodoTitle"
+                        style="@style/Hesba.Bento.Title"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/sp_2"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        tools:text="Cornes de gazelle" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutTodoPath"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/txtTodoFrom"
+                            style="@style/Hesba.Bento.Mono"
+                            android:fontFamily="@font/hb_mono_medium"
+                            android:textColor="@color/hb_bento_bad_ink"
+                            android:textSize="13sp"
+                            tools:text="2,4 %" />
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginStart="@dimen/sp_2"
+                            android:layout_marginEnd="@dimen/sp_2"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_arrow_forward"
+                            app:tint="@color/hb_bento_ink_soft" />
+
+                        <TextView
+                            android:id="@+id/txtTodoTo"
+                            style="@style/Hesba.Bento.Mono"
+                            android:fontFamily="@font/hb_mono_medium"
+                            android:textColor="@color/hb_bento_good_ink"
+                            android:textSize="13sp"
+                            tools:text="55 %" />
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:minHeight="@dimen/sp_3" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/txtTodoBody"
+                            style="@style/Hesba.Bento.Sub"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:textAlignment="viewStart"
+                            tools:text="Vendue 0,900 DT · coût 0,878 DT" />
+
+                        <TextView
+                            android:id="@+id/btnTodo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="@dimen/sp_3"
+                            android:background="@drawable/bg_bento_pill"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="@font/hb_sans_semibold"
+                            android:gravity="center"
+                            android:paddingStart="@dimen/sp_4"
+                            android:paddingEnd="@dimen/sp_4"
+                            android:textColor="@color/hb_bento_label"
+                            android:textSize="13sp"
+                            tools:text="Mettre à 1,950 DT" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- rangées 7-8 : meilleure marge (haut) | simulateur + courses -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/bento_tall"
+                    android:layout_marginTop="@dimen/bento_gap"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/cardBest"
+                        style="@style/Hesba.Bento.Card"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_bento_good"
+                        android:elevation="0dp"
+                        android:orientation="vertical"
+                        android:padding="@dimen/bento_pad">
+
+                        <TextView
+                            android:id="@+id/txtBestLabel"
+                            style="@style/Hesba.Bento.Label"
+                            android:textColor="@color/hb_bento_good_ink"
+                            tools:text="Meilleure marge" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/txtBestValue"
+                            style="@style/Hesba.Bento.Big"
+                            android:textColor="@color/hb_bento_good_ink"
+                            android:textSize="32sp"
+                            tools:text="60,3 %" />
+
+                        <TextView
+                            android:id="@+id/txtBestName"
+                            style="@style/Hesba.Bento.Name"
+                            android:layout_width="match_parent"
+                            android:layout_marginTop="2dp"
+                            android:textAlignment="viewStart"
+                            android:textSize="15sp"
+                            tools:text="Pain au lait" />
+
+                        <TextView
+                            android:id="@+id/txtBestSub"
+                            style="@style/Hesba.Bento.Mono"
+                            android:layout_width="match_parent"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/hb_bento_good_soft"
+                            tools:text="0,700 DT · coût 0,278" />
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="@dimen/bento_gap"
+                        android:layout_height="0dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clipChildren="false"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/cardSimulator"
+                            style="@style/Hesba.Bento.Card"
+                            android:layout_width="match_parent"
+                            android:layout_weight="0"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                style="@style/Hesba.Bento.Icon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_simulate" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/sp_3"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/Hesba.Bento.Name"
+                                    android:text="@string/bento_sim_title" />
+
+                                <TextView
+                                    style="@style/Hesba.Bento.Sub"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:text="@string/bento_sim_sub"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/bento_gap" />
+
+                        <LinearLayout
+                            android:id="@+id/cardShopping"
+                            style="@style/Hesba.Bento.Card"
+                            android:layout_width="match_parent"
+                            android:layout_weight="0"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                style="@style/Hesba.Bento.Icon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_cart" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/sp_3"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/Hesba.Bento.Name"
+                                    android:text="@string/bento_shop_title" />
+
+                                <TextView
+                                    style="@style/Hesba.Bento.Sub"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:text="@string/bento_shop_sub"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Toutes les alertes : s'ouvre depuis la carte « à corriger » -->
             <LinearLayout
                 android:id="@+id/alertsBlock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/txtAlertsTitle"
@@ -104,165 +612,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
-
-                <TextView
-                    android:id="@+id/txtNoAlert"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="@dimen/sp_3"
-                    android:gravity="center_vertical"
-                    android:paddingTop="@dimen/sp_2"
-                    android:paddingBottom="@dimen/sp_2"
-                    android:text="@string/home_no_alert"
-                    android:textAppearance="@style/TextAppearance.Hesba.Body.Soft"
-                    android:visibility="gone"
-                    app:drawableStartCompat="@drawable/ic_check"
-                    app:drawableTint="@color/hb_good" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnMoreAlerts"
-                    style="@style/Widget.Hesba.Button.Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
             </LinearLayout>
-
-            <!-- Actions rapides : bande de 3 touches, comme un clavier de caisse -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/home_actions" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_search"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/actionNewRecipe"
-                    style="@style/Hesba.QuickAction"
-                    android:text="@string/action_new_recipe"
-                    app:drawableTopCompat="@drawable/ic_recipes" />
-
-                <View
-                    android:layout_width="@dimen/hairline"
-                    android:layout_height="match_parent"
-                    android:background="@color/hb_line" />
-
-                <TextView
-                    android:id="@+id/actionScan"
-                    style="@style/Hesba.QuickAction"
-                    android:text="@string/action_scan_invoice"
-                    app:drawableTopCompat="@drawable/ic_scan" />
-
-                <View
-                    android:layout_width="@dimen/hairline"
-                    android:layout_height="match_parent"
-                    android:background="@color/hb_line" />
-
-                <TextView
-                    android:id="@+id/actionAddIngredient"
-                    style="@style/Hesba.QuickAction"
-                    android:text="@string/action_add_ingredient"
-                    app:drawableTopCompat="@drawable/ic_ingredients" />
-            </LinearLayout>
-
-            <!-- Chiffres clés -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/home_figures" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/figRecipes"
-                    style="@style/Hesba.Figure">
-
-                    <TextView
-                        android:id="@+id/txtFigRecipes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Hesba.Figure" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_fig_recipes"
-                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="@dimen/hairline"
-                    android:layout_height="match_parent"
-                    android:background="@color/hb_line" />
-
-                <LinearLayout
-                    android:id="@+id/figIngredients"
-                    style="@style/Hesba.Figure">
-
-                    <TextView
-                        android:id="@+id/txtFigIngredients"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Hesba.Figure" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_fig_ingredients"
-                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="@dimen/hairline"
-                    android:layout_height="match_parent"
-                    android:background="@color/hb_line" />
-
-                <LinearLayout
-                    android:id="@+id/figAttention"
-                    style="@style/Hesba.Figure">
-
-                    <TextView
-                        android:id="@+id/txtFigAttention"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Hesba.Figure" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home_fig_attention"
-                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Outils -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/home_tools" />
-
-            <View style="@style/Hesba.Divider" />
-
-            <include
-                android:id="@+id/toolWhatIf"
-                layout="@layout/item_link" />
-
-            <include
-                android:id="@+id/toolShopping"
-                layout="@layout/item_link" />
-
-            <include
-                android:id="@+id/toolInsights"
-                layout="@layout/item_link" />
-
-            <include
-                android:id="@+id/toolInvoices"
-                layout="@layout/item_link" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

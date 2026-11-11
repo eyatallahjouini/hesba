@@ -135,11 +135,8 @@
     <string name="error_photo_save">The photo could not be saved.</string>
     <string name="error_pdf">The PDF sheet could not be created.</string>
 
-    <string name="home_hello">Hello %1$s</string>
-    <string name="home_hello_guest">Hello</string>
     <string name="home_welcome">Account created. Welcome!</string>
     <string name="home_welcome_moved">Account created. %1$d trial items were moved to it.</string>
-    <string name="home_first_title">Your first cost price</string>
     <string name="home_first_body">Three steps: your raw ingredients, a recipe, and HESBA works out the cost per portion.</string>
     <string name="step1_title">Add an ingredient</string>
     <string name="step1_body">Its name, the price paid and the quantity bought.</string>
@@ -151,26 +148,14 @@
     <string name="step_todo">Step to do</string>
     <string name="home_alerts">Needs attention</string>
     <string name="home_alerts_count">Needs attention · %1$d</string>
-    <string name="home_alerts_all">See all %1$d alerts</string>
-    <string name="home_no_alert">All clear: your margins are where you want them.</string>
-    <string name="home_actions">Quick actions</string>
-    <string name="home_figures">Key figures</string>
-    <string name="home_fig_recipes">recipes</string>
-    <string name="home_fig_ingredients">ingredients</string>
-    <string name="home_fig_attention">to review</string>
-    <string name="home_tools">Tools</string>
     <string name="alert_below_target">Below the %1$s target · cost %2$s, sold %3$s</string>
     <string name="alert_incomplete">Incomplete cost: missing price for %1$s</string>
     <string name="alert_no_price">No selling price yet · suggested %1$s</string>
     <string name="alert_price_changed">%1$s → %2$s · %3$s</string>
     <string name="tool_whatif">“What if” simulator</string>
-    <string name="tool_whatif_sub">What if a price went up? Nothing is saved.</string>
     <string name="tool_shopping">Shopping list</string>
-    <string name="tool_shopping_sub">What to buy for a production run</string>
     <string name="tool_insights">Price trends</string>
-    <string name="tool_insights_sub">Biggest increases and affected recipes</string>
     <string name="tool_invoices">Saved invoices</string>
-    <string name="tool_invoices_sub">Images kept on the phone</string>
 
     <string name="search_hint">Search</string>
     <string name="search_recipes_hint">Search a recipe</string>
@@ -599,32 +584,41 @@
     <string name="lang_fr_hint">Interface in French</string>
     <string name="lang_en_hint">Interface in English</string>
     <string name="lang_ar_hint">Interface in Arabic, right to left</string>
-    <plurals name="home_lead_attention">
-        <item quantity="one">%1$s recipe needs your attention.</item>
-        <item quantity="other">%1$s recipes need your attention.</item>
-    </plurals>
-    <plurals name="home_lead_all_good">
-        <item quantity="one">Your recipe is on target.</item>
-        <item quantity="other">All %1$s of your recipes are on target.</item>
-    </plurals>
     <string name="home_lead_first_ingredient">Start by adding your first ingredient and its price.</string>
     <string name="home_lead_first_recipe">Your ingredients are ready: put together your first recipe.</string>
-    <plurals name="home_fact_below">
-        <item quantity="one">%1$s below its target margin</item>
-        <item quantity="other">%1$s below their target margin</item>
-    </plurals>
-    <plurals name="home_fact_incomplete">
-        <item quantity="one">%1$s incomplete cost</item>
-        <item quantity="other">%1$s incomplete costs</item>
-    </plurals>
-    <plurals name="home_fact_noprice">
-        <item quantity="one">%1$s without a selling price</item>
-        <item quantity="other">%1$s without a selling price</item>
-    </plurals>
-    <plurals name="home_fact_prices">
-        <item quantity="one">%1$s price changed in the last 14 days</item>
-        <item quantity="other">%1$s prices changed in the last 14 days</item>
-    </plurals>
     <string name="home_header">%1$s · %2$s</string>
-    <string name="home_all_clear_body">No margin below target, no missing price.</string>
+
+    <!-- Bento home -->
+    <string name="greeting_morning">Good morning</string>
+    <string name="greeting_afternoon">Good afternoon</string>
+    <string name="greeting_evening">Good evening</string>
+    <string name="greeting_with_name">%1$s, %2$s</string>
+    <string name="bento_margin_label">Average margin</string>
+    <plurals name="bento_margin_sub">
+        <item quantity="one">average target %1$s · %2$s recipe</item>
+        <item quantity="other">average target %1$s · %2$s recipes</item>
+    </plurals>
+    <string name="bento_margin_none">Set a selling price to see your margin</string>
+    <string name="cd_bento_margin">Average margin %1$s, average target %2$s</string>
+    <string name="bento_scan_sub">Prices update themselves</string>
+    <string name="bento_fix_label">to fix</string>
+    <string name="bento_fix_none">nothing to fix</string>
+    <string name="bento_prices_title">Prices</string>
+    <string name="bento_prices_stable">stable for %1$s days</string>
+    <string name="bento_todo_label">Do this now</string>
+    <string name="bento_todo_pager">%1$s / %2$s</string>
+    <string name="cd_bento_next">Next alert, %1$s of %2$s</string>
+    <string name="bento_todo_sold">Sold %1$s · cost %2$s</string>
+    <string name="bento_todo_set_price">Set to %1$s</string>
+    <string name="bento_todo_open">Open</string>
+    <string name="bento_todo_none_title">Everything is on target</string>
+    <string name="bento_todo_none_body">No margin below target, no missing price.</string>
+    <string name="bento_price_applied">Selling price set to %1$s</string>
+    <string name="bento_best_label">Best margin</string>
+    <string name="bento_best_sub">%1$s · cost %2$s</string>
+    <string name="bento_new_recipe_sub">Build it, HESBA works out its cost</string>
+    <string name="bento_sim_title">Simulator</string>
+    <string name="bento_sim_sub">If prices go up</string>
+    <string name="bento_shop_title">Shopping</string>
+    <string name="bento_shop_sub">For your production</string>
 </resources>

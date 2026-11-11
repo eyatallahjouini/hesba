@@ -143,11 +143,8 @@
     <string name="error_pdf">La fiche PDF n\'a pas pu être créée.</string>
 
     <!-- Accueil -->
-    <string name="home_hello">Bonjour %1$s</string>
-    <string name="home_hello_guest">Bonjour</string>
     <string name="home_welcome">Compte créé. Bienvenue !</string>
     <string name="home_welcome_moved">Compte créé. %1$d éléments du mode essai ont été rattachés.</string>
-    <string name="home_first_title">Ton premier prix de revient</string>
     <string name="home_first_body">Trois étapes : tes matières premières, une recette, et HESBA calcule le coût par part.</string>
     <string name="step1_title">Ajoute un ingrédient</string>
     <string name="step1_body">Son nom, le prix payé et la quantité achetée.</string>
@@ -159,26 +156,14 @@
     <string name="step_todo">Étape à faire</string>
     <string name="home_alerts">À surveiller</string>
     <string name="home_alerts_count">À surveiller · %1$d</string>
-    <string name="home_alerts_all">Voir les %1$d alertes</string>
-    <string name="home_no_alert">Rien à signaler : tes marges sont au niveau voulu.</string>
-    <string name="home_actions">Actions rapides</string>
-    <string name="home_figures">Chiffres clés</string>
-    <string name="home_fig_recipes">recettes</string>
-    <string name="home_fig_ingredients">ingrédients</string>
-    <string name="home_fig_attention">à revoir</string>
-    <string name="home_tools">Outils</string>
     <string name="alert_below_target">Sous l\'objectif de %1$s · coût %2$s, vendu %3$s</string>
     <string name="alert_incomplete">Coût incomplet : prix manquant pour %1$s</string>
     <string name="alert_no_price">Pas encore de prix de vente · conseillé %1$s</string>
     <string name="alert_price_changed">%1$s → %2$s · %3$s</string>
     <string name="tool_whatif">Simulateur « et si »</string>
-    <string name="tool_whatif_sub">Et si un prix montait ? Rien n\'est enregistré.</string>
     <string name="tool_shopping">Liste de courses</string>
-    <string name="tool_shopping_sub">Ce qu\'il faut acheter pour une production</string>
     <string name="tool_insights">Évolution des prix</string>
-    <string name="tool_insights_sub">Plus fortes hausses et recettes touchées</string>
     <string name="tool_invoices">Factures enregistrées</string>
-    <string name="tool_invoices_sub">Images gardées sur le téléphone</string>
 
     <!-- Recettes -->
     <string name="search_hint">Rechercher</string>
@@ -633,32 +618,41 @@
     <string name="lang_fr_hint">Interface en français</string>
     <string name="lang_en_hint">Interface en anglais</string>
     <string name="lang_ar_hint">Interface en arabe, de droite à gauche</string>
-    <plurals name="home_lead_attention">
-        <item quantity="one">%1$s recette demande ton attention.</item>
-        <item quantity="other">%1$s recettes demandent ton attention.</item>
-    </plurals>
-    <plurals name="home_lead_all_good">
-        <item quantity="one">Ta recette tient sa marge.</item>
-        <item quantity="other">Tes %1$s recettes tiennent leur marge.</item>
-    </plurals>
     <string name="home_lead_first_ingredient">Commence par noter ton premier ingrédient et son prix.</string>
     <string name="home_lead_first_recipe">Tes ingrédients sont prêts : compose ta première recette.</string>
-    <plurals name="home_fact_below">
-        <item quantity="one">%1$s sous l\'objectif de marge</item>
-        <item quantity="other">%1$s sous l\'objectif de marge</item>
-    </plurals>
-    <plurals name="home_fact_incomplete">
-        <item quantity="one">%1$s coût incomplet</item>
-        <item quantity="other">%1$s coûts incomplets</item>
-    </plurals>
-    <plurals name="home_fact_noprice">
-        <item quantity="one">%1$s sans prix de vente</item>
-        <item quantity="other">%1$s sans prix de vente</item>
-    </plurals>
-    <plurals name="home_fact_prices">
-        <item quantity="one">%1$s prix a changé ces 14 derniers jours</item>
-        <item quantity="other">%1$s prix ont changé ces 14 derniers jours</item>
-    </plurals>
     <string name="home_header">%1$s · %2$s</string>
-    <string name="home_all_clear_body">Aucune marge sous l\'objectif, aucun prix manquant.</string>
+
+    <!-- Accueil en grille Bento -->
+    <string name="greeting_morning">Bonjour</string>
+    <string name="greeting_afternoon">Bonjour</string>
+    <string name="greeting_evening">Bonsoir</string>
+    <string name="greeting_with_name">%1$s, %2$s</string>
+    <string name="bento_margin_label">Marge moyenne</string>
+    <plurals name="bento_margin_sub">
+        <item quantity="one">objectif moyen %1$s · %2$s recette</item>
+        <item quantity="other">objectif moyen %1$s · %2$s recettes</item>
+    </plurals>
+    <string name="bento_margin_none">Fixe un prix de vente pour voir ta marge</string>
+    <string name="cd_bento_margin">Marge moyenne %1$s, objectif moyen %2$s</string>
+    <string name="bento_scan_sub">Les prix se mettent à jour seuls</string>
+    <string name="bento_fix_label">à corriger</string>
+    <string name="bento_fix_none">rien à corriger</string>
+    <string name="bento_prices_title">Prix</string>
+    <string name="bento_prices_stable">stables depuis %1$s jours</string>
+    <string name="bento_todo_label">À faire maintenant</string>
+    <string name="bento_todo_pager">%1$s / %2$s</string>
+    <string name="cd_bento_next">Alerte suivante, %1$s sur %2$s</string>
+    <string name="bento_todo_sold">Vendue %1$s · coût %2$s</string>
+    <string name="bento_todo_set_price">Mettre à %1$s</string>
+    <string name="bento_todo_open">Ouvrir</string>
+    <string name="bento_todo_none_title">Tout est au niveau</string>
+    <string name="bento_todo_none_body">Aucune marge sous l\'objectif, aucun prix manquant.</string>
+    <string name="bento_price_applied">Prix de vente mis à %1$s</string>
+    <string name="bento_best_label">Meilleure marge</string>
+    <string name="bento_best_sub">%1$s · coût %2$s</string>
+    <string name="bento_new_recipe_sub">Compose-la, HESBA calcule son coût</string>
+    <string name="bento_sim_title">Simulateur</string>
+    <string name="bento_sim_sub">Si les prix montent</string>
+    <string name="bento_shop_title">Courses</string>
+    <string name="bento_shop_sub">Pour ta production</string>
 </resources>

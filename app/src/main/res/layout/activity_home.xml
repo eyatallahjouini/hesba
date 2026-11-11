@@ -99,13 +99,16 @@
                 </FrameLayout>
             </LinearLayout>
 
-            <!-- Premier usage : 3 étapes (la grille n'a pas encore de chiffres à montrer) -->
+            <!-- Premier usage : 3 étapes dans une carte (la grille n'a pas encore de chiffres à montrer) -->
             <LinearLayout
                 android:id="@+id/firstUse"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_5"
+                android:layout_marginTop="@dimen/sp_4"
+                android:background="@drawable/bg_bento_card"
+                android:elevation="1dp"
                 android:orientation="vertical"
+                android:padding="@dimen/bento_pad"
                 android:visibility="gone">
 
                 <TextView
@@ -134,7 +137,8 @@
                     layout="@layout/item_step" />
             </LinearLayout>
 
-            <!-- Grille Bento -->
+            <!-- Grille Bento : cachée jusqu'aux premières données, pour ne jamais montrer une grille vide
+                 qui serait aussitôt remplacée par les étapes du premier usage -->
             <LinearLayout
                 android:id="@+id/bento"
                 android:layout_width="match_parent"
@@ -142,7 +146,8 @@
                 android:layout_marginTop="@dimen/sp_4"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <!-- 1 · Marge moyenne (toute la largeur, 2 rangées) -->
                 <LinearLayout

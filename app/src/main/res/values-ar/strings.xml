@@ -136,11 +136,8 @@
     <string name="error_photo_save">تعذّر حفظ الصورة.</string>
     <string name="error_pdf">تعذّر إنشاء بطاقة PDF.</string>
 
-    <string name="home_hello">مرحبًا %1$s</string>
-    <string name="home_hello_guest">مرحبًا</string>
     <string name="home_welcome">أُنشئ الحساب. أهلًا بك!</string>
     <string name="home_welcome_moved">أُنشئ الحساب ونُقل إليه %1$d عنصرًا من وضع التجربة.</string>
-    <string name="home_first_title">أول سعر تكلفة لك</string>
     <string name="home_first_body">ثلاث خطوات: المواد الأولية، ثم وصفة، وتحسب «حسبة» تكلفة الحصة.</string>
     <string name="step1_title">أضف مكوّنًا</string>
     <string name="step1_body">اسمه والسعر المدفوع والكمية المشتراة.</string>
@@ -152,26 +149,14 @@
     <string name="step_todo">خطوة متبقية</string>
     <string name="home_alerts">للمتابعة</string>
     <string name="home_alerts_count">للمتابعة · %1$d</string>
-    <string name="home_alerts_all">عرض التنبيهات الـ%1$d</string>
-    <string name="home_no_alert">لا شيء يُذكر: هوامشك في المستوى المطلوب.</string>
-    <string name="home_actions">إجراءات سريعة</string>
-    <string name="home_figures">أرقام أساسية</string>
-    <string name="home_fig_recipes">وصفات</string>
-    <string name="home_fig_ingredients">مكوّنات</string>
-    <string name="home_fig_attention">للمراجعة</string>
-    <string name="home_tools">أدوات</string>
     <string name="alert_below_target">دون الهدف %1$s · التكلفة %2$s، البيع %3$s</string>
     <string name="alert_incomplete">تكلفة ناقصة: سعر مفقود لـ %1$s</string>
     <string name="alert_no_price">لم يُحدَّد سعر البيع · المقترح %1$s</string>
     <string name="alert_price_changed">%1$s ← %2$s · %3$s</string>
     <string name="tool_whatif">محاكي «ماذا لو»</string>
-    <string name="tool_whatif_sub">ماذا لو ارتفع سعر؟ لا يُحفظ أي شيء.</string>
     <string name="tool_shopping">قائمة المشتريات</string>
-    <string name="tool_shopping_sub">ما يجب شراؤه لإنتاج معيّن</string>
     <string name="tool_insights">تطوّر الأسعار</string>
-    <string name="tool_insights_sub">أكبر الارتفاعات والوصفات المتأثرة</string>
     <string name="tool_invoices">الفواتير المحفوظة</string>
-    <string name="tool_invoices_sub">صور محفوظة على الهاتف</string>
 
     <string name="search_hint">بحث</string>
     <string name="search_recipes_hint">ابحث عن وصفة</string>
@@ -656,56 +641,45 @@
     <string name="lang_fr_hint">الواجهة بالفرنسية</string>
     <string name="lang_en_hint">الواجهة بالإنجليزية</string>
     <string name="lang_ar_hint">الواجهة بالعربية، من اليمين إلى اليسار</string>
-    <plurals name="home_lead_attention">
-        <item quantity="zero">لا وصفة تحتاج إلى انتباهك.</item>
-        <item quantity="one">وصفة واحدة تحتاج إلى انتباهك.</item>
-        <item quantity="two">وصفتان تحتاجان إلى انتباهك.</item>
-        <item quantity="few">%1$s وصفات تحتاج إلى انتباهك.</item>
-        <item quantity="many">%1$s وصفة تحتاج إلى انتباهك.</item>
-        <item quantity="other">%1$s وصفة تحتاج إلى انتباهك.</item>
-    </plurals>
-    <plurals name="home_lead_all_good">
-        <item quantity="zero">وصفاتك تحقق الهامش المطلوب.</item>
-        <item quantity="one">وصفتك تحقق الهامش المطلوب.</item>
-        <item quantity="two">وصفتاك تحققان الهامش المطلوب.</item>
-        <item quantity="few">وصفاتك الـ%1$s تحقق الهامش المطلوب.</item>
-        <item quantity="many">وصفاتك الـ%1$s تحقق الهامش المطلوب.</item>
-        <item quantity="other">وصفاتك الـ%1$s تحقق الهامش المطلوب.</item>
-    </plurals>
     <string name="home_lead_first_ingredient">ابدأ بإضافة أول مكوّن وسعره.</string>
     <string name="home_lead_first_recipe">مكوّناتك جاهزة: كوّن وصفتك الأولى.</string>
-    <plurals name="home_fact_below">
-        <item quantity="zero">%1$s دون هامش الهدف</item>
-        <item quantity="one">%1$s دون هامش الهدف</item>
-        <item quantity="two">%1$s دون هامش الهدف</item>
-        <item quantity="few">%1$s دون هامش الهدف</item>
-        <item quantity="many">%1$s دون هامش الهدف</item>
-        <item quantity="other">%1$s دون هامش الهدف</item>
-    </plurals>
-    <plurals name="home_fact_incomplete">
-        <item quantity="zero">%1$s تكلفة غير مكتملة</item>
-        <item quantity="one">%1$s تكلفة غير مكتملة</item>
-        <item quantity="two">%1$s تكلفة غير مكتملة</item>
-        <item quantity="few">%1$s تكاليف غير مكتملة</item>
-        <item quantity="many">%1$s تكلفة غير مكتملة</item>
-        <item quantity="other">%1$s تكلفة غير مكتملة</item>
-    </plurals>
-    <plurals name="home_fact_noprice">
-        <item quantity="zero">%1$s بلا سعر بيع</item>
-        <item quantity="one">%1$s بلا سعر بيع</item>
-        <item quantity="two">%1$s بلا سعر بيع</item>
-        <item quantity="few">%1$s بلا سعر بيع</item>
-        <item quantity="many">%1$s بلا سعر بيع</item>
-        <item quantity="other">%1$s بلا سعر بيع</item>
-    </plurals>
-    <plurals name="home_fact_prices">
-        <item quantity="zero">تغيّر %1$s سعر خلال الأيام الـ14 الأخيرة</item>
-        <item quantity="one">تغيّر سعر واحد خلال الأيام الـ14 الأخيرة</item>
-        <item quantity="two">تغيّر سعران خلال الأيام الـ14 الأخيرة</item>
-        <item quantity="few">تغيّرت %1$s أسعار خلال الأيام الـ14 الأخيرة</item>
-        <item quantity="many">تغيّر %1$s سعرًا خلال الأيام الـ14 الأخيرة</item>
-        <item quantity="other">تغيّر %1$s سعر خلال الأيام الـ14 الأخيرة</item>
-    </plurals>
     <string name="home_header">%1$s · %2$s</string>
-    <string name="home_all_clear_body">لا هامش دون الهدف ولا سعر ناقص.</string>
+
+    <!-- الصفحة الرئيسية (شبكة بينتو) -->
+    <string name="greeting_morning">صباح الخير</string>
+    <string name="greeting_afternoon">مساء الخير</string>
+    <string name="greeting_evening">مساء الخير</string>
+    <string name="greeting_with_name">%1$s يا %2$s</string>
+    <string name="bento_margin_label">متوسط الهامش</string>
+    <plurals name="bento_margin_sub">
+        <item quantity="zero">الهدف المتوسط %1$s · %2$s وصفة</item>
+        <item quantity="one">الهدف المتوسط %1$s · وصفة واحدة</item>
+        <item quantity="two">الهدف المتوسط %1$s · وصفتان</item>
+        <item quantity="few">الهدف المتوسط %1$s · %2$s وصفات</item>
+        <item quantity="many">الهدف المتوسط %1$s · %2$s وصفة</item>
+        <item quantity="other">الهدف المتوسط %1$s · %2$s وصفة</item>
+    </plurals>
+    <string name="bento_margin_none">حدّد سعر بيع لترى هامشك</string>
+    <string name="cd_bento_margin">متوسط الهامش %1$s، الهدف المتوسط %2$s</string>
+    <string name="bento_scan_sub">الأسعار تتحدّث وحدها</string>
+    <string name="bento_fix_label">للتصحيح</string>
+    <string name="bento_fix_none">لا شيء للتصحيح</string>
+    <string name="bento_prices_title">الأسعار</string>
+    <string name="bento_prices_stable">ثابتة منذ %1$s يومًا</string>
+    <string name="bento_todo_label">افعلها الآن</string>
+    <string name="bento_todo_pager">%1$s / %2$s</string>
+    <string name="cd_bento_next">التنبيه التالي، %1$s من %2$s</string>
+    <string name="bento_todo_sold">تُباع بـ %1$s · الكلفة %2$s</string>
+    <string name="bento_todo_set_price">اجعله %1$s</string>
+    <string name="bento_todo_open">افتح</string>
+    <string name="bento_todo_none_title">كل شيء في المستوى</string>
+    <string name="bento_todo_none_body">لا هامش تحت الهدف ولا سعر ناقص.</string>
+    <string name="bento_price_applied">أصبح سعر البيع %1$s</string>
+    <string name="bento_best_label">أفضل هامش</string>
+    <string name="bento_best_sub">%1$s · الكلفة %2$s</string>
+    <string name="bento_new_recipe_sub">ركّبها وHESBA يحسب كلفتها</string>
+    <string name="bento_sim_title">المحاكي</string>
+    <string name="bento_sim_sub">لو ارتفعت الأسعار</string>
+    <string name="bento_shop_title">المشتريات</string>
+    <string name="bento_shop_sub">لإنتاجك</string>
 </resources>

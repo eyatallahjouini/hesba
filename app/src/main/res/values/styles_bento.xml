@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Accueil en grille Bento : cartes arrondies de tailles différentes, une idée par carte. -->
 <resources>
+    <!-- parent vide requis par aapt pour les styles Hesba.Bento.* (héritage par le nom) -->
+    <style name="Hesba.Bento" />
+
     <!-- carte touchable : 78 dp (une rangée) ou 166 dp (deux rangées) de haut -->
     <style name="Hesba.Bento.Card">
         <item name="android:layout_width">0dp</item>

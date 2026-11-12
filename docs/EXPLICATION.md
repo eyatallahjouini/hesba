@@ -107,7 +107,7 @@ Chemin de base : `app/src/main/java/com/example/hesba/`.
 | `MainActivity.kt` | Aiguillage : connecté → Accueil ; jamais lancé → premier lancement ; sinon → connexion. |
 | `OnboardingActivity.kt` | Premier lancement en 3 pages : histoire animée (3 phrases + ticket qui se remplit), choix de la langue (appliquée tout de suite, RTL en arabe), créer un compte / se connecter. Montré une seule fois (`Settings.onboardingDone`). |
 | `LoginActivity.kt` / `RegisterActivity.kt` | Connexion et inscription locales (voir `auth/`), mode « essayer sans compte ». |
-| `HomeActivity.kt` | Accueil en grille Bento : salutation selon l'heure, marge moyenne, scanner, recettes à corriger, prix qui a bougé, une action à faire (prix conseillé en un geste), meilleure marge, simulateur, courses ; étapes du premier usage. |
+| `HomeActivity.kt` | Accueil en grille Bento : salutation selon l'heure, marge moyenne, scanner, recettes à corriger, prix qui a bougé, une action à faire (prix conseillé en un geste), meilleure marge, simulateur, courses. Sans données, la carte « À faire maintenant » guide vers le premier ingrédient puis la première recette. |
 | `RecettesActivity.kt` | Mes recettes : carte de restaurant, recherche fixe en haut, tri nom / coût / marge, état « aucun résultat », bouton carré d'ajout. |
 | `RecipeDetailActivity.kt` | Fiche recette : coût par part, ticket détaillé « imprimé », prix pratiqué et marge réelle, conseiller de marge (curseur), actions (courses, dupliquer, PDF, modifier, supprimer). |
 | `ComposeRecipeActivity.kt` | Créer / modifier une recette : lignes d'ingrédients, unités, coûts cachés, marge, prix ; coût recalculé à chaque frappe. |
@@ -146,7 +146,7 @@ Chemin de base : `app/src/main/java/com/example/hesba/`.
 | `RecipeSearch.kt` | Recherche (sans accents, arabe) et tri des recettes. |
 | `Planning.kt` | `Workspace` (toutes les données d'un compte), `WhatIf` (simulateur), `ShoppingList` (courses), `Insights` (analyses). |
 | `HomeSummary.kt` | Les alertes de l'Accueil (marge sous l'objectif, coût incomplet, prix non fixé, prix changé). |
-| `HomeHeadline.kt` | La phrase du premier usage (« Commence par noter ton premier ingrédient ») et le décompte des alertes. |
+| `HomeHeadline.kt` | Le premier pas à proposer (premier ingrédient, première recette) et le décompte des alertes. |
 | `HomeDashboard.kt` | Les chiffres des cartes de l'Accueil : marge moyenne et objectif moyen, recettes sous l'objectif, meilleure marge, prix qui a le plus bougé. |
 | `Greeting.kt` | Bonjour ou Bonsoir selon l'heure (matin 5 h – 12 h, après-midi 12 h – 18 h, soir ensuite). |
 | `invoice/OcrLayout.kt` | Remet sur une même ligne les morceaux de texte lus par l'OCR (droite → gauche en arabe). |
@@ -376,7 +376,8 @@ d'une facture simple a dépassé 9 secondes (à mesurer sur un vrai téléphone)
   bougé ces 14 jours ; « À faire maintenant » : une alerte à la fois, avec le prix conseillé en un geste ;
   meilleure marge ; simulateur ; courses. Les cartes montent l'une après l'autre et les chiffres comptent
   jusqu'à leur valeur, sauf si les animations sont coupées sur le téléphone. Couleurs propres à l'Accueil
-  dans `colors_bento.xml` (clair et sombre). Premier usage : la phrase et les 3 étapes.
+  dans `colors_bento.xml` (clair et sombre). La grille est la même dès le premier lancement : sans données,
+  « À faire maintenant » propose d'ajouter le premier ingrédient, puis de composer la première recette.
 * **Mes recettes** : carte de restaurant : nom au début, **prix de vente** bien visible à la fin (ou prix
   conseillé, signalé), coût par part et marge dessous, fine **barre de marge** ; recherche fixe ; tri.
 * **Fiche recette** : coût par part en grand, **ticket** du détail du coût qui s'imprime, prix pratiqué et

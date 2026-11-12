@@ -137,15 +137,8 @@
 
     <string name="home_welcome">Account created. Welcome!</string>
     <string name="home_welcome_moved">Account created. %1$d trial items were moved to it.</string>
-    <string name="home_first_body">Three steps: your raw ingredients, a recipe, and HESBA works out the cost per portion.</string>
-    <string name="step1_title">Add an ingredient</string>
     <string name="step1_body">Its name, the price paid and the quantity bought.</string>
-    <string name="step2_title">Build a recipe</string>
     <string name="step2_body">Pick the ingredients and the number of portions.</string>
-    <string name="step3_title">Scan an invoice</string>
-    <string name="step3_body">Optional: update your prices with one photo.</string>
-    <string name="step_done">Step done</string>
-    <string name="step_todo">Step to do</string>
     <string name="home_alerts">Needs attention</string>
     <string name="home_alerts_count">Needs attention · %1$d</string>
     <string name="alert_below_target">Below the %1$s target · cost %2$s, sold %3$s</string>
@@ -604,6 +597,7 @@
     <string name="bento_fix_label">to fix</string>
     <string name="bento_fix_none">nothing to fix</string>
     <string name="bento_prices_title">Prices</string>
+    <string name="bento_prices_none">Add your ingredients</string>
     <string name="bento_prices_stable">stable for %1$s days</string>
     <string name="bento_todo_label">Do this now</string>
     <string name="bento_todo_pager">%1$s / %2$s</string>

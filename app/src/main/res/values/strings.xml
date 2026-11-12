@@ -145,15 +145,8 @@
     <!-- Accueil -->
     <string name="home_welcome">Compte créé. Bienvenue !</string>
     <string name="home_welcome_moved">Compte créé. %1$d éléments du mode essai ont été rattachés.</string>
-    <string name="home_first_body">Trois étapes : tes matières premières, une recette, et HESBA calcule le coût par part.</string>
-    <string name="step1_title">Ajoute un ingrédient</string>
     <string name="step1_body">Son nom, le prix payé et la quantité achetée.</string>
-    <string name="step2_title">Compose une recette</string>
     <string name="step2_body">Choisis les ingrédients et le nombre de parts.</string>
-    <string name="step3_title">Scanne une facture</string>
-    <string name="step3_body">Facultatif : mets tes prix à jour en une photo.</string>
-    <string name="step_done">Étape faite</string>
-    <string name="step_todo">Étape à faire</string>
     <string name="home_alerts">À surveiller</string>
     <string name="home_alerts_count">À surveiller · %1$d</string>
     <string name="alert_below_target">Sous l\'objectif de %1$s · coût %2$s, vendu %3$s</string>
@@ -638,6 +631,7 @@
     <string name="bento_fix_label">à corriger</string>
     <string name="bento_fix_none">rien à corriger</string>
     <string name="bento_prices_title">Prix</string>
+    <string name="bento_prices_none">Ajoute tes ingrédients</string>
     <string name="bento_prices_stable">stables depuis %1$s jours</string>
     <string name="bento_todo_label">À faire maintenant</string>
     <string name="bento_todo_pager">%1$s / %2$s</string>

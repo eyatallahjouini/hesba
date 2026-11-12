@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.hesba.databinding.ActivityHomeBinding
 import com.example.hesba.databinding.ItemAlertBinding
-import com.example.hesba.databinding.ItemStepBinding
 import com.example.hesba.domain.Greeting
 import com.example.hesba.domain.HomeDashboard
 import com.example.hesba.domain.HomeHeadline
@@ -63,7 +62,6 @@ class HomeActivity : BaseActivity() {
         b.btnProfile.setOnClickListener { BottomNav.open(this, BottomNav.Tab.PROFILE, BottomNav.Tab.HOME) }
         b.cardMargin.setOnClickListener { BottomNav.open(this, BottomNav.Tab.RECIPES, BottomNav.Tab.HOME) }
         b.cardScan.setOnClickListener { startActivity(Intent(this, ScanActivity::class.java)) }
-        b.cardPrice.setOnClickListener { startActivity(Intent(this, InsightsActivity::class.java)) }
         b.cardSimulator.setOnClickListener { startActivity(Intent(this, WhatIfActivity::class.java)) }
         b.cardShopping.setOnClickListener { startActivity(Intent(this, ShoppingListActivity::class.java)) }
         b.cardFix.setOnClickListener { toggleAlerts() }
@@ -104,14 +102,7 @@ class HomeActivity : BaseActivity() {
         lastSummary = s
         renderHeader(ws)
 
-        val firstUse = s.ingredientCount == 0 || s.recipeCount == 0
-        b.firstUse.visibility = if (firstUse) View.VISIBLE else View.GONE
-        b.bento.visibility = if (firstUse) View.GONE else View.VISIBLE
-        if (firstUse) {
-            b.alertsBlock.visibility = View.GONE
-            renderFirstUse(s)
-            return
-        }
+        b.bento.visibility = View.VISIBLE
 
         val d = HomeDashboard.build(ws, s)
         renderMargin(d)
@@ -144,36 +135,6 @@ class HomeActivity : BaseActivity() {
         val initial = (firstName.ifEmpty { business }).firstOrNull()?.uppercaseChar()
         b.txtAvatar.text = initial?.toString().orEmpty()
         b.imgAvatar.visibility = if (initial == null) View.VISIBLE else View.GONE
-    }
-
-    // ---------- premier usage ----------
-
-    private fun renderFirstUse(s: HomeSummary) {
-        b.txtFirstLead.setText(
-            if (HomeHeadline.lead(s) == HomeHeadline.Lead.FirstIngredient) R.string.home_lead_first_ingredient
-            else R.string.home_lead_first_recipe
-        )
-        step(b.step1, 1, R.string.step1_title, R.string.step1_body, R.string.action_add, s.ingredientCount > 0, true) {
-            startActivity(Intent(this, NouvelIngredientActivity::class.java))
-        }
-        step(b.step2, 2, R.string.step2_title, R.string.step2_body, R.string.action_create, s.recipeCount > 0, s.ingredientCount > 0) {
-            startActivity(Intent(this, ComposeRecipeActivity::class.java))
-        }
-        step(b.step3, 3, R.string.step3_title, R.string.step3_body, R.string.action_scan, false, true) {
-            startActivity(Intent(this, ScanActivity::class.java))
-        }
-    }
-
-    private fun step(v: ItemStepBinding, n: Int, title: Int, body: Int, action: Int, done: Boolean, enabled: Boolean, onClick: () -> Unit) {
-        v.stepNumber.text = if (done) "✓" else Fmt.number(this, n.toBigDecimal(), 0)
-        v.stepNumber.contentDescription = getString(if (done) R.string.step_done else R.string.step_todo)
-        v.stepTitle.setText(title)
-        v.stepBody.setText(body)
-        v.stepButton.setText(action)
-        v.stepButton.visibility = if (done) View.GONE else View.VISIBLE
-        v.stepButton.isEnabled = enabled
-        v.stepButton.setOnClickListener { onClick() }
-        v.stepRow.alpha = if (done) 0.6f else 1f
     }
 
     // ---------- cartes ----------
@@ -211,10 +172,15 @@ class HomeActivity : BaseActivity() {
 
     private fun renderPrice(d: HomeDashboard) {
         val pc = d.topPriceChange
+        val noIngredient = lastSummary?.ingredientCount == 0
+        b.cardPrice.setOnClickListener {
+            startActivity(Intent(this, if (noIngredient) NouvelIngredientActivity::class.java else InsightsActivity::class.java))
+        }
         if (pc == null) {
             b.txtPriceName.setText(R.string.bento_prices_title)
             b.txtPriceDelta.visibility = View.GONE
-            b.txtPriceFrom.text = getString(R.string.bento_prices_stable, count(HomeSummary.RECENT_DAYS))
+            b.txtPriceFrom.text = if (noIngredient) getString(R.string.bento_prices_none)
+            else getString(R.string.bento_prices_stable, count(HomeSummary.RECENT_DAYS))
             return
         }
         b.txtPriceName.text = pc.ingredient.nom
@@ -231,7 +197,20 @@ class HomeActivity : BaseActivity() {
     /** Une alerte à la fois, la plus importante d'abord ; « 1 / n › » passe à la suivante. */
     private fun renderTodo() {
         val ws = lastWs ?: return
-        val alerts = lastSummary?.alerts.orEmpty()
+        val s = lastSummary ?: return
+        // premier usage : la carte guide vers le premier ingrédient, puis la première recette
+        when (HomeHeadline.lead(s)) {
+            HomeHeadline.Lead.FirstIngredient -> {
+                todoSetup(R.string.home_lead_first_ingredient, R.string.step1_body, R.string.action_add, NouvelIngredientActivity::class.java)
+                return
+            }
+            HomeHeadline.Lead.FirstRecipe -> {
+                todoSetup(R.string.home_lead_first_recipe, R.string.step2_body, R.string.action_create, ComposeRecipeActivity::class.java)
+                return
+            }
+            else -> Unit
+        }
+        val alerts = s.alerts
         if (alerts.isEmpty()) {
             b.txtTodoTitle.setText(R.string.bento_todo_none_title)
             b.txtTodoBody.setText(R.string.bento_todo_none_body)
@@ -282,6 +261,19 @@ class HomeActivity : BaseActivity() {
                 b.cardTodo.setOnClickListener(open)
             }
         }
+    }
+
+    private fun todoSetup(title: Int, body: Int, action: Int, target: Class<*>) {
+        b.txtTodoTitle.setText(title)
+        b.txtTodoBody.setText(body)
+        b.layoutTodoPath.visibility = View.GONE
+        b.btnNextAlert.visibility = View.GONE
+        b.btnTodo.visibility = View.VISIBLE
+        b.btnTodo.setText(action)
+        val open = View.OnClickListener { startActivity(Intent(this, target)) }
+        b.btnTodo.setOnClickListener(open)
+        b.cardTodo.isClickable = true
+        b.cardTodo.setOnClickListener(open)
     }
 
     /** Bouton de la carte « à faire » : fixer le prix conseillé en un geste, sinon ouvrir la recette. */

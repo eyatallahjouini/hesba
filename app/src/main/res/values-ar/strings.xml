@@ -138,15 +138,8 @@
 
     <string name="home_welcome">أُنشئ الحساب. أهلًا بك!</string>
     <string name="home_welcome_moved">أُنشئ الحساب ونُقل إليه %1$d عنصرًا من وضع التجربة.</string>
-    <string name="home_first_body">ثلاث خطوات: المواد الأولية، ثم وصفة، وتحسب «حسبة» تكلفة الحصة.</string>
-    <string name="step1_title">أضف مكوّنًا</string>
     <string name="step1_body">اسمه والسعر المدفوع والكمية المشتراة.</string>
-    <string name="step2_title">كوّن وصفة</string>
     <string name="step2_body">اختر المكوّنات وعدد الحصص.</string>
-    <string name="step3_title">امسح فاتورة</string>
-    <string name="step3_body">اختياري: حدّث أسعارك بصورة واحدة.</string>
-    <string name="step_done">خطوة منجزة</string>
-    <string name="step_todo">خطوة متبقية</string>
     <string name="home_alerts">للمتابعة</string>
     <string name="home_alerts_count">للمتابعة · %1$d</string>
     <string name="alert_below_target">دون الهدف %1$s · التكلفة %2$s، البيع %3$s</string>
@@ -665,6 +658,7 @@
     <string name="bento_fix_label">للتصحيح</string>
     <string name="bento_fix_none">لا شيء للتصحيح</string>
     <string name="bento_prices_title">الأسعار</string>
+    <string name="bento_prices_none">أضف مكوّناتك</string>
     <string name="bento_prices_stable">ثابتة منذ %1$s يومًا</string>
     <string name="bento_todo_label">افعلها الآن</string>
     <string name="bento_todo_pager">%1$s / %2$s</string>

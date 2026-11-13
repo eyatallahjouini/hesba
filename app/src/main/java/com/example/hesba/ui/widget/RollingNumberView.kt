@@ -1,6 +1,7 @@
 package com.example.hesba.ui.widget
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -35,6 +36,9 @@ class RollingNumberView @JvmOverloads constructor(context: Context, attrs: Attri
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
     }
 
+    // Lecture par position : le tableau est trié par id d'attribut (textSize < textColor < fontFamily < letterSpacing),
+    // comme l'exige obtainStyledAttributes. Lint ne sait pas le vérifier et signale une fausse erreur.
+    @SuppressLint("ResourceType")
     private fun applyAppearance(style: Int) {
         val t = context.obtainStyledAttributes(style, intArrayOf(android.R.attr.textSize, android.R.attr.textColor, android.R.attr.fontFamily, android.R.attr.letterSpacing))
         paint.textSize = t.getDimension(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 28f, resources.displayMetrics))

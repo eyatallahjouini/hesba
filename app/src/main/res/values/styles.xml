@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Composants HESBA. Peu d'arrondis (10 dp), pas de dégradés, pas d'ombres décoratives :
      la hiérarchie vient de la typographie, des filets et de l'alignement. -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- parents implicites des styles « Hesba.* » et « TextAppearance.Hesba.* » -->
     <style name="Hesba" />
     <style name="TextAppearance.Hesba" parent="TextAppearance.Material3.BodyLarge" />
@@ -83,8 +83,8 @@
         <item name="rippleColor">@color/hb_surface_alt</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:elevation">6dp</item>
-        <item name="android:outlineSpotShadowColor">@color/hb_ink</item>
-        <item name="android:outlineAmbientShadowColor">@color/hb_ink</item>
+        <item name="android:outlineSpotShadowColor" tools:targetApi="28">@color/hb_ink</item>
+        <item name="android:outlineAmbientShadowColor" tools:targetApi="28">@color/hb_ink</item>
     </style>
 
     <!-- Champs -->
@@ -154,7 +154,7 @@
         <item name="android:layout_marginTop">@dimen/sp_5</item>
         <item name="android:layout_marginBottom">@dimen/sp_2</item>
         <item name="android:textAppearance">@style/TextAppearance.Hesba.Section</item>
-        <item name="android:accessibilityHeading">true</item>
+        <item name="android:accessibilityHeading" tools:targetApi="28">true</item>
     </style>
     <!-- ligne de liste cliquable : 64 dp minimum -->
     <style name="Hesba.Row">

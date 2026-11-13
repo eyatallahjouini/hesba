@@ -183,6 +183,7 @@
                             android:background="@drawable/bg_bento_chip">
 
                             <ImageView
+                                android:importantForAccessibility="no"
                                 style="@style/Hesba.Bento.Icon"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_scan"
@@ -247,6 +248,7 @@
                             </LinearLayout>
 
                             <ImageView
+                                android:importantForAccessibility="no"
                                 android:id="@+id/imgFix"
                                 style="@style/Hesba.Bento.Icon"
                                 android:src="@drawable/ic_alert"
@@ -495,6 +497,7 @@
                             android:orientation="horizontal">
 
                             <ImageView
+                                android:importantForAccessibility="no"
                                 style="@style/Hesba.Bento.Icon"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
@@ -533,6 +536,7 @@
                             android:orientation="horizontal">
 
                             <ImageView
+                                android:importantForAccessibility="no"
                                 style="@style/Hesba.Bento.Icon"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"

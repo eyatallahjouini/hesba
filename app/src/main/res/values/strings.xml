@@ -145,7 +145,10 @@
 
     <!-- Accueil -->
     <string name="home_welcome">Compte créé. Bienvenue !</string>
-    <string name="home_welcome_moved">Compte créé. %1$d éléments du mode essai ont été rattachés.</string>
+    <plurals name="home_welcome_moved">
+        <item quantity="one">Compte créé. %1$d élément du mode essai a été rattaché.</item>
+        <item quantity="other">Compte créé. %1$d éléments du mode essai ont été rattachés.</item>
+    </plurals>
     <string name="step1_body">Son nom, le prix payé et la quantité achetée.</string>
     <string name="step2_body">Choisis les ingrédients et le nombre de parts.</string>
     <string name="home_alerts">À surveiller</string>
@@ -249,7 +252,10 @@
     <string name="detail_top_ingredient">%1$s pèse %2$s du coût des ingrédients. Toucher pour simuler une variation de son prix.</string>
     <string name="section_cost_detail">Détail du coût</string>
     <string name="detail_line_yield">%1$s · rendement %2$s %%</string>
-    <string name="detail_divided">÷ %1$d parts</string>
+    <plurals name="detail_divided">
+        <item quantity="one">÷ %1$d part</item>
+        <item quantity="other">÷ %1$d parts</item>
+    </plurals>
     <string name="detail_fixed">Part du loyer</string>
     <string name="detail_fixed_sub">Loyer ÷ parts produites par mois</string>
     <string name="section_actions">Actions</string>

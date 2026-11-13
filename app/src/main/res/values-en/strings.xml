@@ -137,7 +137,10 @@
     <string name="error_pdf">The PDF sheet could not be created.</string>
 
     <string name="home_welcome">Account created. Welcome!</string>
-    <string name="home_welcome_moved">Account created. %1$d trial items were moved to it.</string>
+    <plurals name="home_welcome_moved">
+        <item quantity="one">Account created. %1$d trial item was moved to it.</item>
+        <item quantity="other">Account created. %1$d trial items were moved to it.</item>
+    </plurals>
     <string name="step1_body">Its name, the price paid and the quantity bought.</string>
     <string name="step2_body">Pick the ingredients and the number of portions.</string>
     <string name="home_alerts">Needs attention</string>
@@ -238,7 +241,10 @@
     <string name="detail_top_ingredient">%1$s is %2$s of the ingredient cost. Tap to simulate a change in its price.</string>
     <string name="section_cost_detail">Cost breakdown</string>
     <string name="detail_line_yield">%1$s · yield %2$s%%</string>
-    <string name="detail_divided">÷ %1$d portions</string>
+    <plurals name="detail_divided">
+        <item quantity="one">÷ %1$d portion</item>
+        <item quantity="other">÷ %1$d portions</item>
+    </plurals>
     <string name="detail_fixed">Rent share</string>
     <string name="detail_fixed_sub">Rent ÷ portions produced per month</string>
     <string name="section_actions">Actions</string>
@@ -270,7 +276,7 @@
     <string name="field_price_paid">Price paid</string>
     <string name="section_yield">Waste</string>
     <string name="field_yield">Usable share</string>
-    <string name="helper_yield">100% = no waste. Peeled potatoes ≈ 80%, deboned chicken ≈ 70%.</string>
+    <string name="helper_yield">100% = no waste. Peeled potatoes ≈ 80%; deboned chicken ≈ 70%.</string>
     <string name="ingredient_live">Real price: %1$s / %2$s</string>
     <string name="ingredient_live_yield">Of %1$s bought, %2$s is usable. Real price: %3$s / usable %4$s.</string>
     <string name="ingredient_live_empty">Enter the quantity and the price to see the real price.</string>

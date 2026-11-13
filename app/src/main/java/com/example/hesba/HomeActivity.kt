@@ -73,7 +73,7 @@ class HomeActivity : BaseActivity() {
 
         if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_WELCOME, false)) {
             val moved = intent.getIntExtra(EXTRA_MOVED, 0)
-            snack(if (moved > 0) getString(R.string.home_welcome_moved, moved) else getString(R.string.home_welcome), long = true)
+            snack(if (moved > 0) resources.getQuantityString(R.plurals.home_welcome_moved, moved, moved) else getString(R.string.home_welcome), long = true)
         }
 
         val since = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(HomeSummary.RECENT_DAYS.toLong())

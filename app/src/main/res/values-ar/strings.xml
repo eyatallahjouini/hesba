@@ -138,7 +138,14 @@
     <string name="error_pdf">تعذّر إنشاء بطاقة PDF.</string>
 
     <string name="home_welcome">أُنشئ الحساب. أهلًا بك!</string>
-    <string name="home_welcome_moved">أُنشئ الحساب ونُقل إليه %1$d عنصرًا من وضع التجربة.</string>
+    <plurals name="home_welcome_moved">
+        <item quantity="zero">أُنشئ الحساب ونُقل إليه %1$d عنصر من وضع التجربة.</item>
+        <item quantity="one">أُنشئ الحساب ونُقل إليه عنصر واحد من وضع التجربة.</item>
+        <item quantity="two">أُنشئ الحساب ونُقل إليه عنصران من وضع التجربة.</item>
+        <item quantity="few">أُنشئ الحساب ونُقل إليه %1$d عناصر من وضع التجربة.</item>
+        <item quantity="many">أُنشئ الحساب ونُقل إليه %1$d عنصرًا من وضع التجربة.</item>
+        <item quantity="other">أُنشئ الحساب ونُقل إليه %1$d عنصر من وضع التجربة.</item>
+    </plurals>
     <string name="step1_body">اسمه والسعر المدفوع والكمية المشتراة.</string>
     <string name="step2_body">اختر المكوّنات وعدد الحصص.</string>
     <string name="home_alerts">للمتابعة</string>
@@ -239,7 +246,14 @@
     <string name="detail_top_ingredient">يمثّل %1$s %2$s من تكلفة المكوّنات. المس لمحاكاة تغيّر سعره.</string>
     <string name="section_cost_detail">تفصيل التكلفة</string>
     <string name="detail_line_yield">%1$s · المردود %2$s%%</string>
-    <string name="detail_divided">÷ %1$d حصص</string>
+    <plurals name="detail_divided">
+        <item quantity="zero">÷ %1$d حصة</item>
+        <item quantity="one">÷ حصة واحدة</item>
+        <item quantity="two">÷ حصتين</item>
+        <item quantity="few">÷ %1$d حصص</item>
+        <item quantity="many">÷ %1$d حصة</item>
+        <item quantity="other">÷ %1$d حصة</item>
+    </plurals>
     <string name="detail_fixed">حصة الإيجار</string>
     <string name="detail_fixed_sub">الإيجار ÷ الحصص المنتجة شهريًا</string>
     <string name="section_actions">إجراءات</string>

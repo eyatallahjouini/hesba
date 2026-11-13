@@ -218,7 +218,7 @@ class RecipeDetailActivity : BaseActivity() {
         if (r.mainOeuvreParLotMillimes > 0) row(getString(R.string.field_labor), null, Fmt.money(this, r.mainOeuvreParLotMillimes))
         rule()
         row(getString(R.string.label_batch_cost), null, Fmt.money(this, cost.batchMillimes), strong = true)
-        row(getString(R.string.detail_divided, r.nombreParts), null, Fmt.money(this, CostCalculator.costPerPortion(cost.batchExact, r.nombreParts)))
+        row(resources.getQuantityString(R.plurals.detail_divided, r.nombreParts, r.nombreParts), null, Fmt.money(this, CostCalculator.costPerPortion(cost.batchExact, r.nombreParts)))
         if (r.emballageParPartMillimes > 0) row(getString(R.string.field_packaging), null, "+ " + Fmt.money(this, r.emballageParPartMillimes))
         val fixed = RecipeCosting.fixedPerPortion(w.user)
         if (fixed > 0) row(getString(R.string.detail_fixed), getString(R.string.detail_fixed_sub), "+ " + Fmt.money(this, fixed))

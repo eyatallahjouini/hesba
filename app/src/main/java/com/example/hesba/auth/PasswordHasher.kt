@@ -3,8 +3,8 @@ package com.example.hesba.auth
 import android.util.Base64
 import java.security.MessageDigest
 import java.security.SecureRandom
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.PBEKeySpec
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 /**
  * Mot de passe → « sel:empreinte » (PBKDF2-HMAC-SHA256, 120 000 itérations, sel aléatoire de 16 octets).
@@ -32,12 +32,39 @@ object PasswordHasher {
         }
     }
 
-    private fun derive(password: String, salt: ByteArray): ByteArray {
-        val spec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH)
+    private fun derive(password: String, salt: ByteArray): ByteArray = pbkdf2(password, salt, ITERATIONS, KEY_LENGTH)
+
+    /**
+     * PBKDF2-HMAC-SHA256 (RFC 8018) avec Mac « HmacSHA256 », disponible sur tous les Android.
+     * SecretKeyFactory « PBKDF2WithHmacSHA256 » n'existe qu'à partir d'Android 8 (API 26) :
+     * sur Android 7 (minSdk 24) l'inscription et la connexion plantaient.
+     * Même résultat octet pour octet (mot de passe encodé en UTF-8) : les comptes existants se connectent toujours.
+     */
+    internal fun pbkdf2(password: String, salt: ByteArray, iterations: Int, keyLengthBits: Int): ByteArray {
+        val pwd = password.toByteArray(Charsets.UTF_8)
+        val mac = Mac.getInstance("HmacSHA256")
         try {
-            return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).encoded
+            mac.init(SecretKeySpec(pwd, "HmacSHA256"))
         } finally {
-            spec.clearPassword()
+            pwd.fill(0)
         }
+        val hLen = mac.macLength
+        val out = ByteArray(keyLengthBits / 8)
+        var block = 1
+        var offset = 0
+        while (offset < out.size) {
+            mac.update(salt)
+            mac.update(byteArrayOf((block ushr 24).toByte(), (block ushr 16).toByte(), (block ushr 8).toByte(), block.toByte()))
+            var u = mac.doFinal()
+            val t = u.copyOf()
+            repeat(iterations - 1) {
+                u = mac.doFinal(u)
+                for (i in t.indices) t[i] = (t[i].toInt() xor u[i].toInt()).toByte()
+            }
+            t.copyInto(out, offset, 0, minOf(hLen, out.size - offset))
+            offset += hLen
+            block++
+        }
+        return out
     }
 }

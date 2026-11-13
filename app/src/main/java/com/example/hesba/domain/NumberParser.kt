@@ -44,4 +44,15 @@ object NumberParser {
 
     /** Version pratique pour les quantités saisies dans un champ. */
     fun parseOrNull(raw: String?): BigDecimal? = raw?.let { parse(it) }
+
+    /**
+     * Nombre entier positif ou nul (parts, minutes, employés, heures…), chiffres latins ou arabes.
+     * Null si le champ est vide, négatif, décimal (« 2,5 » n'est PAS arrondi à 2) ou trop grand pour un Int
+     * (BigDecimal.toInt() rebouclerait : « 4294967298 » deviendrait 2).
+     */
+    fun parseCount(raw: String?): Int? {
+        val value = parseOrNull(raw) ?: return null
+        if (value.signum() < 0) return null
+        return try { value.intValueExact() } catch (e: ArithmeticException) { null }
+    }
 }

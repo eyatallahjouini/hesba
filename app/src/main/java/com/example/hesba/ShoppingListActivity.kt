@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.hesba.data.Recette
 import com.example.hesba.databinding.ActivityShoppingListBinding
 import com.example.hesba.databinding.ItemLedgerBinding
+import com.example.hesba.domain.NumberParser
 import com.example.hesba.domain.ShoppingList
 import com.example.hesba.domain.Workspace
 import com.example.hesba.ui.BaseActivity
@@ -16,6 +17,7 @@ import com.example.hesba.ui.Fmt
 import com.example.hesba.ui.Picker
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 /** Liste de courses : une recette + une quantité à produire → ingrédients, quantités à acheter, coût estimé. */
 class ShoppingListActivity : BaseActivity() {
@@ -80,7 +82,7 @@ class ShoppingListActivity : BaseActivity() {
     private fun compute() {
         val w = ws ?: return
         val r = recipe ?: return
-        val portions = b.editPortions.text?.toString()?.toIntOrNull() ?: 0
+        val portions = NumberParser.parseCount(b.editPortions.text?.toString()) ?: 0   // chiffres latins ou arabes
         if (portions <= 0) {
             b.tilPortions.error = getString(R.string.error_portions)
             b.listItems.removeAllViews(); b.btnShare.isEnabled = false; result = null
@@ -111,7 +113,7 @@ class ShoppingListActivity : BaseActivity() {
     private fun share() {
         val r = recipe ?: return
         val res = result ?: return
-        val portions = b.editPortions.text.toString()
+        val portions = Fmt.number(this, BigDecimal(NumberParser.parseCount(b.editPortions.text?.toString()) ?: 0), 0)
         val text = buildString {
             appendLine(getString(R.string.shopping_share_title, r.nom, portions))
             for (item in res.items) {

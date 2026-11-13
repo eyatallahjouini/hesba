@@ -90,6 +90,8 @@ class ProfilActivity : BaseActivity() {
         b.btnSaveProfile.setOnClickListener { saveProfile() }
         b.groupActivity.setOnCheckedStateChangeListener { _, _ -> updateChargesFields(); preview() }
         listOf(b.editRent, b.editVolume, b.editEmployees, b.editSalary, b.editHours).forEach { it.doAfterTextChanged { preview() } }
+        b.editVolume.doAfterTextChanged { b.tilVolume.error = null }
+        b.editHours.doAfterTextChanged { b.tilHours.error = null }
         b.txtVersion.text = getString(R.string.app_version, BuildConfigInfo.versionName(this))
 
         lifecycleScope.launch {
@@ -147,10 +149,10 @@ class ProfilActivity : BaseActivity() {
             ville = b.editCity.text.toString().trim(),
             activite = act,
             loyerMensuelMillimes = b.editRent.text?.toString()?.let { Money.parseMillimes(it) } ?: 0,
-            volumeMensuel = NumberParser.parseOrNull(b.editVolume.text?.toString())?.toInt() ?: 0,
-            nombreEmployes = if (act == "avec_employe") NumberParser.parseOrNull(b.editEmployees.text?.toString())?.toInt() ?: 0 else 0,
+            volumeMensuel = NumberParser.parseCount(b.editVolume.text?.toString()) ?: 0,
+            nombreEmployes = if (act == "avec_employe") NumberParser.parseCount(b.editEmployees.text?.toString()) ?: 0 else 0,
             salaireMoyenMillimes = b.editSalary.text?.toString()?.let { Money.parseMillimes(it) } ?: 0,
-            heuresTravailMois = NumberParser.parseOrNull(b.editHours.text?.toString())?.toInt() ?: 0
+            heuresTravailMois = NumberParser.parseCount(b.editHours.text?.toString()) ?: 0
         )
     }
 
@@ -168,6 +170,14 @@ class ProfilActivity : BaseActivity() {
     private fun saveProfile() {
         val u = draftUser() ?: return
         if (u.prenom.isBlank()) { b.tilFirstName.error = getString(R.string.error_name_required); return }
+        // « 2,5 » ou un nombre trop grand : erreur sur le champ au lieu d'un 2 ou d'un 0 enregistré en silence
+        var counts = true
+        for ((edit, til) in listOf(b.editVolume to b.tilVolume, b.editEmployees to b.tilEmployees, b.editHours to b.tilHours)) {
+            val bad = !edit.text.isNullOrBlank() && NumberParser.parseCount(edit.text.toString()) == null
+            til.error = if (bad) getString(R.string.error_whole_number) else null
+            if (bad) counts = false
+        }
+        if (!counts) return
         if (u.activite == "avec_employe" && u.nombreEmployes <= 0 && u.salaireMoyenMillimes > 0) {
             b.tilEmployees.error = getString(R.string.error_employees); return
         }

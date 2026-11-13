@@ -125,6 +125,7 @@
     <string name="error_check_fields">Vérifie les champs en rouge.</string>
     <string name="error_recipe_name">Donne un nom à la recette.</string>
     <string name="error_portions">Indique un nombre de parts supérieur à 0.</string>
+    <string name="error_whole_number">Indique un nombre entier.</string>
     <string name="error_no_line">Ajoute au moins un ingrédient.</string>
     <string name="error_line_quantity">Indique la quantité de chaque ingrédient.</string>
     <string name="error_line_duplicate">Cet ingrédient est déjà dans la recette.</string>

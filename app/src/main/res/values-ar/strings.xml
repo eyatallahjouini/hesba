@@ -119,6 +119,7 @@
     <string name="error_check_fields">تحقّق من الحقول باللون الأحمر.</string>
     <string name="error_recipe_name">أعطِ الوصفة اسمًا.</string>
     <string name="error_portions">أدخل عدد حصص أكبر من 0.</string>
+    <string name="error_whole_number">أدخل عددًا صحيحًا.</string>
     <string name="error_no_line">أضف مكوّنًا واحدًا على الأقل.</string>
     <string name="error_line_quantity">أدخل كمية كل مكوّن.</string>
     <string name="error_line_duplicate">هذا المكوّن موجود في الوصفة.</string>

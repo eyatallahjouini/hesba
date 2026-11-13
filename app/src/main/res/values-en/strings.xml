@@ -118,6 +118,7 @@
     <string name="error_check_fields">Check the fields in red.</string>
     <string name="error_recipe_name">Give the recipe a name.</string>
     <string name="error_portions">Enter a number of portions above 0.</string>
+    <string name="error_whole_number">Enter a whole number.</string>
     <string name="error_no_line">Add at least one ingredient.</string>
     <string name="error_line_quantity">Enter the quantity of each ingredient.</string>
     <string name="error_line_duplicate">This ingredient is already in the recipe.</string>

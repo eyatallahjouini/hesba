@@ -215,7 +215,9 @@ class ComposeRecipeActivity : BaseActivity() {
     // ---------- calcul en direct ----------
 
     private fun millimes(text: CharSequence?): Long = text?.toString()?.let { Money.parseMillimes(it) } ?: 0L
-    private fun int(text: CharSequence?): Int = text?.toString()?.let { NumberParser.parse(it) }?.toInt() ?: 0
+    private fun int(text: CharSequence?): Int = NumberParser.parseCount(text?.toString()) ?: 0
+    /** Champ rempli mais pas un entier valable (« 2,5 », nombre trop grand) : refusé au lieu d'être tronqué. */
+    private fun invalidCount(text: CharSequence?): Boolean = !text.isNullOrBlank() && NumberParser.parseCount(text.toString()) == null
     private fun marginInput(): BigDecimal? = b.editMargin.text?.toString()?.let { NumberParser.parse(it) }
 
     private fun draftRecipe(): Recette = Recette(
@@ -296,6 +298,7 @@ class ComposeRecipeActivity : BaseActivity() {
 
     private fun clearErrors() {
         b.tilPortions.error = null
+        b.tilPrep.error = null
         b.txtLinesError.visibility = View.GONE
     }
 
@@ -305,7 +308,9 @@ class ComposeRecipeActivity : BaseActivity() {
         val recipe = draftRecipe()
         var ok = true
         if (recipe.nom.isEmpty()) { b.tilName.error = getString(R.string.error_recipe_name); ok = false }
-        if (recipe.nombreParts <= 0) { b.tilPortions.error = getString(R.string.error_portions); ok = false }
+        if (invalidCount(b.editPortions.text)) { b.tilPortions.error = getString(R.string.error_whole_number); ok = false }
+        else if (recipe.nombreParts <= 0) { b.tilPortions.error = getString(R.string.error_portions); ok = false }
+        if (invalidCount(b.editPrep.text)) { b.tilPrep.error = getString(R.string.error_whole_number); ok = false }
         val lines = draftLines()
         val valid = lines.filter { it.quantite > 0 }
         if (valid.isEmpty()) {

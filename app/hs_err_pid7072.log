@@ -1,0 +1,250 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 199229440 bytes. Error detail: G1 virtual space
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   This process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+#   JVM is running with Unscaled Compressed Oops mode in which the Java heap is
+#     placed in the first 4GB address space. The Java Heap base address is the
+#     maximum limit for the native heap growth. Please use -XX:HeapBaseMinAddress
+#     to set the Java Heap base and to place the Java Heap above 4GB virtual address.
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_windows.cpp:3732), pid=7072, tid=22660
+#
+# JRE version:  (21.0.12.1+1) (build )
+# Java VM: OpenJDK 64-Bit Server VM (21.0.12.1+1-LTS, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Djava.awt.headless=true -Djava.library.path=C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\LENOVO\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\LENOVO\bin;C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin;C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot\bin;E:\Oracle21\WINDOWS.X64_213000_db_home\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\app\Condidat\product\18.0.0\dbhomeXE\bin;C:\PySchool\3.10-32-bit\Scripts;C:\PySchool\3.10-32-bit;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\Git\cmd;C:\Program Files\dotnet;C:\Program Files (x86)\Microsoft SQL Server\160\Tools\Binn;C:\Program Files\Microsoft SQL Server\160\Tools\Binn;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\Docker\Docker\resources\bin;E:\Program Files;E:\outils jee\apache-maven-3.10.0-bin\apache-maven-3.10.0\bin;C:\Program Files\WSL;E:\Outils 3\BI\bin;$env;PATH;C:\Users\LENOVO\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\LENOVO\AppData\Local\Programs\Python\Python313;C:\Users\LENOVO\AppData\Local\Programs\Python\Python313\Scripts;E:\IntelliJ IDEA 2026.2.3\bin;C:\Users\LENOVO\AppData\Local\Programs\Ollama;C:\Users\LENOVO\AppData\Local\Programs\Microsoft VS Code\bin\copilot-shim;C:\Users\LENOVO\.local\bin;C:\Users\LENOVO\AppData\Roaming\npm;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl;.;C:\Users\LENOVO\AndroidStudioProjects\hesba\app\src\testDebug\jniLibs;C:\Users\LENOVO\AndroidStudioProjects\hesba\app\src\test\jniLibs -Dorg.gradle.internal.worker.tmpdir=C:\Users\LENOVO\AndroidStudioProjects\hesba\app\build\tmp\testDebugUnitTest\work --add-opens=java.base/java.io=ALL-UNNAMED -Xmx512m -Dfile.encoding=UTF-8 -Duser.country=FR -Duser.language=fr -Duser.variant -ea worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 13'
+
+Host: Intel(R) Core(TM) i3-1005G1 CPU @ 1.20GHz, 4 cores, 11G,  Windows 11 , 64 bit Build 26100 (10.0.26100.9974)
+Time: Fri Nov 13 11:13:10 2026 São Tomé (heure standard) elapsed time: 0.115005 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000024f5d475f70):  JavaThread "Unknown thread" [_thread_in_vm, id=22660, stack(0x0000009cd0c00000,0x0000009cd0d00000) (1024K)]
+
+Stack: [0x0000009cd0c00000,0x0000009cd0d00000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x6d83e9]
+V  [jvm.dll+0x8b5736]
+V  [jvm.dll+0x8b7cee]
+V  [jvm.dll+0x8b83d3]
+V  [jvm.dll+0x284596]
+V  [jvm.dll+0x6d4d05]
+V  [jvm.dll+0x6c898a]
+V  [jvm.dll+0x35f2f8]
+V  [jvm.dll+0x366f36]
+V  [jvm.dll+0x3b804e]
+V  [jvm.dll+0x3b82f8]
+V  [jvm.dll+0x33320c]
+V  [jvm.dll+0x333d61]
+V  [jvm.dll+0x87f6eb]
+V  [jvm.dll+0x3c4fd1]
+V  [jvm.dll+0x868905]
+V  [jvm.dll+0x458071]
+V  [jvm.dll+0x459c61]
+C  [jli.dll+0x52dc]
+C  [ucrtbase.dll+0x2cd30]
+C  [KERNEL32.DLL+0x2dda7]
+C  [ntdll.dll+0xc9c5c]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x00007ffbba73b208, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+Total: 0
+
+Other Threads:
+  0x0000024f5d4a15a0 WorkerThread "GC Thread#0"                     [id=5492, stack(0x0000009cd0d00000,0x0000009cd0e00000) (1024K)]
+  0x0000024f5d4a6590 ConcurrentGCThread "G1 Main Marker"            [id=22044, stack(0x0000009cd0e00000,0x0000009cd0f00000) (1024K)]
+  0x0000024f5d4a8130 WorkerThread "G1 Conc#0"                       [id=8520, stack(0x0000009cd0f00000,0x0000009cd1000000) (1024K)]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffbb9e35b97]
+VM state: not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x00007ffbba7af6b0] Heap_lock - owner thread: 0x0000024f5d475f70
+
+Heap address: 0x00000000e0000000, size: 512 MB, Compressed Oops mode: 32-bit
+
+CDS archive(s) mapped at: [0x0000000000000000-0x0000000000000000-0x0000000000000000), size 0, SharedBaseAddress: 0x0000000800000000, ArchiveRelocationMode: 1.
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0, Narrow klass range: 0x0
+
+GC Precious Log:
+ CardTable entry size: 512
+ Card Set container configuration: InlinePtr #cards 5 size 8 Array Of Cards #cards 12 size 40 Howl #buckets 4 coarsen threshold 1843 Howl Bitmap #cards 512 size 80 coarsen threshold 460 Card regions per heap region 1 cards per card region 2048
+
+Heap:
+ garbage-first heap   total 0K, used 0K [0x00000000e0000000, 0x0000000100000000)
+  region size 1024K, 0 young (0K), 0 survivors (0K)
+
+[error occurred during error reporting (printing heap information), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffbba221d49]
+GC Heap History (0 events):
+No events
+
+Dll operation events (2 events):
+Event: 0.056 Attempting to load shared library C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\java.dll
+Event: 0.057 Loaded shared library C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\java.dll
+
+Deoptimization events (0 events):
+No events
+
+Classes loaded (0 events):
+No events
+
+Classes unloaded (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+ZGC Phase Switch (0 events):
+No events
+
+VM Operations (0 events):
+No events
+
+Memory protections (0 events):
+No events
+
+Nmethod flushes (0 events):
+No events
+
+Events (0 events):
+No events
+
+
+Dynamic libraries:
+0x00007ff7d56a0000 - 0x00007ff7d56ae000 	C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\java.exe
+0x00007ffc68ad0000 - 0x00007ffc68d3c000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffc67c90000 - 0x00007ffc67d5b000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffc65c70000 - 0x00007ffc66079000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffc664d0000 - 0x00007ffc6661c000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffc4ea40000 - 0x00007ffc4ea58000 	C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\jli.dll
+0x00007ffc68000000 - 0x00007ffc681de000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffc66630000 - 0x00007ffc66657000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffc68830000 - 0x00007ffc6885b000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffc66660000 - 0x00007ffc66789000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffc66140000 - 0x00007ffc661e3000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffc35b90000 - 0x00007ffc35bae000 	C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\VCRUNTIME140.dll
+0x00007ffc51580000 - 0x00007ffc51811000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.26100.9818_none_3e071914e3359bdd\COMCTL32.dll
+0x00007ffc681f0000 - 0x00007ffc68299000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffc66f80000 - 0x00007ffc66fb1000 	C:\WINDOWS\System32\IMM32.DLL
+0x0000000068aa0000 - 0x0000000068aad000 	C:\Program Files (x86)\360\Total Security\safemon\SafeWrapper.dll
+0x00007ffc67d60000 - 0x00007ffc67e1c000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffc66bb0000 - 0x00007ffc66c58000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffc68860000 - 0x00007ffc68978000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffc63350000 - 0x00007ffc63455000 	C:\Program Files (x86)\360\Total Security\safemon\libzdtp64.dll
+0x00007ffc66fc0000 - 0x00007ffc67770000 	C:\WINDOWS\System32\SHELL32.dll
+0x00007ffc66790000 - 0x00007ffc667f8000 	C:\WINDOWS\System32\SHLWAPI.dll
+0x00007ffc65530000 - 0x00007ffc6553b000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffc4f050000 - 0x00007ffc4f05c000 	C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\vcruntime140_1.dll
+0x00007ffbe21a0000 - 0x00007ffbe222d000 	C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\msvcp140.dll
+0x00007ffbb9af0000 - 0x00007ffbba892000 	C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\server\jvm.dll
+0x00007ffc66ef0000 - 0x00007ffc66f70000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffc65ae0000 - 0x00007ffc65b3e000 	C:\WINDOWS\SYSTEM32\POWRPROF.dll
+0x00007ffc4e940000 - 0x00007ffc4e976000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffc65ac0000 - 0x00007ffc65ad5000 	C:\WINDOWS\SYSTEM32\UMPDC.dll
+0x00007ffc64870000 - 0x00007ffc6488b000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+0x00007ffc4ee50000 - 0x00007ffc4ee5a000 	C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\jimage.dll
+0x00007ffc62820000 - 0x00007ffc62a6c000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ffc66800000 - 0x00007ffc66ba5000 	C:\WINDOWS\System32\combase.dll
+0x00007ffc685c0000 - 0x00007ffc6869a000 	C:\WINDOWS\System32\OLEAUT32.dll
+0x00007ffc34400000 - 0x00007ffc3443b000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ffc66080000 - 0x00007ffc6612c000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffc317e0000 - 0x00007ffc31800000 	C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\java.dll
+
+JVMTI agents: none
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.26100.9818_none_3e071914e3359bdd;C:\Program Files (x86)\360\Total Security\safemon;C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin\server
+
+VM Arguments:
+jvm_args: -Djava.awt.headless=true -Djava.library.path=C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\LENOVO\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\LENOVO\bin;C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin;C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot\bin;E:\Oracle21\WINDOWS.X64_213000_db_home\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\app\Condidat\product\18.0.0\dbhomeXE\bin;C:\PySchool\3.10-32-bit\Scripts;C:\PySchool\3.10-32-bit;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\Git\cmd;C:\Program Files\dotnet;C:\Program Files (x86)\Microsoft SQL Server\160\Tools\Binn;C:\Program Files\Microsoft SQL Server\160\Tools\Binn;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\Docker\Docker\resources\bin;E:\Program Files;E:\outils jee\apache-maven-3.10.0-bin\apache-maven-3.10.0\bin;C:\Program Files\WSL;E:\Outils 3\BI\bin;$env;PATH;C:\Users\LENOVO\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\LENOVO\AppData\Local\Programs\Python\Python313;C:\Users\LENOVO\AppData\Local\Programs\Python\Python313\Scripts;E:\IntelliJ IDEA 2026.2.3\bin;C:\Users\LENOVO\AppData\Local\Programs\Ollama;C:\Users\LENOVO\AppData\Local\Programs\Microsoft VS Code\bin\copilot-shim;C:\Users\LENOVO\.local\bin;C:\Users\LENOVO\AppData\Roaming\npm;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl;.;C:\Users\LENOVO\AndroidStudioProjects\hesba\app\src\testDebug\jniLibs;C:\Users\LENOVO\AndroidStudioProjects\hesba\app\src\test\jniLibs -Dorg.gradle.internal.worker.tmpdir=C:\Users\LENOVO\AndroidStudioProjects\hesba\app\build\tmp\testDebugUnitTest\work --add-opens=java.base/java.io=ALL-UNNAMED -Xmx512m -Dfile.encoding=UTF-8 -Duser.country=FR -Duser.language=fr -Duser.variant -ea 
+java_command: worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 13'
+java_class_path (initial): C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\workerMain\\gradle-worker.jar;C:\\Users\\LENOVO\\AndroidStudioProjects\\hesba\\app\\build\\intermediates\\built_in_kotlinc\\debugUnitTest\\compileDebugUnitTestKotlin\\classes;C:\\Users\\LENOVO\\AndroidStudioProjects\\hesba\\app\\build\\intermediates\\java_res\\debugUnitTest\\processDebugUnitTestJavaRes\\out;C:\\Users\\LENOVO\\AndroidStudioProjects\\hesba\\app\\build\\intermediates\\runtime_app_classes_jar\\debug\\bundleDebugClassesToRuntimeJar\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\junit\\junit\\4.13.2\\8ac9e16d933b6fb43bc7f576336b8f4d7eb5ba12\\junit-4.13.2.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\b43166e0f22464e730b44aa07e488497\\transformed\\viewbinding-9.4.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\0e00118d6e6f4e0ca67bd3a50c27327b\\transformed\\material-1.14.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\a6928e9cad88a318babfe2d098456e81\\transformed\\constraintlayout-2.2.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\3eec705981d57d7529f2e54dcb075bdd\\transformed\\camera-video-1.6.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fd06afd402fa160adf66c9b9025c9ea5\\transformed\\camera-camera2-pipe-1.6.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6cc53313579fe7201d370927e7c68c12\\transformed\\camera-lifecycle-1.6.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\2dd8677444d3764f5605ea11c3ad9533\\transformed\\camera-camera2-1.6.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4ecefa4a83e393be424741e7db9b6af8\\transformed\\camera-core-1.6.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\70783323b2d29c1c71ff64e5a820c22c\\transformed\\camera-view-1.6.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\019453fc298476e1761302720f3a9166\\transformed\\appcompat-resources-1.8.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\7a2b9088d8c891896e69b001177d8740\\transformed\\text-recognition-16.0.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\97e657ea23a18479dc406be4cb449337\\transformed\\play-services-mlkit-text-recognition-19.0.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4033fd6bb78e226b2097cb4af5c960b7\\transformed\\text-recognition-bundled-common-17.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fa3a35d44fa6d3bafa96f2e910fd2120\\transformed\\play-services-mlkit-text-recognition-common-19.1.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f26a114a42be862299b9b1fe36dcbe53\\transformed\\vision-common-17.3.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\406f0e0426b6334b8d5bd401cd251d85\\transformed\\common-18.11.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\1b0110e1b6b5989debc45297d17b98cf\\transformed\\appcompat-1.8.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\1bf31ac70283237cbdf19db3b9ebaade\\transformed\\recyclerview-1.4.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\47815306cd5a1d7e4fdc2aef25a7d605\\transformed\\viewpager2-1.1.0-beta02-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\18d29f519247722975436bb12f196de8\\transformed\\play-services-base-18.5.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\56234846d5ed30ef63a77bc08d2695ea\\transformed\\vision-interfaces-16.3.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\e19a23ace09c2e302fb825e2a8770da6\\transformed\\play-services-tasks-18.2.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6203bea9ac90d69fad68a68af964a09d\\transformed\\play-services-basement-18.4.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\527c4cbc4777e208b2f97308fcbdc622\\transformed\\fragment-1.5.4-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\eb4150eb2f60c2ab219cb5ebc9b2ebf4\\transformed\\activity-1.13.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\aaf1880d86ec7a69fc1610fed8e87cae\\transformed\\activity-ktx-1.13.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\1d16128bffd584dd7ce2f2fbedb6f41f\\transformed\\emoji2-views-helper-1.3.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f7659cfb060e668405581e30ab15bfa8\\transformed\\emoji2-1.3.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\c7d797cd22051b75429133643869bff5\\transformed\\drawerlayout-1.1.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\073fb19decbb4353ec5165759e643e2c\\transformed\\coordinatorlayout-1.1.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\a65dbd0349615874a76d11b80e6b3403\\transformed\\viewpager-1.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\415955cac4a57490bea7ecbc47e3c2ab\\transformed\\customview-1.2.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\dd52d5286a66eedb9c6e7545dab194fd\\transformed\\transition-1.5.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\75f8b955caff190746ac417a934c0696\\transformed\\dynamicanimation-1.1.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\d5a47d64c6ecd22d930adbbad90e20c4\\transformed\\vectordrawable-animated-1.1.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\9a832883757519aa6799867873a26f90\\transformed\\vectordrawable-1.1.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\37538947c52b51a7635d9fc7db1b7443\\transformed\\viewfinder-core-1.5.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\945148f9752adde02bb408be7e475c57\\transformed\\loader-1.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4b57deca88447ebb2aec85099f8df127\\transformed\\core-1.19.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6e88baa0f03ae83d59d2ba09983e9be2\\transformed\\customview-poolingcontainer-1.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\cd2ae2155bd2676cf79cba6b02235693\\transformed\\graphics-shapes-release-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f4abe75d209b7d25499ebd42922b0c3e\\transformed\\lifecycle-viewmodel-2.10.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\481aafc14561d641676497c3eee6de31\\transformed\\lifecycle-viewmodel-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\1f3a35b7beca82a18b5fbd1a70a49e21\\transformed\\lifecycle-runtime-ktx-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fa14f0c61d88a9cb1d5a77ff06dad500\\transformed\\lifecycle-livedata-core-ktx-2.10.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\bd9ba9a94a6eb5b800578c6e1e005c6a\\transformed\\lifecycle-viewmodel-ktx-2.10.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6646a427d1cea43a1b16e887fd4d8908\\transformed\\lifecycle-process-2.10.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\506bb00bf06025063915fdf024da7aa4\\transformed\\lifecycle-livedata-core-2.10.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\de9389eeb49db26eaf1794840b0eff37\\transformed\\lifecycle-livedata-2.10.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\74adc0beb55fb1775ae34595b34f7027\\transformed\\lifecycle-runtime-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\42c7f84d5d14155fa124cb0082eeb639\\transformed\\savedstate-ktx-1.4.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\531b8969491194039e3c67288ae8206a\\transformed\\savedstate-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.lifecycle\\lifecycle-common-jvm\\2.10.0\\2b7a92c746f3339efc533a2da0024e596760f816\\lifecycle-common-jvm-2.10.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\ba599f04f0acaf1662ce184358f155e9\\transformed\\lifecycle-viewmodel-savedstate-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f825c95e81b41e8b26a6224a044ebe60\\transformed\\core-ktx-1.19.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.room\\room-common-jvm\\2.7.2\\46a9845444d0b849131baeb85bfe4051828261ad\\room-common-jvm-2.7.2.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\bbb08499be151d707f80f4fe752e3ae5\\transformed\\room-runtime-release-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\55027578e0d0b4d819f230ced08a88f6\\transformed\\room-ktx-2.7.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\595b7c88e87af6a5b7db274abbea2acc\\transformed\\media3-muxer-1.9.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\d67e8e78da3ef9c0a04c316a82a98fbe\\transformed\\media3-container-1.9.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\14078d0fde78c50d878c9a11330229db\\transformed\\media3-common-1.9.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\495358581bcfac8bf341de6b81e38428\\transformed\\annotation-experimental-1.4.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.concurrent\\concurrent-futures-ktx\\1.1.0\\b4c245baf36d1a9e7defaf3be84f7a2ad4e1c797\\concurrent-futures-ktx-1.1.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\22a1e58ed777113eaaef7b164afa15b9\\transformed\\navigationevent-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.jetbrains.kotlinx\\kotlinx-coroutines-core-jvm\\1.9.0\\9beade4c1c1569e4f36cbd2c37e02e3e41502601\\kotlinx-coroutines-core-jvm-1.9.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.jetbrains.kotlinx\\kotlinx-coroutines-android\\1.9.0\\6cf3b8df5a2ce8c6b0dffe55657a827c405ee2fe\\kotlinx-coroutines-android-1.9.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\43311772d0c1ab7dfc26502ab862227c\\transformed\\core-backported-fixes-1.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\5a3d6e189b88b8296fdc49c492787efb\\transformed\\core-viewtree-1.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\ebcfd447ef46857d0d7b51a5b318c207\\transformed\\versionedparcelable-1.1.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.collection\\collection-jvm\\1.4.2\\bc60b5568a66d765a9fe8e266fd0c6c727e0b50b\\collection-jvm-1.4.2.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\5df481642e51a21ffda984117de0f15c\\transformed\\profileinstaller-1.4.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\7103c04bac4927d83818c2452a8e9eb3\\transformed\\startup-runtime-1.1.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\e186d3e12fc5e4067e4df06c9abbdd67\\transformed\\tracing-ktx-1.3.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\03f32423b3f7f4160b4498e8b3499805\\transformed\\tracing-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\554ebc9b6b19f68a59434e6f6d38fe02\\transformed\\featurecombinationquery-1.6.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.jetbrains.kotlinx\\atomicfu-jvm\\0.28.0\\6a9ac536f4b2144e57c176fd4e26821eb12084f4\\atomicfu-jvm-0.28.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4ff07173bafe62bff11c81bb06798de3\\transformed\\tesseract4android-4.9.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\d295a96b7baf323b684696083fcf27f7\\transformed\\cursoradapter-1.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.resourceinspection\\resourceinspection-annotation\\1.0.1\\8c21f8ff5d96d5d52c948707f7e4d6ca6773feef\\resourceinspection-annotation-1.0.1.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.constraintlayout\\constraintlayout-core\\1.1.2\\f7ab6170b99b9421bd4942846426ff820b552f7d\\constraintlayout-core-1.1.2.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4cb81e35f2b1c5902149fcf3bf0af694\\transformed\\cardview-1.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.concurrent\\concurrent-futures\\1.1.0\\50b7fb98350d5f42a4e49704b03278542293ba48\\concurrent-futures-1.1.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\931d6a285934f8309a7b4a71f9bdd53f\\transformed\\exifinterface-1.4.2-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fad7407e5555c0a86c4d22bdfc69c6e7\\transformed\\core-runtime-2.2.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.arch.core\\core-common\\2.2.0\\5e1b8b81dfd5f52c56a8d53b18ca759c19a301f3\\core-common-2.2.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\212894dfda8c4a668ed09b0d1f001232\\transformed\\interpolator-1.0.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\a02a4ee77956d338e2f2cf8fa50675a9\\transformed\\transport-backend-cct-2.3.3-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6ca31f5f37f8a05693d144df8c0b6609\\transformed\\transport-runtime-2.2.6-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\ac10e129a0db46a4905acbb6028a98e8\\transformed\\transport-api-2.2.1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fc093ed69dd52eb59245984fad2c3b53\\transformed\\firebase-components-16.1.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\e7ae55d0357d2e14487eba68e0d7bcfe\\transformed\\firebase-encoders-json-17.1.0-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.firebase\\firebase-encoders\\16.1.0\\267565db8531da1483692e27eb58f93ec894c78\\firebase-encoders-16.1.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\5a11c56a6c62d3dbad4ff4e779764fed\\transformed\\sqlite-framework-release-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\49c914047c54a47c7859f6181140d299\\transformed\\sqlite-release-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\androidx.annotation\\annotation-jvm\\1.10.0\\388cfaa79001d0f024d28f6a13d5a3dfc2f0e18f\\annotation-jvm-1.10.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\3d21d60ad9826c3bcfb5d0230ebf403a\\transformed\\runtime-annotation-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.jetbrains.kotlinx\\kotlinx-serialization-core-jvm\\1.7.3\\1f226780b845ff9206474c05159245d861556249\\kotlinx-serialization-core-jvm-1.7.3.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.jetbrains.kotlin\\kotlin-stdlib\\2.2.10\\30de6faa127a4a012db8e71bf1b9c0a99b1402b2\\kotlin-stdlib-2.2.10.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.hamcrest\\hamcrest-core\\1.3\\42a25dc3219429f0e5d060061f71acb49bf010a0\\hamcrest-core-1.3.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.jetbrains\\annotations\\23.0.0\\8cc20c07506ec18e0834947b84a864bfc094484e\\annotations-23.0.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.dagger\\dagger\\2.59\\493f539003e401ebe645a8b383b7ed1991acd1b2\\dagger-2.59.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.jspecify\\jspecify\\1.0.0\\7425a601c1c7ec76645a78d22b8c6a627edee507\\jspecify-1.0.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.guava\\guava\\33.3.1-android\\36162b3b4e9df67dae90db62a2c54616ca42c1bd\\guava-33.3.1-android.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.errorprone\\error_prone_annotations\\2.28.0\\59fc00087ce372de42e394d2c789295dff2d19f0\\error_prone_annotations-2.28.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.auto.value\\auto-value-annotations\\1.6.3\\b88c1bb7f149f6d2cc03898359283e57b08f39cc\\auto-value-annotations-1.6.3.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.guava\\listenablefuture\\9999.0-empty-to-avoid-conflict-with-guava\\b421526c5f297295adef1c886e5246c39d4ac629\\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\jakarta.inject\\jakarta.inject-api\\2.0.1\\4c28afe1991a941d7702fe1362c365f0a8641d1e\\jakarta.inject-api-2.0.1.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\javax.inject\\javax.inject\\1\\6975da39a7040257bd51d21a231b76c915872d38\\javax.inject-1.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.guava\\failureaccess\\1.0.2\\c4a06a64e650562f30b7bf9aaec1bfed43aca12b\\failureaccess-1.0.2.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.code.findbugs\\jsr305\\3.0.2\\25ea2e8b0c338a877313bd4672d3fe056ea78f0d\\jsr305-3.0.2.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\org.checkerframework\\checker-qual\\3.43.0\\9425eee39e56b116d2b998b7c2cebcbd11a3c98b\\checker-qual-3.43.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.j2objc\\j2objc-annotations\\3.0.0\\7399e65dd7e9ff3404f4535b2f017093bdb134c7\\j2objc-annotations-3.0.0.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\e4fb637253bc8cfb7f6cf028737b539c\\transformed\\image-1.0.0-beta1-runtime.jar;C:\\Users\\LENOVO\\.gradle\\caches\\modules-2\\files-2.1\\com.google.firebase\\firebase-annotations\\16.0.0\\dbeae20d6c97b747b59ef47b6dcf770ba1a60fa6\\firebase-annotations-16.0.0.jar;C:\\Users\\LENOVO\\AndroidStudioProjects\\hesba\\app\\build\\intermediates\\java_res\\debug\\processDebugJavaRes\\out;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\0f6dc56e82b1214e0178cfd65e274502\\transformed\\viewbinding-9.4.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6c07e27a2988714ef64cf1b8130f71b3\\transformed\\material-1.14.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f560c73c7250e443d32e13f2c4dc7bcf\\transformed\\constraintlayout-2.2.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4300ecbd3d2723094151f5e2f56ac50d\\transformed\\camera-video-1.6.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fee6ff7ac1a993434ed18f1e37188bda\\transformed\\camera-camera2-pipe-1.6.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\7a67e876b983faf0dcae0915480153ee\\transformed\\camera-lifecycle-1.6.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\ab7070f4edc0eff3892d9cdd12a10b89\\transformed\\camera-camera2-1.6.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\b58ceba4e5f00ccc8f29df5181955e90\\transformed\\camera-core-1.6.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\59969a6340dd7f367c3c1642bf1fa8ae\\transformed\\camera-view-1.6.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\b66a02eb5d96739d7920e66327e531ff\\transformed\\appcompat-resources-1.8.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\513a17d60510c1bd4509bbb0bf5ae175\\transformed\\text-recognition-16.0.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\85ebdea6b5bde745377fb45073e0452d\\transformed\\play-services-mlkit-text-recognition-19.0.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\641fcb75a8277fc21b6afdff4f0ac76e\\transformed\\text-recognition-bundled-common-17.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\08b420550f86f143730bd180c05594dc\\transformed\\play-services-mlkit-text-recognition-common-19.1.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\dc5b495c484b5dc90aa1f7333b4b0b6e\\transformed\\vision-common-17.3.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4380197a6679934bc1c7cd811ede9cff\\transformed\\common-18.11.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\97f0fb6bff0e996b4bc615cfa74be3ff\\transformed\\appcompat-1.8.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f055d5ab93ec6fe846de0c794e518bd8\\transformed\\recyclerview-1.4.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\926aa77e81c6c7fcf243e23014e25838\\transformed\\viewpager2-1.1.0-beta02\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\c1cc26b579c79f383325447776316981\\transformed\\play-services-base-18.5.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\cccd57a266a4f733b5069b881574286e\\transformed\\vision-interfaces-16.3.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\805c8bae85571982ed70c5e2aa7d7afd\\transformed\\play-services-tasks-18.2.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\d594c70b9a0693057055d5da14972cb7\\transformed\\play-services-basement-18.4.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\e953efc66b9e975b4873f1f27c98b678\\transformed\\fragment-1.5.4\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\1f03b56e0b1212a059a29fb199988333\\transformed\\activity-1.13.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\37ea0075242c7ad8037ae4ce50649534\\transformed\\activity-ktx-1.13.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\232246a9071c2ab967b341b1af32dc7b\\transformed\\emoji2-views-helper-1.3.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\dd2acacc9645fb59612c1fe39305a21b\\transformed\\emoji2-1.3.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\dd2acacc9645fb59612c1fe39305a21b\\transformed\\emoji2-1.3.0\\jars\\libs\\repackaged.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\bc5a47e2f5cfe571bec17202be0856d3\\transformed\\drawerlayout-1.1.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\37fe41b126897ea3c707375e81f7e046\\transformed\\coordinatorlayout-1.1.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\3532941cd5b9bacc50bfdee1a274e51a\\transformed\\viewpager-1.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4c68a58655ae45a6c73d9cfe30d4ed18\\transformed\\customview-1.2.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\630f755083c2314ddef10e906ddc3c38\\transformed\\transition-1.5.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f6152bbf67c853b409ddff672bc2864e\\transformed\\dynamicanimation-1.1.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f95b47fbcbf53bbefcd58470da0c9cc5\\transformed\\vectordrawable-animated-1.1.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\d6f00407a2deef43c46f239f15c39483\\transformed\\vectordrawable-1.1.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\f8aaed3d74455e7e7ee2715a7312e47f\\transformed\\viewfinder-core-1.5.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\bfe07dba2bb91e7ce5087c1aec907450\\transformed\\loader-1.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\471eec42662d20b84846a73d53b7b7a2\\transformed\\core-1.19.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\408d7533ac581eeda0fbd3e087f2497b\\transformed\\customview-poolingcontainer-1.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\0b675bc2bb5fc484a3914011e4793356\\transformed\\graphics-shapes-release\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\8e9d02b45f39e2d37ff87e9936f8915a\\transformed\\lifecycle-viewmodel-2.10.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\e8a8347ae36443e17842540f28db3b49\\transformed\\lifecycle-viewmodel\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6d6c6b892123ca18b3875f52a7f1ef40\\transformed\\lifecycle-runtime-ktx\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\0c3bab405f06cd16cc67a94f3f47f1b8\\transformed\\lifecycle-livedata-core-ktx-2.10.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\2fe70a9270c55f64e1d876dd6e3dbc76\\transformed\\lifecycle-viewmodel-ktx-2.10.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\819b717ddf8d6a42503de44c98953398\\transformed\\lifecycle-process-2.10.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\43c85e8ca00dc62972b24a25369c36ef\\transformed\\lifecycle-livedata-core-2.10.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\04fa267cfe016708095703b451d305f5\\transformed\\lifecycle-livedata-2.10.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\85f5e1056795e3b7b05ac858c51d1da5\\transformed\\lifecycle-runtime\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\7b5f176af09e53f65ded8e17104aa7ee\\transformed\\savedstate-ktx-1.4.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\b27fb0b972395e35e7289f1ccc7e3bbc\\transformed\\savedstate\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\ffb2406a9a5b4edf2fdfad7faea1c08f\\transformed\\lifecycle-viewmodel-savedstate\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\a12a330b810e064a6e27b3d204c2cff6\\transformed\\core-ktx-1.19.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\3338f99af16f8ebb332eb0b296fee956\\transformed\\room-runtime-release\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\717a46c7f9443f98110a700d813bc305\\transformed\\room-ktx-2.7.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\aa12990628da838aaa867a6d16189809\\transformed\\media3-muxer-1.9.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\3c102c931eda7a9419abd5520e463632\\transformed\\media3-container-1.9.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\760bafbb057b15d52e4dd0929781bceb\\transformed\\media3-common-1.9.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fc81ba2e198fe52f588c556a5aa05259\\transformed\\annotation-experimental-1.4.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\38715d7f886b84615f1cdb8ebc2b6e8d\\transformed\\navigationevent\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\3008a250d207b163562ab4e1f966e33f\\transformed\\core-backported-fixes-1.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fcb2b4ac54d53f871bcfe8c053c29884\\transformed\\core-viewtree-1.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\acabbc7371e9033ba421381198598149\\transformed\\versionedparcelable-1.1.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\c5fe01e5ac6ecec3385114d0a5de7c50\\transformed\\profileinstaller-1.4.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\c76dc688121aef3a0b05d721b28a4fa6\\transformed\\startup-runtime-1.1.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\96bef921bcbecff00314a72acda619fb\\transformed\\tracing-ktx-1.3.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\d05a8a83d554fc54cee80732298d232b\\transformed\\tracing\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\483fff0f0f46f725325c31d2aa0949c1\\transformed\\featurecombinationquery-1.6.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\5b7ae52d1ba8f1b74ddffd9741aac731\\transformed\\tesseract4android-4.9.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\ae8444164660a91f66636a56233e94f3\\transformed\\cursoradapter-1.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\4cd846090c3efc40a26f7db3845a965a\\transformed\\cardview-1.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\43d7ab276ea9db773220ed29fc31617b\\transformed\\exifinterface-1.4.2\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6d012f13841bd3fdaba8d7692fa5307c\\transformed\\core-runtime-2.2.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\1fb3c11115f394794c749f1239e1e1fd\\transformed\\interpolator-1.0.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\fa3f751f229bba90cba296526e5e139a\\transformed\\transport-backend-cct-2.3.3\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\203f90cc849925b9fcbd5ca29b1b1d4c\\transformed\\transport-runtime-2.2.6\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\59b5383e64f3bf2884dc8389522b98d6\\transformed\\transport-api-2.2.1\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\15bd0bb8868f8e408f36dfece44f5c40\\transformed\\firebase-components-16.1.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\8a5448f04e7a1db9b8dd881c41344d7a\\transformed\\firebase-encoders-json-17.1.0\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6ef299056c7b2fdedd41916897aad195\\transformed\\sqlite-framework-release\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\78e1299550437146bf9c6ca772240e34\\transformed\\sqlite-release\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\2178af8e31e97eb2645f55c53e8806da\\transformed\\runtime-annotation\\jars\\classes.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\6dde1d46f6c7d167fbc12f6f1a665df9\\transformed\\image-1.0.0-beta1\\jars\\classes.jar;C:\\Users\\LENOVO\\AndroidStudioProjects\\hesba\\app\\build\\intermediates\\compile_and_runtime_r_class_jar\\debug\\processDebugResources\\R.jar;C:\\Users\\LENOVO\\.gradle\\caches\\9.6.0\\transforms\\56dc76bbdc498a976a9665e76cf8a7ef\\transformed\\android.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 3                                         {product} {ergonomic}
+     uint ConcGCThreads                            = 1                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 4                                         {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 1048576                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 199229440                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 536870912                                 {product} {command line}
+   size_t MinHeapDeltaBytes                        = 1048576                                   {product} {ergonomic}
+   size_t MinHeapSize                              = 8388608                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 5832780                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122912730                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122912730                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+   size_t SoftMaxHeapSize                          = 536870912                              {manageable} {ergonomic}
+     bool UseCompressedOops                        = true                           {product lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags foldmultilines=false
+ #1: stderr all=off uptime,level,tags foldmultilines=false
+
+Release file:
+<release file has not been read>
+Environment Variables:
+JAVA_HOME=C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2
+PATH=C:\Users\LENOVO\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\LENOVO\bin;C:\Users\LENOVO\.gradle\jdks\eclipse_adoptium-21-amd64-windows.2\bin;C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot\bin;E:\Oracle21\WINDOWS.X64_213000_db_home\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\app\Condidat\product\18.0.0\dbhomeXE\bin;C:\PySchool\3.10-32-bit\Scripts;C:\PySchool\3.10-32-bit;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\Git\cmd;C:\Program Files\dotnet;C:\Program Files (x86)\Microsoft SQL Server\160\Tools\Binn;C:\Program Files\Microsoft SQL Server\160\Tools\Binn;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn;C:\Program Files\Microsoft SQL Server\160\DTS\Binn;C:\Program Files\Docker\Docker\resources\bin;E:\Program Files;E:\outils jee\apache-maven-3.10.0-bin\apache-maven-3.10.0\bin;C:\Program Files\WSL;E:\Outils 3\BI\bin;$env;PATH;C:\Users\LENOVO\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\LENOVO\AppData\Local\Programs\Python\Python313;C:\Users\LENOVO\AppData\Local\Programs\Python\Python313\Scripts;E:\IntelliJ IDEA 2026.2.3\bin;C:\Users\LENOVO\AppData\Local\Programs\Ollama;C:\Users\LENOVO\AppData\Local\Programs\Microsoft VS Code\bin\copilot-shim;C:\Users\LENOVO\.local\bin;C:\Users\LENOVO\AppData\Roaming\npm;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
+USERNAME=Condidat
+SHELL=C:\Program Files\Git\usr\bin\bash.exe
+TERM=xterm-256color
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 126 Stepping 5, GenuineIntel
+TMP=C:\Users\LENOVO\AppData\Local\Temp
+TEMP=C:\Users\LENOVO\AppData\Local\Temp
+
+
+
+
+Periodic native trim disabled
+
+---------------  S Y S T E M  ---------------
+
+OS:
+ Windows 11 , 64 bit Build 26100 (10.0.26100.9974)
+OS uptime: 0 days 18:37 hours
+Hyper-V role detected
+
+CPU: total 4 (initial active 4) (2 cores per cpu, 2 threads per core) family 6 model 126 stepping 5 microcode 0xa8, cx8, cmov, fxsr, ht, mmx, 3dnowpref, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, lzcnt, tsc, tscinvbit, avx, avx2, aes, erms, clmul, bmi1, bmi2, adx, avx512f, avx512dq, avx512cd, avx512bw, avx512vl, sha, fma, vzeroupper, avx512_vpopcntdq, avx512_vpclmulqdq, avx512_vaes, avx512_vnni, clflush, clflushopt, avx512_vbmi2, avx512_vbmi, hv, rdtscp, rdpid, fsrm, gfni, avx512_bitalg, f16c, avx512_ifma
+Processor Information for the first 4 processors :
+  Max Mhz: 1190, Current Mhz: 1190, Mhz Limit: 1190
+
+Memory: 4k page, system-wide physical 12083M (623M free)
+TotalPageFile size 20326M (AvailPageFile size 65M)
+current process WorkingSet (physical memory assigned to process): 13M, peak: 13M
+current process commit charge ("private bytes"): 52M, peak: 242M
+
+vm_info: OpenJDK 64-Bit Server VM (21.0.12.1+1-LTS) for windows-amd64 JRE (21.0.12.1+1-LTS), built on 2026-08-18T00:00:00Z by "admin" with MS VC++ 17.12 (VS2022)
+
+END.

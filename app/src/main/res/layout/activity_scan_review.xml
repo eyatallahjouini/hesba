@@ -235,6 +235,48 @@
                 android:background="@drawable/bg_note_bad"
                 android:visibility="gone" />
 
+            <!-- résumé du scan : nouveaux ingrédients, prix modifiés, lignes ignorées -->
+            <TextView
+                android:id="@+id/txtCreatedTitle"
+                style="@style/Hesba.Section"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtCreatedList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.3"
+                android:textAppearance="@style/TextAppearance.Hesba.Body"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtPricesTitle"
+                style="@style/Hesba.Section"
+                android:text="@string/result_prices_title"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtPricesList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.3"
+                android:textAppearance="@style/TextAppearance.Hesba.Body"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtSkippedTitle"
+                style="@style/Hesba.Section"
+                android:text="@string/result_skipped_title"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtSkippedList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.3"
+                android:textAppearance="@style/TextAppearance.Hesba.Body.Soft"
+                android:visibility="gone" />
+
             <TextView
                 style="@style/Hesba.Section"
                 android:text="@string/result_recipes" />

@@ -105,8 +105,13 @@ class ShoppingListActivity : BaseActivity() {
         }
         b.txtTotal.text = Fmt.money(this, res.totalMillimes)
         b.txtTotalPackages.text = Fmt.money(this, res.packagesTotalMillimes)
-        b.txtMissing.visibility = if (res.missingPrices.isEmpty()) View.GONE else View.VISIBLE
-        b.txtMissing.text = getString(R.string.shopping_missing, res.missingPrices.joinToString { it.nom })
+        // prix manquants et lignes impossibles à convertir : signalés, jamais oubliés en silence
+        val warnings = listOfNotNull(
+            res.missingPrices.takeIf { it.isNotEmpty() }?.let { getString(R.string.shopping_missing, it.joinToString { i -> i.nom }) },
+            res.unconvertible.takeIf { it.isNotEmpty() }?.let { getString(R.string.shopping_unconvertible, it.joinToString { i -> i.nom }) }
+        )
+        b.txtMissing.visibility = if (warnings.isEmpty()) View.GONE else View.VISIBLE
+        b.txtMissing.text = warnings.joinToString("\n")
         b.btnShare.isEnabled = res.items.isNotEmpty()
     }
 

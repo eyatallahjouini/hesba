@@ -395,6 +395,7 @@
     <string name="shopping_total_used">Coût des quantités utilisées</string>
     <string name="shopping_total_packages">Si tu achètes des emballages entiers</string>
     <string name="shopping_missing">Prix manquant pour : %1$s. Le total ne les compte pas.</string>
+    <string name="shopping_unconvertible">Unité incompatible, non comptés : %1$s. Corrige l\'unité dans la recette.</string>
     <string name="shopping_note">Les quantités tiennent compte des pertes (part utilisable) de chaque ingrédient.</string>
     <string name="shopping_empty_title">Aucune recette</string>
     <string name="shopping_empty_body">Compose d\'abord une recette pour préparer ta liste de courses.</string>
@@ -515,6 +516,29 @@
     <string name="result_recipes">Recettes recalculées</string>
     <string name="result_no_recipe">Aucune recette n\'utilise ces ingrédients.</string>
     <string name="result_footer">La facture est enregistrée dans « Factures enregistrées ».</string>
+    <string name="result_prices_title">Prix mis à jour</string>
+    <string name="result_skipped_title">Lignes ignorées</string>
+    <string name="result_list_item">• %1$s</string>
+    <string name="result_price_line">• %1$s : %2$s → %3$s</string>
+    <string name="result_skipped_line">• %1$s : %2$s</string>
+    <string name="skip_ignored">ignorée par toi</string>
+    <string name="skip_no_ingredient">aucun ingrédient choisi</string>
+    <string name="skip_no_price">prix manquant</string>
+    <string name="skip_invalid_price">prix invalide (0 ou moins)</string>
+    <string name="skip_invalid_quantity">quantité invalide (0 ou moins)</string>
+    <string name="skip_unit">unité incompatible</string>
+    <string name="skip_duplicate">en double</string>
+    <string name="skip_no_name">nom manquant</string>
+    <string name="review_problem_invalid_price">Prix invalide : il doit être supérieur à 0.</string>
+    <string name="review_problem_invalid_quantity">Quantité invalide : elle doit être supérieure à 0.</string>
+    <string name="review_problem_no_name">Nom manquant : donne un nom à l\'ingrédient.</string>
+    <string name="review_save_error_title">Enregistrement impossible</string>
+    <string name="review_save_error">Rien n\'a été modifié. Vérifie les lignes et réessaie.</string>
+    <plurals name="result_created_title">
+        <item quantity="one">%d nouvel ingrédient ajouté</item>
+        <item quantity="many">%d nouveaux ingrédients ajoutés</item>
+        <item quantity="other">%d nouveaux ingrédients ajoutés</item>
+    </plurals>
 
     <!-- Pluriels -->
     <plurals name="recipes_count">

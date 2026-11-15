@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.LinearGradient
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Shader
 import android.util.AttributeSet
@@ -25,6 +26,10 @@ class ScanLineView @JvmOverloads constructor(context: Context, attrs: AttributeS
     private val accent = ContextCompat.getColor(context, R.color.hb_accent)
     private val line = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = accent; strokeWidth = 2.5f * density }
     private val trail = Paint()
+    // dégradé de la traînée créé une seule fois (0 → len), puis placé à chaque image par une matrice
+    private val trailLength = 36 * density
+    private val trailShader = LinearGradient(0f, 0f, 0f, trailLength, ColorUtils.setAlphaComponent(accent, 0), ColorUtils.setAlphaComponent(accent, 70), Shader.TileMode.CLAMP)
+    private val trailMatrix = Matrix()
     private var y = 0f
     private var down = true
     private var animator: ValueAnimator? = null
@@ -68,9 +73,11 @@ class ScanLineView @JvmOverloads constructor(context: Context, attrs: AttributeS
         if (area.isEmpty) area.set(0f, 0f, width.toFloat(), height.toFloat())
         val py = area.top + y * area.height()
         // courte traînée derrière la ligne, dans le sens du mouvement
-        val len = 36 * density
-        val from = if (down) py - len else py + len
-        trail.shader = LinearGradient(0f, from, 0f, py, ColorUtils.setAlphaComponent(accent, 0), ColorUtils.setAlphaComponent(accent, 70), Shader.TileMode.CLAMP)
+        val from = if (down) py - trailLength else py + trailLength
+        // transparent en « from », opaque sur la ligne (py), comme avant
+        if (down) trailMatrix.setTranslate(0f, from) else { trailMatrix.setScale(1f, -1f); trailMatrix.postTranslate(0f, from) }
+        trailShader.setLocalMatrix(trailMatrix)
+        trail.shader = trailShader
         canvas.save()
         canvas.clipRect(area)
         canvas.drawRect(area.left, minOf(from, py), area.right, maxOf(from, py), trail)

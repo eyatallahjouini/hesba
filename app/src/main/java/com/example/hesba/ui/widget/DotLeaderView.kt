@@ -34,9 +34,11 @@ class DotLeaderView @JvmOverloads constructor(context: Context, attrs: Attribute
         setMeasuredDimension(getDefaultSize(0, widthMeasureSpec), h)
     }
 
+    private val loc = IntArray(2)   // réutilisé à chaque dessin (pas d'allocation dans onDraw)
+
     override fun onDraw(canvas: Canvas) {
         if (width < gap * 2) return
-        val loc = IntArray(2).also { getLocationInWindow(it) }
+        getLocationInWindow(loc)
         val y = height - radius - paddingBottom
         // première position alignée sur la grille de la fenêtre → colonnes régulières d'une ligne à l'autre
         var x = (gap - (loc[0] % gap)) % gap + radius

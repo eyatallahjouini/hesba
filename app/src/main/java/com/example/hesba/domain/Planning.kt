@@ -79,17 +79,23 @@ object ShoppingList {
         val packagesCostMillimes: Long?   // coût si on achète des emballages entiers
     )
 
-    data class Result(val items: List<Item>, val totalMillimes: Long, val packagesTotalMillimes: Long, val missingPrices: List<Ingredient>, val factor: BigDecimal)
+    /** [unconvertible] : ingrédients dont l'unité de la ligne ne se convertit pas (ex. œufs en kg) ; absents de la liste et du total. */
+    data class Result(
+        val items: List<Item>, val totalMillimes: Long, val packagesTotalMillimes: Long, val missingPrices: List<Ingredient>, val factor: BigDecimal,
+        val unconvertible: List<Ingredient> = emptyList()
+    )
 
     /** [portions] = nombre de parts à produire. */
     fun build(workspace: Workspace, recette: Recette, portions: Int): Result? {
         if (recette.nombreParts <= 0 || portions <= 0) return null
         val factor = BigDecimal(portions).divide(BigDecimal(recette.nombreParts), Money.INTERNAL_SCALE, RoundingMode.HALF_UP)
         val grouped = linkedMapOf<Long, BigDecimal>()
+        val unconvertible = mutableListOf<Ingredient>()
         for (ligne in workspace.linesByRecipe[recette.id].orEmpty()) {
             val ingredient = workspace.ingredientsById[ligne.ingredientId] ?: continue
             val pkg = BigDecimal(ingredient.quantiteEmballage.toString())
-            val base = UnitConverter.toBase(BigDecimal(ligne.quantite.toString()), ligne.unite, ingredient.unite, pkg) ?: continue
+            val base = UnitConverter.toBase(BigDecimal(ligne.quantite.toString()), ligne.unite, ingredient.unite, pkg)
+            if (base == null) { if (unconvertible.none { it.id == ingredient.id }) unconvertible += ingredient; continue }
             grouped[ingredient.id] = (grouped[ingredient.id] ?: BigDecimal.ZERO).add(base.multiply(factor))
         }
         val missing = mutableListOf<Ingredient>()
@@ -109,7 +115,7 @@ object ShoppingList {
             packagesCost?.let { totalPackages += it }
             Item(ingredient, net, gross, packages, cost?.let { Money.roundMillimes(it) }, packagesCost)
         }
-        return Result(items, Money.roundMillimes(total), totalPackages, missing, factor)
+        return Result(items, Money.roundMillimes(total), totalPackages, missing, factor, unconvertible.filter { it.id !in grouped })
     }
 }
 

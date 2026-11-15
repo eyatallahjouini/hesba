@@ -142,6 +142,17 @@ class MatchingAndPlanningTest {
     }
 
     @Test
+    fun listeDeCoursesSignaleLesLignesImpossiblesAConvertir() {
+        // œufs (pièce) saisis en kg : la ligne ne peut pas être convertie ; elle ne doit pas disparaître en silence
+        val ws2 = ws.copy(lines = lignes.map { if (it.ingredientId == 3L) it.copy(unite = "kg") else it })
+        val list = ShoppingList.build(ws2, gateau, 8)!!
+        assertTrue(list.items.none { it.ingredient.id == 3L })
+        assertEquals(listOf("Oeufs"), list.unconvertible.map { it.nom })
+        assertEquals(4100L, list.totalMillimes)                  // farine 600 + beurre 3500, sans les œufs
+        assertTrue(ShoppingList.build(ws, gateau, 8)!!.unconvertible.isEmpty())
+    }
+
+    @Test
     fun analysesDepuisLHistorique() {
         val history = listOf(
             PrixHistorique(ingredientId = 2, ancienPrixMillimes = 3000, nouveauPrixMillimes = 3200, ancienneQuantite = 250.0, nouvelleQuantite = 250.0, source = "manuel", date = 1000),

@@ -389,6 +389,7 @@
     <string name="shopping_total_used">تكلفة الكميات المستعملة</string>
     <string name="shopping_total_packages">إذا اشتريت عبوات كاملة</string>
     <string name="shopping_missing">سعر مفقود لـ: %1$s. لا يشملها المجموع.</string>
+    <string name="shopping_unconvertible">وحدة غير متوافقة، لم تُحتسب: %1$s. صحّح الوحدة في الوصفة.</string>
     <string name="shopping_note">تأخذ الكميات بعين الاعتبار فاقد كل مكوّن (الجزء القابل للاستعمال).</string>
     <string name="shopping_empty_title">لا توجد وصفات</string>
     <string name="shopping_empty_body">كوّن وصفة أولًا لإعداد قائمة مشترياتك.</string>
@@ -505,6 +506,32 @@
     <string name="result_recipes">الوصفات المعاد حسابها</string>
     <string name="result_no_recipe">لا توجد وصفة تستعمل هذه المكوّنات.</string>
     <string name="result_footer">حُفظت الفاتورة في «الفواتير المحفوظة».</string>
+    <string name="result_prices_title">الأسعار المحدَّثة</string>
+    <string name="result_skipped_title">الأسطر المتجاهَلة</string>
+    <string name="result_list_item">• %1$s</string>
+    <string name="result_price_line">• %1$s: %2$s ← %3$s</string>
+    <string name="result_skipped_line">• %1$s: %2$s</string>
+    <string name="skip_ignored">تجاهلتَه أنت</string>
+    <string name="skip_no_ingredient">لم يُختر أي مكوّن</string>
+    <string name="skip_no_price">السعر ناقص</string>
+    <string name="skip_invalid_price">سعر غير صالح (0 أو أقل)</string>
+    <string name="skip_invalid_quantity">كمية غير صالحة (0 أو أقل)</string>
+    <string name="skip_unit">وحدة غير متوافقة</string>
+    <string name="skip_duplicate">مكرَّر</string>
+    <string name="skip_no_name">الاسم ناقص</string>
+    <string name="review_problem_invalid_price">سعر غير صالح: يجب أن يكون أكبر من 0.</string>
+    <string name="review_problem_invalid_quantity">كمية غير صالحة: يجب أن تكون أكبر من 0.</string>
+    <string name="review_problem_no_name">الاسم ناقص: أعطِ المكوّن اسمًا.</string>
+    <string name="review_save_error_title">تعذّر الحفظ</string>
+    <string name="review_save_error">لم يتغيّر أي شيء. راجع الأسطر وحاول مجددًا.</string>
+    <plurals name="result_created_title">
+        <item quantity="zero">لم يُضف أي مكوّن جديد</item>
+        <item quantity="one">أُضيف مكوّن جديد واحد</item>
+        <item quantity="two">أُضيف مكوّنان جديدان</item>
+        <item quantity="few">أُضيفت %d مكوّنات جديدة</item>
+        <item quantity="many">أُضيف %d مكوّنًا جديدًا</item>
+        <item quantity="other">أُضيف %d مكوّن جديد</item>
+    </plurals>
 
     <plurals name="recipes_count">
         <item quantity="zero">لا وصفات</item>

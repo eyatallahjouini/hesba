@@ -142,7 +142,10 @@ class HesbaRepository(private val db: HesbaDatabase, val userId: Long) {
 
     data class PriceUpdate(val ingredientId: Long, val newPriceMillimes: Long, val newPackageQuantity: Double? = null)
 
-    data class PriceApplyResult(val updatedIngredients: Int, val impacts: List<RecipeImpact>)
+    /** Un prix réellement modifié (pour le résumé : « Farine : 1,200 DT → 1,450 DT »). */
+    data class PriceChange(val ingredientId: Long, val name: String, val oldPriceMillimes: Long?, val newPriceMillimes: Long)
+
+    data class PriceApplyResult(val updatedIngredients: Int, val impacts: List<RecipeImpact>, val changes: List<PriceChange> = emptyList())
 
     /**
      * Applique des nouveaux prix confirmés par l'utilisateur, dans UNE transaction :
@@ -153,7 +156,9 @@ class HesbaRepository(private val db: HesbaDatabase, val userId: Long) {
         return db.withTransaction {
             val before = snapshot()
             var count = 0
+            val changes = mutableListOf<PriceChange>()
             for (u in updates) {
+                if (u.newPriceMillimes <= 0) continue          // jamais de prix nul ou négatif en base
                 val ing = db.ingredientDao().parId(u.ingredientId) ?: continue
                 if (ing.utilisateurId != userId) continue
                 val qty = u.newPackageQuantity ?: ing.quantiteEmballage
@@ -170,6 +175,7 @@ class HesbaRepository(private val db: HesbaDatabase, val userId: Long) {
                         factureId = factureId
                     )
                 )
+                changes += PriceChange(ing.id, ing.nom, ing.prixMillimes, u.newPriceMillimes)
                 count++
             }
             val changedIds = updates.map { it.ingredientId }.toSet()
@@ -177,7 +183,7 @@ class HesbaRepository(private val db: HesbaDatabase, val userId: Long) {
             val after = snapshot()
             val impacts = after.recipes.filter { r -> after.linesByRecipe[r.id].orEmpty().any { it.ingredientId in changedIds } }
                 .map { r -> RecipeImpact(r, before.cost(before.recipes.first { it.id == r.id }), after.cost(r)) }
-            PriceApplyResult(count, impacts)
+            PriceApplyResult(count, impacts, changes)
         }
     }
 
@@ -205,6 +211,13 @@ class HesbaRepository(private val db: HesbaDatabase, val userId: Long) {
     }
 
     suspend fun deleteSynonym(s: Synonyme) = db.synonymeDao().supprimer(s)
+
+    /** Ingrédient de l'utilisateur qui porte ce nom (sans tenir compte des majuscules, accents, espaces), ou null. */
+    suspend fun ingredientNamed(name: String): Ingredient? {
+        val key = TextNormalizer.normalize(name)
+        if (key.isEmpty()) return null
+        return db.ingredientDao().listePour(userId).firstOrNull { TextNormalizer.normalize(it.nom) == key }
+    }
 
     /** Crée un ingrédient depuis une ligne de facture (refuse les doublons de nom). */
     suspend fun createIngredient(draft: Ingredient): Long {

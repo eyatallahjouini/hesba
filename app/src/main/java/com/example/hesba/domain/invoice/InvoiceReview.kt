@@ -15,7 +15,10 @@ import java.math.RoundingMode
 object InvoiceReview {
 
     enum class Action { ACCEPT, IGNORE }
-    enum class Problem { NO_INGREDIENT, NO_PRICE, UNIT_MISMATCH, DUPLICATE }
+    enum class Problem { NO_INGREDIENT, NO_PRICE, UNIT_MISMATCH, DUPLICATE, INVALID_PRICE, INVALID_QUANTITY, NO_NAME }
+
+    /** Pourquoi une ligne n'est pas enregistrée (montré dans le résumé final). */
+    enum class Skip { IGNORED, NO_INGREDIENT, NO_PRICE, INVALID_PRICE, INVALID_QUANTITY, UNIT_MISMATCH, DUPLICATE, NO_NAME }
 
     data class Line(
         val index: Int,
@@ -59,12 +62,16 @@ object InvoiceReview {
     fun initial(invoice: ParsedInvoice, matcher: IngredientMatching, ingredients: Map<Long, Ingredient>, options: Options): List<Line> {
         val lines = invoice.lines.mapIndexed { i, src ->
             val m = matcher.match(src.name)
-            Line(index = i, source = src, ingredientId = m.ingredientId, match = m.confidence)
+            val line = Line(index = i, source = src, ingredientId = m.ingredientId, match = m.confidence)
+            // aucun ingrédient ne correspond : on propose de le créer (si son unité permet de le ranger en g, ml ou pièce)
+            if (m.ingredientId == null && newIngredientFor(line) != null) line.copy(createNew = true) else line
         }
         val dup = duplicates(lines.map { it.copy(action = Action.ACCEPT) })
         return lines.map { l ->
             val ev = evaluate(l, ingredients[l.ingredientId], options)
-            val safe = (l.match == MatchConfidence.EXACT || l.match == MatchConfidence.HIGH) && ev.problem == null &&
+            val sureTarget = l.createNew || l.match == MatchConfidence.EXACT || l.match == MatchConfidence.HIGH
+            // coché d'office seulement si la cible, le prix et l'unité sont sûrs ; sinon l'utilisateur décide
+            val safe = sureTarget && ev.problem == null &&
                 LineField.UNIT_PRICE !in l.uncertain && LineField.UNIT !in l.uncertain && l.index !in dup
             l.copy(action = if (safe) Action.ACCEPT else Action.IGNORE)
         }
@@ -82,14 +89,38 @@ object InvoiceReview {
     }
 
     fun evaluate(line: Line, ingredient: Ingredient?, options: Options): Evaluation {
+        // nouvel ingrédient : le nom est obligatoire
+        if (ingredient == null && line.createNew && line.name.isBlank()) return Evaluation(null, null, Problem.NO_NAME)
         val target = ingredient ?: (if (line.createNew) newIngredientFor(line) else null)
             ?: return Evaluation(null, null, if (line.createNew) Problem.UNIT_MISMATCH else Problem.NO_INGREDIENT)
-        if (line.unitPriceMillimes == null) return Evaluation(target.prixMillimes, null, Problem.NO_PRICE)
+        val old = if (ingredient == null) null else target.prixMillimes
+        // quantité : absente = acceptée (beaucoup de tickets n'affichent qu'un prix), mais jamais ≤ 0
+        if (line.quantity != null && line.quantity.signum() <= 0) return Evaluation(old, null, Problem.INVALID_QUANTITY)
+        if (line.unitPriceMillimes == null) return Evaluation(old, null, Problem.NO_PRICE)
+        if (line.unitPriceMillimes <= 0) return Evaluation(old, null, Problem.INVALID_PRICE)   // prix ≤ 0 refusé
         val pkg = BigDecimal(target.quantiteEmballage.toString())
+        // unité du ticket convertible vers celle de l'ingrédient (kg ↔ g, L ↔ ml), sinon rien n'est modifié
         val perBase = InvoiceParser.pricePerBaseUnit(line.asInvoiceLine(), target.unite, pkg, options.discount, options.tax)
-            ?: return Evaluation(target.prixMillimes, null, Problem.UNIT_MISMATCH)
+            ?: return Evaluation(old, null, Problem.UNIT_MISMATCH)
         val newPrice = Money.roundMillimes(perBase.multiply(pkg))
-        return Evaluation(if (ingredient == null) null else target.prixMillimes, newPrice, null)
+        if (newPrice <= 0) return Evaluation(old, null, Problem.INVALID_PRICE)               // arrondi à 0 millime
+        return Evaluation(old, newPrice, null)
+    }
+
+    /** Raison pour laquelle la ligne ne sera pas enregistrée, ou null si elle le sera. */
+    fun skipReason(line: Line, ingredient: Ingredient?, options: Options, duplicates: Set<Int>): Skip? {
+        val problem = evaluate(line, ingredient, options).problem
+        return when {
+            problem == Problem.NO_INGREDIENT -> Skip.NO_INGREDIENT
+            problem == Problem.NO_PRICE -> Skip.NO_PRICE
+            problem == Problem.INVALID_PRICE -> Skip.INVALID_PRICE
+            problem == Problem.INVALID_QUANTITY -> Skip.INVALID_QUANTITY
+            problem == Problem.UNIT_MISMATCH -> Skip.UNIT_MISMATCH
+            problem == Problem.NO_NAME -> Skip.NO_NAME
+            problem == Problem.DUPLICATE || line.index in duplicates -> Skip.DUPLICATE
+            line.action == Action.IGNORE -> Skip.IGNORED
+            else -> null
+        }
     }
 
     /** Lignes acceptées qui visent le même ingrédient (on n'en garde qu'une : pas de doublon). */

@@ -380,6 +380,7 @@
     <string name="shopping_total_used">Cost of quantities used</string>
     <string name="shopping_total_packages">If you buy whole packs</string>
     <string name="shopping_missing">Missing price for: %1$s. The total does not include them.</string>
+    <string name="shopping_unconvertible">Incompatible unit, not counted: %1$s. Fix the unit in the recipe.</string>
     <string name="shopping_note">Quantities take each ingredient’s waste (usable share) into account.</string>
     <string name="shopping_empty_title">No recipes</string>
     <string name="shopping_empty_body">Build a recipe first to prepare your shopping list.</string>
@@ -496,6 +497,28 @@
     <string name="result_recipes">Recalculated recipes</string>
     <string name="result_no_recipe">No recipe uses these ingredients.</string>
     <string name="result_footer">The invoice is saved in “Saved invoices”.</string>
+    <string name="result_prices_title">Prices updated</string>
+    <string name="result_skipped_title">Ignored lines</string>
+    <string name="result_list_item">• %1$s</string>
+    <string name="result_price_line">• %1$s: %2$s → %3$s</string>
+    <string name="result_skipped_line">• %1$s: %2$s</string>
+    <string name="skip_ignored">ignored by you</string>
+    <string name="skip_no_ingredient">no ingredient chosen</string>
+    <string name="skip_no_price">missing price</string>
+    <string name="skip_invalid_price">invalid price (0 or less)</string>
+    <string name="skip_invalid_quantity">invalid quantity (0 or less)</string>
+    <string name="skip_unit">incompatible unit</string>
+    <string name="skip_duplicate">duplicate</string>
+    <string name="skip_no_name">missing name</string>
+    <string name="review_problem_invalid_price">Invalid price: it must be greater than 0.</string>
+    <string name="review_problem_invalid_quantity">Invalid quantity: it must be greater than 0.</string>
+    <string name="review_problem_no_name">Missing name: give the ingredient a name.</string>
+    <string name="review_save_error_title">Could not save</string>
+    <string name="review_save_error">Nothing was changed. Check the lines and try again.</string>
+    <plurals name="result_created_title">
+        <item quantity="one">%d new ingredient added</item>
+        <item quantity="other">%d new ingredients added</item>
+    </plurals>
 
     <plurals name="recipes_count">
         <item quantity="one">%d recipe</item>

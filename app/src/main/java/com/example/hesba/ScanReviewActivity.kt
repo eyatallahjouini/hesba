@@ -48,6 +48,7 @@ import com.example.hesba.ui.ImpactViews
 import com.example.hesba.ui.Picker
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -70,8 +71,15 @@ class ScanReviewActivity : BaseActivity() {
         data class Failed(val message: Int) : State()
         object Ready : State()
         object Saving : State()
-        data class Done(val updated: Int, val created: Int, val impacts: List<RecipeImpact>) : State()
+        data class Done(val summary: Summary, val impacts: List<RecipeImpact>) : State()
     }
+
+    /** Résumé montré à la fin : créés, prix modifiés (ancien → nouveau), lignes ignorées avec leur raison. */
+    data class Summary(
+        val created: List<String>,
+        val prices: List<HesbaRepository.PriceChange>,
+        val skipped: List<Pair<String, InvoiceReview.Skip>>
+    )
 
     class Model(app: Application) : AndroidViewModel(app) {
         val state = MutableStateFlow<State>(State.Reading)
@@ -90,6 +98,8 @@ class ScanReviewActivity : BaseActivity() {
         val preview = MutableStateFlow<Bitmap?>(null)
         /** Les lignes trouvées ont-elles déjà été présentées une à une ? */
         var linesRevealed = false
+        /** Vrai quand l'enregistrement a échoué (rien n'a été écrit) : message à montrer une fois. */
+        val saveError = MutableStateFlow(false)
 
         private val db get() = HesbaDatabase.getInstance(getApplication())
         private val repo get() = HesbaRepository(db, SessionManager(getApplication()).getUserId())
@@ -142,40 +152,70 @@ class ScanReviewActivity : BaseActivity() {
 
         fun confirm() {
             val toApply = ready()
+            // lignes qui ne seront pas enregistrées, avec leur raison (pour le résumé final)
+            val dup = InvoiceReview.duplicates(lines)
+            val skipped = lines.mapNotNull { l ->
+                InvoiceReview.skipReason(l, ws?.ingredientsById?.get(l.ingredientId), options, dup)?.let { l.name to it }
+            }
             state.value = State.Saving
             viewModelScope.launch {
                 val r = repo
-                val result = db.withTransaction {
-                    val kept = files.firstOrNull()
-                    val factureId = r.saveInvoice(
-                        Facture(
-                            utilisateurId = r.userId, fournisseur = supplier.trim(), dateFacture = date.trim(),
-                            imagePath = kept?.absolutePath, langue = language, nombreLignes = lines.size, totalMillimes = invoice?.totalMillimes
+                try {
+                    // UNE transaction : facture, créations, prix, historique et coûts des recettes — tout ou rien
+                    val result = db.withTransaction {
+                        val kept = files.firstOrNull()
+                        val factureId = r.saveInvoice(
+                            Facture(
+                                utilisateurId = r.userId, fournisseur = supplier.trim(), dateFacture = date.trim(),
+                                imagePath = kept?.absolutePath, langue = language, nombreLignes = lines.size, totalMillimes = invoice?.totalMillimes
+                            )
                         )
-                    )
-                    var created = 0
-                    val updates = mutableListOf<HesbaRepository.PriceUpdate>()
-                    for (l in toApply) {
-                        val ev = evaluation(l)
-                        val price = ev.newPriceMillimes ?: continue
-                        if (l.createNew) {
-                            val virtual = InvoiceReview.newIngredientFor(l) ?: continue
-                            val id = r.createIngredient(virtual.copy(prixMillimes = price))
-                            created++
-                            if (TextNormalizer.normalize(l.source.name) != TextNormalizer.normalize(virtual.nom)) r.learnSynonym(l.source.name, id)
-                        } else {
-                            val id = l.ingredientId ?: continue
-                            updates += HesbaRepository.PriceUpdate(id, price)
-                            // on retient l'association confirmée : la prochaine facture sera reconnue directement
-                            if (l.match != MatchConfidence.EXACT) r.learnSynonym(l.source.name, id)
+                        val created = mutableListOf<String>()
+                        val lateSkipped = mutableListOf<Pair<String, InvoiceReview.Skip>>()
+                        val updates = linkedMapOf<Long, HesbaRepository.PriceUpdate>()   // un seul nouveau prix par ingrédient
+                        fun addUpdate(l: InvoiceReview.Line, id: Long, price: Long) {
+                            if (updates.containsKey(id)) lateSkipped += l.name to InvoiceReview.Skip.DUPLICATE
+                            else updates[id] = HesbaRepository.PriceUpdate(id, price)
                         }
+                        for (l in toApply) {
+                            val ev = evaluation(l)
+                            val price = ev.newPriceMillimes ?: continue
+                            if (l.createNew) {
+                                val virtual = InvoiceReview.newIngredientFor(l) ?: continue
+                                val existing = r.ingredientNamed(virtual.nom)
+                                if (existing == null) {
+                                    val id = r.createIngredient(virtual.copy(prixMillimes = price))
+                                    created += virtual.nom
+                                    if (TextNormalizer.normalize(l.source.name) != TextNormalizer.normalize(virtual.nom)) r.learnSynonym(l.source.name, id)
+                                } else {
+                                    // ce nom existe déjà : pas de doublon, on met à jour le prix de l'ingrédient existant
+                                    // (recalculé pour SON emballage ; refusé si l'unité ne se convertit pas)
+                                    val asExisting = l.copy(createNew = false, ingredientId = existing.id)
+                                    val p = InvoiceReview.evaluate(asExisting, existing, options).newPriceMillimes
+                                    if (p != null) addUpdate(l, existing.id, p)
+                                    else lateSkipped += l.name to (InvoiceReview.skipReason(asExisting, existing, options, emptySet()) ?: InvoiceReview.Skip.UNIT_MISMATCH)
+                                }
+                            } else {
+                                val id = l.ingredientId ?: continue
+                                addUpdate(l, id, price)
+                                // on retient l'association confirmée : la prochaine facture sera reconnue directement
+                                if (l.match != MatchConfidence.EXACT) r.learnSynonym(l.source.name, id)
+                            }
+                        }
+                        // prix modifié seulement s'il est différent ; coûts des recettes recalculés dans la même transaction
+                        val applied = r.applyPrices(updates.values.toList(), PrixHistorique.SOURCE_FACTURE, factureId)
+                        State.Done(Summary(created, applied.changes, skipped + lateSkipped), applied.impacts)
                     }
-                    val applied = r.applyPrices(updates, PrixHistorique.SOURCE_FACTURE, factureId)
-                    State.Done(applied.updatedIngredients, created, applied.impacts)
+                    // pages supplémentaires d'un PDF : seule la première est gardée comme justificatif
+                    withContext(Dispatchers.IO) { files.drop(1).forEach { it.delete() } }
+                    state.value = result
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    // la transaction a tout annulé : rien n'est écrit, on revient à la vérification
+                    state.value = State.Ready
+                    saveError.value = true
                 }
-                // pages supplémentaires d'un PDF : seule la première est gardée comme justificatif
-                withContext(Dispatchers.IO) { files.drop(1).forEach { it.delete() } }
-                state.value = result
             }
         }
 
@@ -221,6 +261,15 @@ class ScanReviewActivity : BaseActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) { model.state.collect { render(it) } }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                model.saveError.collect { failed ->
+                    if (!failed) return@collect
+                    model.saveError.value = false
+                    Dialogs.info(this@ScanReviewActivity, getString(R.string.review_save_error_title), getString(R.string.review_save_error))
+                }
+            }
         }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -362,6 +411,9 @@ class ScanReviewActivity : BaseActivity() {
             ev.problem == InvoiceReview.Problem.NO_INGREDIENT -> getString(R.string.review_problem_no_ingredient)
             ev.problem == InvoiceReview.Problem.NO_PRICE -> getString(R.string.review_problem_no_price)
             ev.problem == InvoiceReview.Problem.UNIT_MISMATCH -> getString(R.string.review_problem_unit, target?.let { Fmt.unitLabel(this, it.unite) } ?: "")
+            ev.problem == InvoiceReview.Problem.INVALID_PRICE -> getString(R.string.review_problem_invalid_price)
+            ev.problem == InvoiceReview.Problem.INVALID_QUANTITY -> getString(R.string.review_problem_invalid_quantity)
+            ev.problem == InvoiceReview.Problem.NO_NAME -> getString(R.string.review_problem_no_name)
             else -> null
         }
         v.txtProblem.visibility = if (problem != null) View.VISIBLE else View.GONE
@@ -473,8 +525,26 @@ class ScanReviewActivity : BaseActivity() {
 
     private fun renderDone(s: State.Done) {
         setTitleText(getString(R.string.result_title))
-        b.txtResultTitle.text = resources.getQuantityString(R.plurals.result_updated, s.updated, s.updated)
-        b.txtResultBody.text = if (s.created > 0) resources.getQuantityString(R.plurals.result_created, s.created, s.created) else getString(R.string.result_body)
+        val sum = s.summary
+        b.txtResultTitle.text = resources.getQuantityString(R.plurals.result_updated, sum.prices.size, sum.prices.size)
+        b.txtResultBody.setText(R.string.result_body)
+
+        // « X nouveaux ingrédients ajoutés » + leur liste
+        showBlock(b.txtCreatedTitle, b.txtCreatedList, sum.created.isNotEmpty())
+        b.txtCreatedTitle.text = resources.getQuantityString(R.plurals.result_created_title, sum.created.size, sum.created.size)
+        b.txtCreatedList.text = sum.created.joinToString("\n") { getString(R.string.result_list_item, it) }
+
+        // « Prix mis à jour » : ancien → nouveau, en DT
+        showBlock(b.txtPricesTitle, b.txtPricesList, sum.prices.isNotEmpty())
+        b.txtPricesList.text = sum.prices.joinToString("\n") {
+            getString(R.string.result_price_line, it.name, Fmt.money(this, it.oldPriceMillimes), Fmt.money(this, it.newPriceMillimes))
+        }
+
+        // « Lignes ignorées » + la raison de chacune
+        showBlock(b.txtSkippedTitle, b.txtSkippedList, sum.skipped.isNotEmpty())
+        b.txtSkippedList.text = sum.skipped.joinToString("\n") { (name, reason) ->
+            getString(R.string.result_skipped_line, name, getString(skipText(reason)))
+        }
         val below = s.impacts.filter { it.fallsBelowTarget }
         b.txtResultAlert.visibility = if (below.isEmpty()) View.GONE else View.VISIBLE
         b.txtResultAlert.text = resources.getQuantityString(R.plurals.result_below, below.size, below.size, below.joinToString { it.recette.nom })
@@ -484,6 +554,23 @@ class ScanReviewActivity : BaseActivity() {
         b.btnConfirm.isEnabled = true
         b.btnConfirm.setText(R.string.action_done)
         b.btnConfirm.setOnClickListener { goHome() }
+    }
+
+    private fun showBlock(title: View, body: View, visible: Boolean) {
+        val v = if (visible) View.VISIBLE else View.GONE
+        title.visibility = v
+        body.visibility = v
+    }
+
+    private fun skipText(reason: InvoiceReview.Skip): Int = when (reason) {
+        InvoiceReview.Skip.IGNORED -> R.string.skip_ignored
+        InvoiceReview.Skip.NO_INGREDIENT -> R.string.skip_no_ingredient
+        InvoiceReview.Skip.NO_PRICE -> R.string.skip_no_price
+        InvoiceReview.Skip.INVALID_PRICE -> R.string.skip_invalid_price
+        InvoiceReview.Skip.INVALID_QUANTITY -> R.string.skip_invalid_quantity
+        InvoiceReview.Skip.UNIT_MISMATCH -> R.string.skip_unit
+        InvoiceReview.Skip.DUPLICATE -> R.string.skip_duplicate
+        InvoiceReview.Skip.NO_NAME -> R.string.skip_no_name
     }
 
     private fun showImage() {

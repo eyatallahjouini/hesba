@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Accueil en grille Bento (mode clair) : fond clair, une couleur douce par idée.
-     Textes sur leur carte : encre 13:1, encre douce 6:1, rouge 7:1, vert 7:1, safran 6:1. -->
+<!-- Anciennes couleurs de l'Accueil Bento : ramenées sur la palette Minimal (clair et sombre suivent
+     values/colors.xml et values-night/colors.xml). Seront retirées quand l'Accueil sera refait. -->
 <resources>
-    <color name="hb_bento_bg">#F7F3EE</color>
-    <color name="hb_bento_card">#FFFFFF</color>
-    <color name="hb_bento_line">#00000000</color>
-    <color name="hb_bento_ink">#2A1E17</color>
-    <color name="hb_bento_ink_soft">#67574A</color>
-    <color name="hb_bento_icon">#B07548</color>
-    <color name="hb_bento_label">#8A4A12</color>
-    <color name="hb_bento_ripple">#1F2A1E17</color>
-    <!-- marge moyenne -->
-    <color name="hb_bento_hero">#F4D7B8</color>
-    <color name="hb_bento_hero_soft">#6A5341</color>
-    <color name="hb_bento_ring_track">#E8C29A</color>
-    <color name="hb_bento_ring">#C46A24</color>
-    <color name="hb_bento_ring_tick">#8A4A12</color>
-    <!-- scanner -->
-    <color name="hb_bento_scan">#EBCBA2</color>
-    <color name="hb_bento_scan_soft">#5E4636</color>
-    <color name="hb_bento_scan_chip">#FFFFFF</color>
-    <color name="hb_bento_scan_icon">#94501A</color>
-    <!-- à corriger / hausse de prix -->
-    <color name="hb_bento_bad">#F3CFC6</color>
-    <color name="hb_bento_bad_ink">#82281C</color>
-    <color name="hb_bento_bad_icon">#A4463A</color>
-    <!-- meilleure marge / baisse de prix -->
-    <color name="hb_bento_good">#D0E4CA</color>
-    <color name="hb_bento_good_ink">#225428</color>
-    <color name="hb_bento_good_soft">#3F5A42</color>
-    <!-- bouton doux et avatar -->
-    <color name="hb_bento_pill">#F4D7B8</color>
-    <color name="hb_bento_avatar">#E0CFBB</color>
-    <color name="hb_bento_avatar_ink">#5A4636</color>
+    <color name="hb_bento_bg">@color/hesba_background</color>
+    <color name="hb_bento_card">@color/hesba_surface</color>
+    <color name="hb_bento_line">@color/hesba_border</color>
+    <color name="hb_bento_ink">@color/hesba_text_primary</color>
+    <color name="hb_bento_ink_soft">@color/hesba_text_secondary</color>
+    <color name="hb_bento_icon">@color/hesba_accent_text</color>
+    <color name="hb_bento_label">@color/hesba_accent_text</color>
+    <color name="hb_bento_ripple">@color/hesba_ripple</color>
+    <color name="hb_bento_hero">@color/hesba_accent_soft</color>
+    <color name="hb_bento_hero_soft">@color/hesba_text_secondary</color>
+    <color name="hb_bento_ring_track">@color/hesba_border</color>
+    <color name="hb_bento_ring">@color/hesba_accent</color>
+    <color name="hb_bento_ring_tick">@color/hesba_text_primary</color>
+    <color name="hb_bento_scan">@color/hesba_surface_alt</color>
+    <color name="hb_bento_scan_soft">@color/hesba_text_secondary</color>
+    <color name="hb_bento_scan_chip">@color/hesba_surface</color>
+    <color name="hb_bento_scan_icon">@color/hesba_accent_text</color>
+    <color name="hb_bento_bad">@color/hesba_error_bg</color>
+    <color name="hb_bento_bad_ink">@color/hesba_error</color>
+    <color name="hb_bento_bad_icon">@color/hesba_error</color>
+    <color name="hb_bento_good">@color/hesba_success_bg</color>
+    <color name="hb_bento_good_ink">@color/hesba_success</color>
+    <color name="hb_bento_good_soft">@color/hesba_success</color>
+    <color name="hb_bento_pill">@color/hesba_accent_soft</color>
+    <color name="hb_bento_avatar">@color/hesba_accent_soft</color>
+    <color name="hb_bento_avatar_ink">@color/hesba_text_primary</color>
 </resources>

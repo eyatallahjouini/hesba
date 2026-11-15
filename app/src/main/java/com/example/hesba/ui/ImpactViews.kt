@@ -24,7 +24,7 @@ object ImpactViews {
             v.impactMargin.text = if (i.after.realMarginPercent != null)
                 ctx.getString(R.string.before_after, Fmt.percent(ctx, i.before.realMarginPercent), Fmt.percent(ctx, i.after.realMarginPercent))
             else ctx.getString(R.string.advisor_no_price_short)
-            v.impactMargin.setTextColor(ctx.getColor(if (i.belowTarget) R.color.hb_bad else R.color.hb_ink))
+            v.impactMargin.setTextColor(ctx.getColor(if (i.belowTarget) R.color.hesba_error else R.color.hesba_text_primary))
             v.impactSuggested.text = ctx.getString(R.string.before_after, Fmt.money(ctx, i.before.suggestedPriceMillimes), Fmt.money(ctx, i.after.suggestedPriceMillimes))
             v.impactTag.visibility = if (i.belowTarget) View.VISIBLE else View.GONE
             v.impactTag.setText(if (i.fallsBelowTarget) R.string.tag_falls_below else R.string.tag_below_target)

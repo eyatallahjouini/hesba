@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Profil (design Minimal) : barre ardoise ; en-tête (cercle d'initiales, nom, e-mail) ;
+     mode essai ou cartes « Mon commerce » et « Charges » ; cartes de réglages (icône, titre, chevron) ;
+     « Se déconnecter » en texte rouge ; version. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/hesba_background"
     android:orientation="vertical">
+
+    <!-- barre du haut (écran d'onglet : pas de retour) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/hesba_primary"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingEnd="@dimen/screen_margin">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
+            android:text="@string/tab_profile"
+            android:textAppearance="@style/Hesba.Text.Toolbar" />
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -15,344 +37,434 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="@dimen/gutter"
-            android:paddingEnd="@dimen/gutter"
-            android:paddingBottom="@dimen/sp_6">
+            android:paddingStart="@dimen/screen_margin"
+            android:paddingTop="@dimen/screen_margin"
+            android:paddingEnd="@dimen/screen_margin"
+            android:paddingBottom="@dimen/space_xl">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_5"
-                android:accessibilityHeading="true"
-                android:text="@string/tab_profile"
-                android:textAppearance="@style/TextAppearance.Hesba.Display" />
-
-            <!-- Identité -->
-            <LinearLayout
+            <!-- ===== En-tête : identité ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Hesba.Card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_4"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/txtMonogram"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:background="@drawable/bg_monogram"
-                    android:fontFamily="@font/hb_sans_bold"
-                    android:gravity="center"
-                    android:importantForAccessibility="no"
-                    android:textColor="@color/hb_accent_ink"
-                    android:textSize="24sp"
-                    android:textStyle="normal" />
+                android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/sp_4"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/txtName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Hesba.Subtitle" />
+                        android:id="@+id/txtMonogram"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_monogram"
+                        android:fontFamily="@font/hb_sans_bold"
+                        android:gravity="center"
+                        android:importantForAccessibility="no"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/hesba_text_primary"
+                        android:textSize="26sp"
+                        tools:text="E" />
 
-                    <TextView
-                        android:id="@+id/txtEmail"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                        android:layout_marginStart="@dimen/space_l"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/Hesba.Text.Title"
+                            tools:text="Eya" />
+
+                        <TextView
+                            android:id="@+id/txtEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/Hesba.Text.Caption"
+                            tools:text="eya@exemple.tn" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Mode essai -->
+            <!-- ===== Mode essai ===== -->
             <LinearLayout
                 android:id="@+id/blockGuest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_4"
+                android:layout_marginTop="@dimen/card_gap"
+                android:background="@drawable/bg_advisor"
                 android:orientation="vertical"
+                android:padding="@dimen/card_padding"
                 android:visibility="gone">
 
                 <TextView
                     style="@style/Hesba.Note"
                     android:text="@string/profile_guest_note" />
 
+                <!-- bouton principal de l'écran en mode essai -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCreateAccount"
+                    style="@style/Hesba.Button.Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_3"
+                    android:layout_marginTop="@dimen/space_m"
                     android:text="@string/action_create_account" />
             </LinearLayout>
 
-            <!-- Mon commerce -->
+            <!-- ===== Mon commerce + charges (compte connecté) ===== -->
             <LinearLayout
                 android:id="@+id/blockBusiness"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    style="@style/Hesba.Section"
-                    android:text="@string/section_business" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilFirstName"
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Hesba.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/field_first_name">
+                    android:layout_marginTop="@dimen/card_gap">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editFirstName"
-                        style="@style/Widget.Hesba.EditText"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName|textCapWords" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:orientation="vertical">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_3"
-                    android:hint="@string/field_business_name">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/space_m"
+                            android:accessibilityHeading="true"
+                            android:text="@string/section_business"
+                            android:textAppearance="@style/Hesba.Text.Title" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editBusiness"
-                        style="@style/Widget.Hesba.EditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textCapWords" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilFirstName"
+                            style="@style/Hesba.Field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/field_first_name"
+                            app:startIconDrawable="@drawable/ic_profile">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_3"
-                    android:hint="@string/field_city">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editFirstName"
+                                style="@style/Widget.Hesba.EditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName|textCapWords" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editCity"
-                        style="@style/Widget.Hesba.EditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textCapWords" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Hesba.Field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_m"
+                            android:hint="@string/field_business_name"
+                            app:startIconDrawable="@drawable/ic_home">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_4"
-                    android:text="@string/section_activity"
-                    android:textAppearance="@style/TextAppearance.Hesba.Label" />
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editBusiness"
+                                style="@style/Widget.Hesba.EditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapWords" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/groupActivity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:selectionRequired="true"
-                    app:singleSelection="true">
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Hesba.Field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_m"
+                            android:hint="@string/field_city">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipHome"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/activity_home" />
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editCity"
+                                style="@style/Widget.Hesba.EditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapWords" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipSolo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/activity_solo" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_l"
+                            android:text="@string/section_activity"
+                            android:textAppearance="@style/Hesba.Text.Body"
+                            android:fontFamily="@font/hb_sans_medium" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chipStaff"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checkable="true"
-                        android:text="@string/activity_staff" />
-                </com.google.android.material.chip.ChipGroup>
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/groupActivity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_xs"
+                            app:selectionRequired="true"
+                            app:singleSelection="true">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipHome"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checkable="true"
+                                android:text="@string/activity_home" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipSolo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checkable="true"
+                                android:text="@string/activity_solo" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipStaff"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checkable="true"
+                                android:text="@string/activity_staff" />
+                        </com.google.android.material.chip.ChipGroup>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
                 <!-- Charges (travail d'Aya, sans valeurs inventées) -->
-                <TextView
-                    style="@style/Hesba.Section"
-                    android:text="@string/section_charges" />
-
-                <TextView
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Hesba.Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/charges_note"
-                    android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                    android:layout_marginTop="@dimen/card_gap">
 
-                <LinearLayout
-                    android:id="@+id/blockRent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_3"
-                        android:layout_marginEnd="@dimen/sp_2"
-                        android:layout_weight="1"
-                        android:hint="@string/field_rent"
-                        app:suffixText="@string/currency_short">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editRent"
-                            style="@style/Widget.Hesba.EditText.Money"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilVolume"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_3"
-                        android:layout_marginStart="@dimen/sp_2"
-                        android:layout_weight="1"
-                        android:hint="@string/field_volume">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editVolume"
-                            style="@style/Widget.Hesba.EditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFeatureSettings="tnum"
-                            android:inputType="number"
-                            android:maxLength="7" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilEmployees"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_3"
-                    android:hint="@string/field_employees">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editEmployees"
-                        style="@style/Widget.Hesba.EditText"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFeatureSettings="tnum"
-                        android:inputType="number"
-                        android:maxLength="3" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:accessibilityHeading="true"
+                            android:text="@string/section_charges"
+                            android:textAppearance="@style/Hesba.Text.Title" />
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilSalary"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_3"
-                        android:layout_marginEnd="@dimen/sp_2"
-                        android:layout_weight="1"
-                        android:hint="@string/field_salary"
-                        app:suffixText="@string/currency_short">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editSalary"
-                            style="@style/Widget.Hesba.EditText.Money"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/tilHours"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_3"
-                        android:layout_marginStart="@dimen/sp_2"
-                        android:layout_weight="1"
-                        android:hint="@string/field_hours">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editHours"
-                            style="@style/Widget.Hesba.EditText"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_xs"
+                            android:text="@string/charges_note"
+                            android:textAppearance="@style/Hesba.Text.Caption" />
+
+                        <LinearLayout
+                            android:id="@+id/blockRent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_m"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Hesba.Field"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/space_s"
+                                android:layout_weight="1"
+                                android:hint="@string/field_rent"
+                                app:suffixText="@string/currency_short">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/editRent"
+                                    style="@style/Widget.Hesba.EditText.Money"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilVolume"
+                                style="@style/Hesba.Field"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/space_s"
+                                android:layout_weight="1"
+                                android:hint="@string/field_volume">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/editVolume"
+                                    style="@style/Widget.Hesba.EditText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFeatureSettings="tnum"
+                                    android:inputType="number"
+                                    android:maxLength="7" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilEmployees"
+                            style="@style/Hesba.Field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_m"
+                            android:hint="@string/field_employees">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editEmployees"
+                                style="@style/Widget.Hesba.EditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFeatureSettings="tnum"
+                                android:inputType="number"
+                                android:maxLength="3" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilSalary"
+                                style="@style/Hesba.Field"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_m"
+                                android:layout_marginEnd="@dimen/space_s"
+                                android:layout_weight="1"
+                                android:hint="@string/field_salary"
+                                app:suffixText="@string/currency_short">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/editSalary"
+                                    style="@style/Widget.Hesba.EditText.Money"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/tilHours"
+                                style="@style/Hesba.Field"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_m"
+                                android:layout_marginStart="@dimen/space_s"
+                                android:layout_weight="1"
+                                android:hint="@string/field_hours">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/editHours"
+                                    style="@style/Widget.Hesba.EditText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFeatureSettings="tnum"
+                                    android:inputType="number"
+                                    android:maxLength="3" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/txtChargesPreview"
+                            style="@style/Hesba.Note"
+                            android:layout_marginTop="@dimen/space_m"
+                            android:accessibilityLiveRegion="polite"
                             android:fontFeatureSettings="tnum"
-                            android:inputType="number"
-                            android:maxLength="3" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
+                            android:textAppearance="@style/Hesba.Text.Caption"
+                            android:textColor="@color/hesba_text_primary" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/txtChargesPreview"
-                    style="@style/Hesba.Note"
-                    android:layout_marginTop="@dimen/sp_3"
-                    android:accessibilityLiveRegion="polite"
-                    android:fontFeatureSettings="tnum"
-                    android:textAppearance="@style/TextAppearance.Hesba.Caption"
-                    android:textColor="@color/hb_ink" />
-
+                <!-- bouton principal de l'écran pour un compte connecté -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSaveProfile"
+                    style="@style/Hesba.Button.Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_4"
+                    android:layout_marginTop="@dimen/space_l"
                     android:text="@string/action_save_profile" />
             </LinearLayout>
 
-            <!-- Préférences -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/section_preferences" />
-
-            <View style="@style/Hesba.Divider" />
-
-            <include
-                android:id="@+id/rowLanguage"
-                layout="@layout/item_link" />
-
-            <include
-                android:id="@+id/rowTheme"
-                layout="@layout/item_link" />
-
-            <!-- Données -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/section_data" />
-
-            <View style="@style/Hesba.Divider" />
-
-            <include
-                android:id="@+id/rowBackup"
-                layout="@layout/item_link" />
-
-            <include
-                android:id="@+id/rowRestore"
-                layout="@layout/item_link" />
-
-            <include
-                android:id="@+id/rowInvoices"
-                layout="@layout/item_link" />
-
-            <include
-                android:id="@+id/rowPassword"
-                layout="@layout/item_link" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogout"
-                style="@style/Widget.Hesba.Button.Outlined"
+            <!-- ===== Réglages : préférences ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Hesba.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_5"
+                android:layout_marginTop="@dimen/space_xl"
+                app:contentPaddingBottom="0dp"
+                app:contentPaddingTop="@dimen/space_xs">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:accessibilityHeading="true"
+                        android:text="@string/section_preferences"
+                        android:textAppearance="@style/Hesba.Text.Title" />
+
+                    <include
+                        android:id="@+id/rowLanguage"
+                        layout="@layout/item_link" />
+
+                    <include
+                        android:id="@+id/rowTheme"
+                        layout="@layout/item_link" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Réglages : données ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Hesba.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/card_gap"
+                app:contentPaddingBottom="0dp"
+                app:contentPaddingTop="@dimen/space_xs">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:accessibilityHeading="true"
+                        android:text="@string/section_data"
+                        android:textAppearance="@style/Hesba.Text.Title" />
+
+                    <include
+                        android:id="@+id/rowBackup"
+                        layout="@layout/item_link" />
+
+                    <include
+                        android:id="@+id/rowRestore"
+                        layout="@layout/item_link" />
+
+                    <include
+                        android:id="@+id/rowInvoices"
+                        layout="@layout/item_link" />
+
+                    <include
+                        android:id="@+id/rowPassword"
+                        layout="@layout/item_link" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- action destructive en texte rouge -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                style="@style/Hesba.Button.Danger"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/space_l"
                 android:text="@string/action_logout"
                 app:icon="@drawable/ic_logout" />
 
@@ -360,9 +472,9 @@
                 android:id="@+id/txtVersion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_4"
+                android:layout_marginTop="@dimen/space_s"
                 android:gravity="center"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:textAppearance="@style/Hesba.Text.Caption" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

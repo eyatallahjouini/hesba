@@ -1,11 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Palette HESBA « Minimal » (mode clair). Le mode sombre est dans values-night/colors.xml.
+     Aucune couleur orange, corail ou ambre. -->
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="safran">#F28C28</color>
-    <color name="brun">#3E2723</color>
-    <color name="creme">#FFF8EE</color>
-    <color name="vert">#2E7D32</color>
-    <color name="rouge">#D32F2F</color>
-    <color name="caramel">#E9C9A0</color>
+
+    <!-- ===== Palette Minimal ===== -->
+    <color name="hesba_primary">#1F2933</color>
+    <color name="hesba_on_primary">#FFFFFF</color>
+    <color name="hesba_accent">#3CBFA4</color>
+    <color name="hesba_on_accent">#0F2E28</color>
+    <color name="hesba_background">#F7F8F9</color>
+    <color name="hesba_surface">#FFFFFF</color>
+    <color name="hesba_text_primary">#1F2933</color>
+    <color name="hesba_text_secondary">#6B7682</color>
+    <color name="hesba_text_hint">#9AA3AD</color>
+    <color name="hesba_border">#E4E7EB</color>
+    <color name="hesba_success">#1A6B5A</color>
+    <color name="hesba_success_bg">#E0F5F0</color>
+    <color name="hesba_error">#A3243A</color>
+    <color name="hesba_error_bg">#FBE4E6</color>
+
+    <!-- Nuances dérivées (même famille) -->
+    <!-- turquoise foncé pour le petit texte sur fond clair : 4,9:1 sur blanc (le turquoise pur fait 2,3:1) -->
+    <color name="hesba_accent_text">#1A7F6B</color>
+    <!-- fond turquoise très clair (cercle d'initiales, pastille active) -->
+    <color name="hesba_accent_soft">#DDF3EE</color>
+    <color name="hesba_surface_alt">#EEF1F3</color>
+    <color name="hesba_border_strong">#CBD2D9</color>
+    <color name="hesba_ripple">#141F2933</color>
+    <color name="hesba_scrim">#991F2933</color>
+    <!-- fond de l'icône de l'application -->
+    <color name="hesba_icon_bg">#1F2933</color>
+
+    <!-- Anciens noms (utilisés par RecipePdf.kt) : valeurs fixes claires, le PDF reste imprimable en mode sombre -->
+    <color name="safran">#3CBFA4</color>
+    <color name="brun">#1F2933</color>
+    <color name="creme">#F7F8F9</color>
+    <color name="vert">#1A6B5A</color>
+    <color name="rouge">#A3243A</color>
+    <color name="caramel">#E4E7EB</color>
 </resources>

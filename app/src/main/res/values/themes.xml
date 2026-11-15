@@ -1,42 +1,51 @@
 <resources>
     <!-- Thème unique de HESBA, clair et sombre (les couleurs changent dans values-night/colors_theme.xml) -->
     <style name="Base.Theme.Hesba" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/hb_accent</item>
-        <item name="colorOnPrimary">@color/hb_on_accent</item>
-        <item name="colorPrimaryContainer">@color/hb_surface_alt</item>
-        <item name="colorOnPrimaryContainer">@color/hb_ink</item>
-        <item name="colorSecondary">@color/hb_accent_ink</item>
-        <item name="colorOnSecondary">@color/hb_bg</item>
-        <item name="colorSecondaryContainer">@color/hb_surface_alt</item>
-        <item name="colorOnSecondaryContainer">@color/hb_ink</item>
-        <item name="colorTertiary">@color/hb_accent_ink</item>
-        <item name="colorAccent">@color/hb_accent_ink</item>
-        <item name="colorControlActivated">@color/hb_accent_ink</item>
-        <item name="colorControlNormal">@color/hb_ink_soft</item>
-        <item name="colorError">@color/hb_bad</item>
-        <item name="colorOnError">@color/hb_bg</item>
-        <item name="android:colorBackground">@color/hb_bg</item>
-        <item name="colorOnBackground">@color/hb_ink</item>
-        <item name="colorSurface">@color/hb_surface</item>
-        <item name="colorOnSurface">@color/hb_ink</item>
-        <item name="colorSurfaceVariant">@color/hb_surface_alt</item>
-        <item name="colorOnSurfaceVariant">@color/hb_ink_soft</item>
-        <item name="colorSurfaceContainer">@color/hb_surface</item>
-        <item name="colorSurfaceContainerLow">@color/hb_surface</item>
-        <item name="colorSurfaceContainerHigh">@color/hb_surface</item>
-        <item name="colorSurfaceContainerHighest">@color/hb_surface_alt</item>
-        <!-- pas de teinte rosée Material sur les surfaces surélevées (barre du bas, dialogues) -->
+        <!-- Palette Minimal (valeurs claires dans values/colors.xml, sombres dans values-night/colors.xml) -->
+        <item name="colorPrimary">@color/hesba_primary</item>
+        <item name="colorOnPrimary">@color/hesba_on_primary</item>
+        <item name="colorPrimaryContainer">@color/hesba_accent_soft</item>
+        <item name="colorOnPrimaryContainer">@color/hesba_text_primary</item>
+        <item name="colorSecondary">@color/hesba_accent</item>
+        <item name="colorOnSecondary">@color/hesba_on_accent</item>
+        <item name="colorSecondaryContainer">@color/hesba_accent_soft</item>
+        <item name="colorOnSecondaryContainer">@color/hesba_text_primary</item>
+        <item name="colorTertiary">@color/hesba_accent_text</item>
+        <item name="colorAccent">@color/hesba_accent</item>
+        <!-- éléments actifs (curseur, cases, interrupteurs, sélection) en turquoise -->
+        <item name="colorControlActivated">@color/hesba_accent</item>
+        <item name="colorControlNormal">@color/hesba_text_secondary</item>
+        <item name="colorControlHighlight">@color/hesba_ripple</item>
+        <item name="colorError">@color/hesba_error</item>
+        <item name="colorOnError">@color/hesba_on_primary</item>
+        <item name="colorErrorContainer">@color/hesba_error_bg</item>
+        <item name="colorOnErrorContainer">@color/hesba_error</item>
+        <item name="android:colorBackground">@color/hesba_background</item>
+        <item name="colorOnBackground">@color/hesba_text_primary</item>
+        <item name="colorSurface">@color/hesba_surface</item>
+        <item name="colorOnSurface">@color/hesba_text_primary</item>
+        <item name="colorSurfaceVariant">@color/hesba_surface_alt</item>
+        <item name="colorOnSurfaceVariant">@color/hesba_text_secondary</item>
+        <item name="colorSurfaceContainerLowest">@color/hesba_surface</item>
+        <item name="colorSurfaceContainer">@color/hesba_surface</item>
+        <item name="colorSurfaceContainerLow">@color/hesba_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/hesba_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/hesba_surface_alt</item>
+        <!-- pas de teinte Material sur les surfaces surélevées (barre du bas, dialogues) -->
         <item name="elevationOverlayEnabled">false</item>
-        <item name="colorOutline">@color/hb_line</item>
-        <item name="colorOutlineVariant">@color/hb_line</item>
-        <item name="android:windowBackground">@color/hb_bg</item>
-        <item name="android:textColorPrimary">@color/hb_ink</item>
-        <item name="android:textColorSecondary">@color/hb_ink_soft</item>
-        <item name="android:textColorHint">@color/hb_hint</item>
-        <item name="android:textColorHighlight">@color/hb_surface_alt</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorOutline">@color/hesba_border</item>
+        <item name="colorOutlineVariant">@color/hesba_border</item>
+        <item name="android:windowBackground">@color/hesba_background</item>
+        <item name="android:textColorPrimary">@color/hesba_text_primary</item>
+        <item name="android:textColorSecondary">@color/hesba_text_secondary</item>
+        <item name="android:textColorHint">@color/hesba_text_hint</item>
+        <item name="android:textColorHighlight">@color/hesba_accent_soft</item>
+        <!-- barre de statut ardoise, icônes blanches (BaseActivity peint la bande sous la barre : bord à bord) -->
+        <item name="android:statusBarColor">@color/hesba_primary</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <!-- Police Cairo partout : hb_sans* pointent vers Cairo (res/font) et sont appliquées
+             par textViewStyle, editTextStyle et toutes les textAppearance ci-dessous -->
         <!-- police par défaut et échelle typographique Material → styles Hesba -->
         <!-- police par défaut via le style des TextView (pas via android:fontFamily du thème,
              qui passerait devant la police des textAppearance, ex. les montants en police ticket) -->

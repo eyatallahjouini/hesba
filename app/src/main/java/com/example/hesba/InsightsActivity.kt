@@ -54,7 +54,7 @@ class InsightsActivity : BaseActivity() {
         b.content.addView(LayoutInflater.from(this).inflate(R.layout.view_section, b.content, false).apply { (this as TextView).setText(title) })
         b.content.addView(View(this).apply {
             layoutParams = android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimensionPixelSize(R.dimen.hairline))
-            setBackgroundColor(getColor(R.color.hb_line))
+            setBackgroundColor(getColor(R.color.hesba_border))
         })
     }
 
@@ -78,7 +78,7 @@ class InsightsActivity : BaseActivity() {
                 v.ledgerDetail.text = getString(R.string.before_after, Fmt.money(this, c.oldPriceMillimes), Fmt.money(this, c.newPriceMillimes)) + " · " + Fmt.relative(c.date)
                 v.ledgerDetail.visibility = View.VISIBLE
                 v.ledgerValue.text = Fmt.signedPercent(this, c.percent)
-                v.ledgerValue.setTextColor(getColor(if (c.percent.signum() > 0) R.color.hb_bad else R.color.hb_good))
+                v.ledgerValue.setTextColor(getColor(if (c.percent.signum() > 0) R.color.hesba_error else R.color.hesba_success))
                 v.root.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java).putExtra(NouvelIngredientActivity.EXTRA_INGREDIENT_ID, c.ingredient.id)) }
                 b.content.addView(v.root)
             }
@@ -91,7 +91,7 @@ class InsightsActivity : BaseActivity() {
                 v.ledgerDetail.text = getString(R.string.before_after, Fmt.money(this, a.oldCost), Fmt.money(this, a.newCost))
                 v.ledgerDetail.visibility = View.VISIBLE
                 v.ledgerValue.text = getString(R.string.per_portion_delta, Fmt.signedMoney(this, a.delta))
-                v.ledgerValue.setTextColor(getColor(if (a.delta > 0) R.color.hb_bad else R.color.hb_good))
+                v.ledgerValue.setTextColor(getColor(if (a.delta > 0) R.color.hesba_error else R.color.hesba_success))
                 v.root.setOnClickListener { startActivity(Intent(this, RecipeDetailActivity::class.java).putExtra(RecipeDetailActivity.EXTRA_ID, a.recette.id)) }
                 b.content.addView(v.root)
             }

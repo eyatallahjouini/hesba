@@ -18,7 +18,8 @@ import com.example.hesba.R
 import com.example.hesba.ui.Motion
 
 /**
- * Barre du bas HESBA : 4 onglets (icône + libellé) et un indicateur safran qui glisse d'un onglet à l'autre.
+ * Barre du bas HESBA (design Minimal) : fond surface, filet fin en haut, 4 onglets (icône + libellé toujours visible)
+ * et un indicateur turquoise qui glisse d'un onglet à l'autre. Couleurs des onglets : res/color/bottom_nav_*.xml.
  * Chaque onglet est un écran à part : le nouvel écran dessine l'indicateur sur l'ancien onglet
  * puis le fait glisser jusqu'au sien ([select] avec from). La barre étant au même endroit sur tous les écrans,
  * le mouvement paraît continu.
@@ -30,9 +31,9 @@ class NavBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
     private val density = resources.displayMetrics.density
     private val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
     private val tabs = mutableListOf<View>()
-    private val indicatorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ContextCompat.getColor(context, R.color.hb_accent) }
-    private val pillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ContextCompat.getColor(context, R.color.hb_accent_soft) }
-    private val linePaint = Paint().apply { color = ContextCompat.getColor(context, R.color.hb_line) }
+    private val indicatorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ContextCompat.getColor(context, R.color.hesba_accent) }
+    private val pillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = ContextCompat.getColor(context, R.color.hesba_accent_soft) }
+    private val linePaint = Paint().apply { color = ContextCompat.getColor(context, R.color.hesba_border) }
     private val rect = RectF()
     private var position = 0f
     private var selected = 0
@@ -40,7 +41,7 @@ class NavBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
 
     init {
         setWillNotDraw(false)
-        setBackgroundColor(ContextCompat.getColor(context, R.color.hb_surface))
+        setBackgroundColor(ContextCompat.getColor(context, R.color.hesba_surface))
         addView(row, LayoutParams(LayoutParams.MATCH_PARENT, (64 * density).toInt()))
     }
 
@@ -83,12 +84,9 @@ class NavBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
     }
 
     private fun style(tab: View, on: Boolean) {
-        val color = ContextCompat.getColor(context, if (on) R.color.hb_ink else R.color.hb_ink_soft)
-        tab.findViewById<ImageView>(R.id.navIcon).setColorFilter(color)
-        tab.findViewById<TextView>(R.id.navLabel).apply {
-            setTextColor(color)
-            typeface = ResourcesCompat.getFont(context, if (on) R.font.hb_sans_semibold else R.font.hb_sans)
-        }
+        // les couleurs suivent l'état « selected » (bottom_nav_color / bottom_nav_text_color dans view_nav_tab.xml)
+        tab.findViewById<TextView>(R.id.navLabel).typeface =
+            ResourcesCompat.getFont(context, if (on) R.font.hb_sans_semibold else R.font.hb_sans)
         tab.isSelected = on
     }
 
@@ -102,7 +100,7 @@ class NavBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
             val pw = 56 * density; val ph = 30 * density; val top = 8 * density
             rect.set(center - pw / 2, top, center + pw / 2, top + ph)
             canvas.drawRoundRect(rect, ph / 2, ph / 2, pillPaint)
-            // trait safran sur le bord haut de la barre
+            // trait turquoise sur le bord haut de la barre
             val iw = 28 * density
             rect.set(center - iw / 2, 0f, center + iw / 2, 3 * density)
             canvas.drawRoundRect(rect, 1.5f * density, 1.5f * density, indicatorPaint)

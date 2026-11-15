@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Carte de l'Accueil (Bento) : fond plein, coins arrondis, ondulation au toucher limitée à la carte -->
-<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/hb_bento_ripple">
+<!-- Carte en alerte : fond erreur clair -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/hesba_ripple">
     <item>
         <shape>
-            <solid android:color="@color/hb_bento_bad" />
+            <solid android:color="@color/hesba_error_bg" />
             <stroke android:width="1dp" android:color="@android:color/transparent" />
-            <corners android:radius="20dp" />
+            <corners android:radius="@dimen/radius_card" />
         </shape>
     </item>
 </ripple>

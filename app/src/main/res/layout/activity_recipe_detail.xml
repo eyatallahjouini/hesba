@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Détail recette (design Minimal) : barre ardoise avec retour ; carte en-tête (nom, coût par part, prix conseillé,
+     badge de marge) ; carte « Ingrédients » (lignes séparées par un filet fin, « imprimée » à l'ouverture) ;
+     carte « Prix de vente » ; carte « Conseiller de marge » ; carte d'actions ; « Supprimer » en texte rouge. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/hesba_background"
     android:orientation="vertical">
 
-    <include layout="@layout/view_top_bar" />
+    <include layout="@layout/view_toolbar" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
@@ -18,188 +23,241 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="@dimen/gutter"
-            android:paddingEnd="@dimen/gutter"
-            android:paddingBottom="@dimen/sp_6">
+            android:paddingStart="@dimen/screen_margin"
+            android:paddingTop="@dimen/screen_margin"
+            android:paddingEnd="@dimen/screen_margin"
+            android:paddingBottom="@dimen/space_xxl">
 
-            <ImageView
-                android:id="@+id/imgPhoto"
+            <!-- ===== Carte en-tête ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Hesba.Card"
                 android:layout_width="match_parent"
-                android:layout_height="168dp"
-                android:layout_marginBottom="@dimen/sp_4"
-                android:background="@drawable/bg_photo"
-                android:importantForAccessibility="no"
-                android:scaleType="centerCrop"
-                android:visibility="gone" />
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/txtName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:accessibilityHeading="true"
-                android:textAppearance="@style/TextAppearance.Hesba.Title" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <!-- Le chiffre principal -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_4"
-                android:text="@string/label_cost_per_portion"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                    <ImageView
+                        android:id="@+id/imgPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:layout_marginBottom="@dimen/space_l"
+                        android:background="@drawable/bg_photo"
+                        android:importantForAccessibility="no"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/txtCost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Hesba.Money.Large" />
+                    <TextView
+                        android:id="@+id/txtName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:accessibilityHeading="true"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/Hesba.Text.Headline"
+                        tools:text="Cornes de gazelle" />
 
-            <TextView
-                android:id="@+id/txtCostSub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFeatureSettings="tnum"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:text="@string/label_cost_per_portion"
+                        android:textAppearance="@style/Hesba.Text.Caption" />
 
-            <!-- Le ticket : détail du coût, « imprimé » à l'ouverture -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_marginTop="@dimen/sp_5"
-                android:background="@drawable/bg_printer_slot"
-                android:importantForAccessibility="no" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
+                        <TextView
+                            android:id="@+id/txtCost"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/Hesba.Text.Amount"
+                            tools:text="0,878 DT" />
+
+                        <TextView
+                            android:id="@+id/txtMarginBadge"
+                            style="@style/Hesba.Badge.Success"
+                            android:layout_marginStart="@dimen/space_s"
+                            android:visibility="gone"
+                            tools:text="Marge OK · 55 %"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtCostSub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/Hesba.Text.Caption"
+                        tools:text="40 parts · lot 35,120 DT" />
+
+                    <TextView
+                        android:id="@+id/txtHeaderSuggested"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/Hesba.Text.Body"
+                        tools:text="Prix conseillé : 1,950 DT" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Carte « Ingrédients » : détail du coût, « imprimé » à l'ouverture ===== -->
             <com.example.hesba.ui.widget.ReceiptLayout
                 android:id="@+id/receipt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/sp_2"
-                android:layout_marginEnd="@dimen/sp_2"
-                android:paddingStart="@dimen/sp_4"
-                android:paddingTop="@dimen/sp_4"
-                android:paddingEnd="@dimen/sp_4"
-                android:paddingBottom="@dimen/sp_4">
+                android:layout_marginTop="@dimen/card_gap"
+                android:padding="@dimen/card_padding"
+                app:flat="true">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/section_ingredients"
+                    android:textAppearance="@style/Hesba.Text.Title" />
+
+                <!-- nom de la recette rempli par le code : déjà en tête de page, donc caché ici -->
                 <TextView
                     android:id="@+id/receiptTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textAllCaps="true"
-                    android:textAppearance="@style/TextAppearance.Hesba.Ticket.Strong"
-                    android:textSize="14sp" />
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/receiptMeta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.Hesba.Ticket.Soft" />
-
-                <com.example.hesba.ui.widget.DotLeaderView
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_marginTop="@dimen/sp_3"
-                    android:layout_marginBottom="@dimen/sp_1" />
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/Hesba.Text.Caption"
+                    tools:text="40 parts · 15 novembre 2026" />
 
                 <LinearLayout
                     android:id="@+id/listDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                    android:layout_marginTop="@dimen/space_s"
+                    android:divider="@drawable/divider_hairline"
+                    android:orientation="vertical"
+                    android:showDividers="middle" />
             </com.example.hesba.ui.widget.ReceiptLayout>
 
             <TextView
                 android:id="@+id/txtIssues"
                 style="@style/Hesba.Note"
-                android:layout_marginTop="@dimen/sp_4"
+                android:layout_marginTop="@dimen/card_gap"
                 android:background="@drawable/bg_note_bad"
                 android:visibility="gone" />
 
-            <!-- Prix de vente pratiqué -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/section_selling" />
-
-            <View style="@style/Hesba.Divider" />
-
-            <LinearLayout style="@style/Hesba.LedgerRow">
-                <TextView
-                    style="@style/Hesba.LedgerLabel"
-                    android:text="@string/label_selling_price" />
-                <TextView
-                    android:id="@+id/txtPrice"
-                    style="@style/Hesba.LedgerValue" />
-            </LinearLayout>
-
-            <LinearLayout style="@style/Hesba.LedgerRow">
-                <TextView
-                    style="@style/Hesba.LedgerLabel"
-                    android:text="@string/label_real_margin" />
-                <TextView
-                    android:id="@+id/txtMargin"
-                    style="@style/Hesba.LedgerValue" />
-            </LinearLayout>
-
-            <LinearLayout style="@style/Hesba.LedgerRow">
-                <TextView
-                    style="@style/Hesba.LedgerLabel"
-                    android:text="@string/label_profit" />
-                <TextView
-                    android:id="@+id/txtProfit"
-                    style="@style/Hesba.LedgerValue" />
-            </LinearLayout>
-
-            <LinearLayout style="@style/Hesba.LedgerRow">
-                <TextView
-                    android:id="@+id/lblSuggested"
-                    style="@style/Hesba.LedgerLabel" />
-                <TextView
-                    android:id="@+id/txtSuggested"
-                    style="@style/Hesba.LedgerValue" />
-            </LinearLayout>
-
-            <LinearLayout
+            <!-- ===== Carte « Prix de vente » ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Hesba.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnEditPrice"
-                    style="@style/Widget.Hesba.Button.Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/action_change_price" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnApplySuggested"
-                    style="@style/Widget.Hesba.Button.Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <!-- Conseiller de marge -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/section_advisor" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/advisor_intro"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_3"
-                android:background="@drawable/bg_advisor"
-                android:orientation="vertical"
-                android:padding="@dimen/sp_4">
+                android:layout_marginTop="@dimen/card_gap">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/space_xs"
+                        android:accessibilityHeading="true"
+                        android:text="@string/section_selling"
+                        android:textAppearance="@style/Hesba.Text.Title" />
+
+                    <LinearLayout style="@style/Hesba.LedgerRow">
+                        <TextView
+                            style="@style/Hesba.LedgerLabel"
+                            android:text="@string/label_selling_price" />
+                        <TextView
+                            android:id="@+id/txtPrice"
+                            style="@style/Hesba.LedgerValue" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Hesba.LedgerRow">
+                        <TextView
+                            style="@style/Hesba.LedgerLabel"
+                            android:text="@string/label_real_margin" />
+                        <TextView
+                            android:id="@+id/txtMargin"
+                            style="@style/Hesba.LedgerValue" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Hesba.LedgerRow">
+                        <TextView
+                            style="@style/Hesba.LedgerLabel"
+                            android:text="@string/label_profit" />
+                        <TextView
+                            android:id="@+id/txtProfit"
+                            style="@style/Hesba.LedgerValue" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Hesba.LedgerRow">
+                        <TextView
+                            android:id="@+id/lblSuggested"
+                            style="@style/Hesba.LedgerLabel" />
+                        <TextView
+                            android:id="@+id/txtSuggested"
+                            style="@style/Hesba.LedgerValue" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditPrice"
+                        style="@style/Hesba.Button.Secondary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:text="@string/action_change_price"
+                        app:icon="@drawable/ic_edit" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnApplySuggested"
+                        style="@style/Hesba.Button.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Carte « Conseiller de marge » ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/card_gap"
+                android:background="@drawable/bg_advisor"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/section_advisor"
+                    android:textAppearance="@style/Hesba.Text.Title" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:text="@string/advisor_intro"
+                    android:textAppearance="@style/Hesba.Text.Caption" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l"
                     android:baselineAligned="true"
                     android:orientation="horizontal">
 
@@ -208,13 +266,15 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/advisor_margin"
-                        android:textAppearance="@style/TextAppearance.Hesba.Body.Soft" />
+                        android:textAppearance="@style/Hesba.Text.Body"
+                        android:textColor="@color/hesba_text_secondary" />
 
                     <TextView
                         android:id="@+id/txtAdvisorMargin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Hesba.Money" />
+                        android:textAppearance="@style/TextAppearance.Hesba.Money"
+                        android:textColor="@color/hesba_accent_text" />
                 </LinearLayout>
 
                 <com.google.android.material.slider.Slider
@@ -225,43 +285,44 @@
                     android:stepSize="1"
                     android:valueFrom="0"
                     android:valueTo="90"
+                    app:haloColor="@color/hesba_accent_soft"
                     app:labelBehavior="gone"
+                    app:thumbColor="@color/hesba_accent"
                     app:tickVisible="false"
-                    app:thumbColor="@color/hb_accent_ink"
-                    app:trackColorActive="@color/hb_accent"
-                    app:trackColorInactive="@color/hb_line" />
+                    app:trackColorActive="@color/hesba_accent"
+                    app:trackColorInactive="@color/hesba_border" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_3"
+                    android:layout_marginTop="@dimen/space_s"
                     android:text="@string/advisor_price"
-                    android:textAppearance="@style/TextAppearance.Hesba.Body.Soft" />
+                    android:textAppearance="@style/Hesba.Text.Caption" />
 
                 <LinearLayout
                     android:id="@+id/advisorPriceRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
-                    android:gravity="bottom|end"
+                    android:gravity="bottom|start"
                     android:orientation="horizontal">
 
                     <com.example.hesba.ui.widget.RollingNumberView
                         android:id="@+id/txtAdvisorPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Hesba.Money.Large" />
+                        android:textAppearance="@style/Hesba.Text.Amount" />
 
                     <TextView
                         android:id="@+id/txtAdvisorCurrency"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
-                        android:layout_marginBottom="6dp"
+                        android:layout_marginBottom="4dp"
                         android:importantForAccessibility="no"
                         android:text="@string/currency_short"
-                        android:textAppearance="@style/TextAppearance.Hesba.Ticket.Soft"
-                        android:textSize="14sp" />
+                        android:textAppearance="@style/Hesba.Text.Body"
+                        android:textColor="@color/hesba_text_secondary" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/Hesba.LedgerRow">
@@ -277,54 +338,72 @@
                     android:id="@+id/txtAdvisorEffect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_2"
+                    android:layout_marginTop="@dimen/space_xs"
                     android:fontFeatureSettings="tnum"
-                    android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                    android:textAppearance="@style/Hesba.Text.Caption" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnKeepMargin"
-                    style="@style/Widget.Hesba.Button.Outlined"
+                    style="@style/Hesba.Button.Secondary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_3"
+                    android:layout_marginTop="@dimen/space_m"
                     android:enabled="false" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/txtTopIngredient"
                 style="@style/Hesba.Note"
-                android:layout_marginTop="@dimen/sp_3"
+                android:layout_marginTop="@dimen/card_gap"
                 android:visibility="gone" />
 
-            <!-- Actions -->
-            <TextView
-                style="@style/Hesba.Section"
-                android:text="@string/section_actions" />
+            <!-- ===== Carte d'actions ===== -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Hesba.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/card_gap"
+                app:contentPaddingBottom="0dp"
+                app:contentPaddingTop="@dimen/space_xs">
 
-            <View style="@style/Hesba.Divider" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <include
-                android:id="@+id/actShopping"
-                layout="@layout/item_link" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:accessibilityHeading="true"
+                        android:text="@string/section_actions"
+                        android:textAppearance="@style/Hesba.Text.Title" />
 
-            <include
-                android:id="@+id/actDuplicate"
-                layout="@layout/item_link" />
+                    <include
+                        android:id="@+id/actEdit"
+                        layout="@layout/item_link" />
 
-            <include
-                android:id="@+id/actPdf"
-                layout="@layout/item_link" />
+                    <include
+                        android:id="@+id/actShopping"
+                        layout="@layout/item_link" />
 
-            <include
-                android:id="@+id/actEdit"
-                layout="@layout/item_link" />
+                    <include
+                        android:id="@+id/actDuplicate"
+                        layout="@layout/item_link" />
+
+                    <include
+                        android:id="@+id/actPdf"
+                        layout="@layout/item_link" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
-                style="@style/Widget.Hesba.Button.Danger"
+                style="@style/Hesba.Button.Danger"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_4"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/space_l"
                 android:text="@string/action_delete_recipe"
                 app:icon="@drawable/ic_delete" />
         </LinearLayout>

@@ -65,6 +65,10 @@ class HomeActivity : BaseActivity() {
         b.cardSimulator.setOnClickListener { startActivity(Intent(this, WhatIfActivity::class.java)) }
         b.cardShopping.setOnClickListener { startActivity(Intent(this, ShoppingListActivity::class.java)) }
         b.cardFix.setOnClickListener { toggleAlerts() }
+        // design Minimal : bouton principal et cartes chiffres
+        b.btnNewRecipe.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
+        b.cardStatRecipes.setOnClickListener { BottomNav.open(this, BottomNav.Tab.RECIPES, BottomNav.Tab.HOME) }
+        b.cardStatIngredients.setOnClickListener { BottomNav.open(this, BottomNav.Tab.INGREDIENTS, BottomNav.Tab.HOME) }
         b.btnNextAlert.setOnClickListener {
             alertIndex++
             Motion.tick(it)
@@ -104,6 +108,9 @@ class HomeActivity : BaseActivity() {
 
         b.bento.visibility = View.VISIBLE
 
+        renderStats(s)
+        renderLastCalc(ws)
+
         val d = HomeDashboard.build(ws, s)
         renderMargin(d)
         renderFix(s)
@@ -135,6 +142,41 @@ class HomeActivity : BaseActivity() {
         val initial = (firstName.ifEmpty { business }).firstOrNull()?.uppercaseChar()
         b.txtAvatar.text = initial?.toString().orEmpty()
         b.imgAvatar.visibility = if (initial == null) View.VISIBLE else View.GONE
+    }
+
+    // ---------- cartes du haut (design Minimal) : affichage seulement, chiffres déjà calculés ----------
+
+    private fun renderStats(s: HomeSummary) {
+        b.txtStatRecipes.text = count(s.recipeCount)
+        b.txtStatIngredients.text = count(s.ingredientCount)
+    }
+
+    /** Recette modifiée en dernier : coût par part, prix conseillé et badge de marge (même calcul que la fiche recette). */
+    private fun renderLastCalc(ws: Workspace) {
+        val last = ws.recipes.maxByOrNull { it.dateMiseAJour }
+        if (last == null) {
+            b.txtLastCalcName.setText(R.string.home_last_calc)
+            b.layoutLastCalcCost.visibility = View.GONE
+            b.txtLastCalcSuggested.setText(R.string.home_last_calc_empty)
+            b.cardLastCalc.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
+            return
+        }
+        val c = ws.cost(last)
+        b.txtLastCalcName.text = getString(R.string.home_last_calc_name, last.nom)
+        b.layoutLastCalcCost.visibility = View.VISIBLE
+        b.txtLastCalcCost.text = Fmt.money(this, c.costPerPortionMillimes)
+        b.txtLastCalcSuggested.text = getString(R.string.home_last_calc_suggested, Fmt.money(this, c.suggestedPriceMillimes))
+        val margin = c.realMarginPercent
+        if (margin == null) {
+            b.txtLastCalcBadge.visibility = View.GONE
+        } else {
+            val low = c.isBelowTarget(BigDecimal(last.margeVoulue.toString()))
+            b.txtLastCalcBadge.visibility = View.VISIBLE
+            b.txtLastCalcBadge.text = getString(if (low) R.string.badge_price_low else R.string.badge_margin_ok, Fmt.percent(this, margin))
+            b.txtLastCalcBadge.setBackgroundResource(if (low) R.drawable.bg_badge_error else R.drawable.bg_badge_success)
+            b.txtLastCalcBadge.setTextColor(getColor(if (low) R.color.hesba_error else R.color.hesba_success))
+        }
+        b.cardLastCalc.setOnClickListener { openRecipe(last.id) }
     }
 
     // ---------- cartes ----------
@@ -388,7 +430,7 @@ class HomeActivity : BaseActivity() {
     private fun enter(d: HomeDashboard) {
         if (entered) return
         entered = true
-        val cards = listOf(b.header, b.cardMargin, b.cardScan, b.cardFix, b.cardPrice, b.cardTodo, b.cardBest, b.cardSimulator, b.cardShopping)
+        val cards = listOf(b.header, b.cardStatRecipes, b.cardStatIngredients, b.cardLastCalc, b.btnNewRecipe, b.cardMargin, b.cardScan, b.cardFix, b.cardPrice, b.cardTodo, b.cardBest, b.cardSimulator, b.cardShopping)
         cards.forEachIndexed { i, v -> Motion.riseIn(v, i * Motion.STAGGER, 10f) }
         d.averageMargin?.let { countUp(b.txtMargin, it) }
         d.best?.let { countUp(b.txtBestValue, it.margin) }

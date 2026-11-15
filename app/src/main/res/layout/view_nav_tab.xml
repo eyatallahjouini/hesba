@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Un onglet de la barre du bas : icône dans la pastille, libellé dessous. 64 dp de haut. -->
+<!-- Un onglet de la barre du bas (design Minimal) : icône dans la pastille, libellé toujours visible dessous. 64 dp de haut.
+     Couleurs par état « selected » : icône res/color/bottom_nav_color, libellé res/color/bottom_nav_text_color. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="0dp"
     android:layout_height="match_parent"
     android:background="?attr/selectableItemBackgroundBorderless"
@@ -14,7 +16,8 @@
         android:id="@+id/navIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:importantForAccessibility="no" />
+        android:importantForAccessibility="no"
+        app:tint="@color/bottom_nav_color" />
 
     <TextView
         android:id="@+id/navLabel"
@@ -22,7 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:ellipsize="end"
+        android:fontFamily="@font/hb_sans"
         android:importantForAccessibility="no"
         android:maxLines="1"
+        android:textColor="@color/bottom_nav_text_color"
         android:textSize="12sp" />
 </LinearLayout>

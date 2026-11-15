@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Rôles de couleur HESBA « Le Ticket » (mode clair).
-     Même famille que la palette d'origine (safran, brun, crème, caramel, vert, rouge), adoucie pour les yeux :
-     fond papier chaud au lieu d'un blanc éclatant, encre brune profonde, safran réservé à l'action.
-     Contrastes (WCAG) sur hb_bg : encre 14:1, encre douce 6,4:1, safran texte 5,2:1, indice 4,1:1. -->
+<!-- Anciens rôles « hb_* » encore utilisés par les layouts et le Kotlin : ils pointent maintenant
+     vers la palette Minimal (colors.xml / values-night/colors.xml), donc clair et sombre suivent tout seuls.
+     À mesure que les écrans sont refaits, les layouts passent aux noms hesba_*. -->
 <resources>
-    <color name="hb_bg">#F6F0E6</color>
-    <color name="hb_surface">#FFFBF4</color>
-    <color name="hb_surface_alt">#EFE3CF</color>
-    <!-- papier du ticket (fiche recette, scanner, premier lancement) -->
-    <color name="hb_paper">#FFFDF8</color>
-    <color name="hb_ink">#2D1F1A</color>
-    <color name="hb_ink_soft">#6A564C</color>
-    <color name="hb_hint">#8B776C</color>
-    <color name="hb_line">#E3D5C1</color>
-    <color name="hb_line_strong">#CBB79C</color>
-    <color name="hb_accent">#F28C28</color>
-    <color name="hb_on_accent">#2D1F1A</color>
-    <color name="hb_accent_ink">#A0520A</color>
-    <color name="hb_accent_soft">#FBE5CA</color>
-    <color name="hb_good">#2E7D32</color>
-    <color name="hb_good_bg">#E3EFDF</color>
-    <color name="hb_bad">#C62828</color>
-    <color name="hb_bad_bg">#F9E1DE</color>
-    <!-- ardoise du marché (liste des ingrédients) : craie sur ardoise, dans les deux thèmes -->
-    <color name="hb_slate">#27302B</color>
-    <color name="hb_slate_line">#4A5650</color>
-    <color name="hb_chalk">#F2EDE2</color>
-    <color name="hb_chalk_soft">#B4B8AE</color>
-    <color name="hb_chalk_accent">#F7A94F</color>
-    <color name="hb_chalk_bad">#F4A097</color>
-    <color name="hb_scrim">#993E2723</color>
+    <color name="hb_bg">@color/hesba_background</color>
+    <color name="hb_surface">@color/hesba_surface</color>
+    <color name="hb_surface_alt">@color/hesba_surface_alt</color>
+    <color name="hb_paper">@color/hesba_surface</color>
+    <color name="hb_ink">@color/hesba_text_primary</color>
+    <color name="hb_ink_soft">@color/hesba_text_secondary</color>
+    <color name="hb_hint">@color/hesba_text_hint</color>
+    <color name="hb_line">@color/hesba_border</color>
+    <color name="hb_line_strong">@color/hesba_border_strong</color>
+    <color name="hb_accent">@color/hesba_accent</color>
+    <color name="hb_on_accent">@color/hesba_on_accent</color>
+    <color name="hb_accent_ink">@color/hesba_accent_text</color>
+    <color name="hb_accent_soft">@color/hesba_accent_soft</color>
+    <color name="hb_good">@color/hesba_success</color>
+    <color name="hb_good_bg">@color/hesba_success_bg</color>
+    <color name="hb_bad">@color/hesba_error</color>
+    <color name="hb_bad_bg">@color/hesba_error_bg</color>
+    <!-- ancienne « ardoise » de la liste des ingrédients : ardoise Minimal, dans les deux thèmes -->
+    <color name="hb_slate">#1F2933</color>
+    <color name="hb_slate_line">#3A4754</color>
+    <color name="hb_chalk">#F1F3F5</color>
+    <color name="hb_chalk_soft">#9AA3AD</color>
+    <color name="hb_chalk_accent">@color/hesba_accent</color>
+    <color name="hb_chalk_bad">#F28B9C</color>
+    <color name="hb_scrim">@color/hesba_scrim</color>
 </resources>

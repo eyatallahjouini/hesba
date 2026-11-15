@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Ardoise du marché : fond plein, seuls les coins du haut arrondis (le tableau descend jusqu'à la barre du bas) -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/hb_slate" />
-    <corners android:topLeftRadius="20dp" android:topRightRadius="20dp" />
-</shape>

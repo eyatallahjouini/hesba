@@ -9,5 +9,7 @@
     <declare-styleable name="ReceiptLayout">
         <attr name="edgeTop" format="boolean" />
         <attr name="edgeBottom" format="boolean" />
+        <!-- design Minimal : carte plate (coins 16 dp, filet fin), sans dents de ticket -->
+        <attr name="flat" format="boolean" />
     </declare-styleable>
 </resources>

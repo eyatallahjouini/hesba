@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icône pour Android 7 à 7.1 (avant les icônes adaptatives) : carré arrondi ardoise + logo Hesba -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/hesba_icon_bg" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_launcher_foreground" />
+</layer-list>

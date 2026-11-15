@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Une langue proposée au premier lancement : nom dans sa propre langue, précision, coche si choisie -->
+<!-- Une langue proposée au premier lancement (design Minimal) : nom dans sa propre langue, précision, coche turquoise si choisie -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/sp_3"
+    android:layout_marginBottom="@dimen/card_gap"
     android:background="@drawable/bg_option"
     android:clickable="true"
     android:focusable="true"
@@ -12,8 +12,8 @@
     android:gravity="center_vertical"
     android:minHeight="72dp"
     android:orientation="horizontal"
-    android:paddingStart="@dimen/sp_4"
-    android:paddingEnd="@dimen/sp_4">
+    android:paddingStart="@dimen/card_padding"
+    android:paddingEnd="@dimen/card_padding">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -26,15 +26,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
-            android:textAppearance="@style/TextAppearance.Hesba.Subtitle"
-            android:textSize="19sp" />
+            android:textAppearance="@style/Hesba.Text.Title"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/langHint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
-            android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+            android:textAppearance="@style/Hesba.Text.Caption" />
     </LinearLayout>
 
     <ImageView
@@ -43,5 +43,5 @@
         android:layout_height="24dp"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_check"
-        app:tint="@color/hb_accent_ink" />
+        app:tint="@color/hesba_accent_text" />
 </LinearLayout>

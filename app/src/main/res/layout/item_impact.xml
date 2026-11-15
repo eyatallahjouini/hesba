@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Effet d'un changement de prix sur une recette : avant → après, chiffres alignés -->
+<!-- Effet d'un changement de prix sur une recette (design Minimal, partagé) : nom + badge, puis coût, marge, prix conseillé ; filet fin -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:orientation="vertical"
-        android:paddingTop="@dimen/sp_3"
-        android:paddingBottom="@dimen/sp_3">
+        android:paddingTop="@dimen/space_m"
+        android:paddingBottom="@dimen/space_m">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,12 +25,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textAppearance="@style/TextAppearance.Hesba.Label" />
+                android:textAppearance="@style/Hesba.Text.Body" />
 
             <TextView
                 android:id="@+id/impactTag"
-                style="@style/Hesba.Tag.Bad"
-                android:layout_marginStart="@dimen/sp_2"
+                style="@style/Hesba.Badge.Error"
+                android:layout_marginStart="@dimen/space_s"
                 android:text="@string/tag_below_target"
                 android:visibility="gone" />
         </LinearLayout>
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/label_cost_per_portion"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:textAppearance="@style/Hesba.Text.Caption" />
 
             <TextView
                 android:id="@+id/impactCost"
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/label_real_margin"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:textAppearance="@style/Hesba.Text.Caption" />
 
             <TextView
                 android:id="@+id/impactMargin"
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/label_suggested_price"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:textAppearance="@style/Hesba.Text.Caption" />
 
             <TextView
                 android:id="@+id/impactSuggested"

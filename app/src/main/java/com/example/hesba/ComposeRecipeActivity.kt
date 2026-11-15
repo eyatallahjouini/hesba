@@ -277,6 +277,16 @@ class ComposeRecipeActivity : BaseActivity() {
             real != null -> getString(R.string.compose_summary, Fmt.money(this, recipe.prixVenteMillimes), Fmt.percent(this, real))
             else -> ""
         }
+        // design Minimal : badge du résumé (marge réelle atteinte = vert, prix trop bas = rouge)
+        if (real == null) {
+            b.txtSummaryBadge.visibility = View.GONE
+        } else {
+            val low = real < (margin ?: BigDecimal(DEFAULT_MARGIN))
+            b.txtSummaryBadge.visibility = View.VISIBLE
+            b.txtSummaryBadge.text = getString(if (low) R.string.badge_price_low else R.string.badge_margin_ok, Fmt.percent(this, real))
+            b.txtSummaryBadge.setBackgroundResource(if (low) R.drawable.bg_badge_error else R.drawable.bg_badge_success)
+            b.txtSummaryBadge.setTextColor(getColor(if (low) R.color.hesba_error else R.color.hesba_success))
+        }
 
         val labor = RecipeCosting.laborEstimate(user, recipe.tempsPreparationMinutes)
         b.btnLaborEstimate.visibility = if (labor != null && labor != recipe.mainOeuvreParLotMillimes) View.VISIBLE else View.GONE

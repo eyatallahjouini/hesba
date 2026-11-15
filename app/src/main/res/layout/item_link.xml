@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Ligne de lien : icône, titre, sous-titre, chevron (miroir en arabe), filet en bas -->
+<!-- Ligne de lien (design Minimal, partagée) : icône, titre, sous-titre, chevron (miroir en arabe), filet en bas -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/row"
@@ -17,9 +17,9 @@
             android:id="@+id/icon"
             android:layout_width="@dimen/icon"
             android:layout_height="@dimen/icon"
-            android:layout_marginEnd="@dimen/sp_4"
+            android:layout_marginEnd="@dimen/space_l"
             android:importantForAccessibility="no"
-            app:tint="@color/hb_accent_ink" />
+            app:tint="@color/hesba_accent_text" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -31,21 +31,21 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Hesba.Label" />
+                android:textAppearance="@style/Hesba.Text.Body" />
 
             <TextView
                 android:id="@+id/subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:textAppearance="@style/Hesba.Text.Caption" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/sp_3"
+            android:layout_marginStart="@dimen/space_m"
             android:textAppearance="@style/TextAppearance.Hesba.Money.Small"
             android:visibility="gone" />
 
@@ -53,10 +53,10 @@
             android:id="@+id/chevron"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginStart="@dimen/sp_2"
+            android:layout_marginStart="@dimen/space_s"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_chevron"
-            app:tint="@color/hb_ink_soft" />
+            app:tint="@color/hesba_text_hint" />
     </LinearLayout>
 
     <View style="@style/Hesba.Divider" />

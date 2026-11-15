@@ -3,7 +3,6 @@
 <resources>
     <string name="app_name">حسبة</string>
     <string name="app_name_display">حسبة</string>
-    <string name="logo_mark">د.ت</string>
     <string name="app_version">الإصدار %1$s · البيانات محفوظة على هذا الهاتف</string>
 
     <string name="money_format">%1$s د.ت</string>
@@ -718,4 +717,26 @@
     <string name="bento_sim_sub">لو ارتفعت الأسعار</string>
     <string name="bento_shop_title">المشتريات</string>
     <string name="bento_shop_sub">لإنتاجك</string>
+    <!-- الصفحة الرئيسية (Minimal) -->
+    <string name="home_stat_recipes">وصفات محفوظة</string>
+    <string name="home_last_calc">آخر حساب</string>
+    <string name="home_last_calc_name">آخر حساب · %1$s</string>
+    <string name="home_last_calc_suggested">السعر المقترح: %1$s</string>
+    <string name="home_last_calc_empty">لا توجد وصفة محسوبة بعد. أنشئ وصفتك الأولى لترى تكلفتها هنا.</string>
+    <string name="badge_margin_ok">الهامش جيد · %1$s</string>
+    <string name="badge_price_low">السعر منخفض جدًا · %1$s</string>
+    <string name="home_tools">المتابعة والأدوات</string>
+    <!-- وصفاتي (Minimal) -->
+    <string name="action_first_recipe">أنشئ وصفتي الأولى</string>
+    <string name="list_per_portion">للحصة</string>
+    <string name="list_meta">%1$s · %2$s</string>
+    <plurals name="recipe_ingredients">
+        <item quantity="zero">%d مكوّن</item>
+        <item quantity="one">مكوّن واحد</item>
+        <item quantity="two">مكوّنان</item>
+        <item quantity="few">%d مكوّنات</item>
+        <item quantity="many">%d مكوّنًا</item>
+        <item quantity="other">%d مكوّن</item>
+    </plurals>
+    <string name="field_unit">الوحدة</string>
 </resources>

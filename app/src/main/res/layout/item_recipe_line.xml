@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Ligne de recette dans l'éditeur : nom + coût, puis quantité + unité, retirer -->
+<!-- Ligne d'ingrédient dans l'éditeur (design Minimal) : nom + coût à la fin, bouton retirer gris,
+     puis quantité + unité ; filet fin entre les lignes -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -11,7 +12,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingTop="@dimen/sp_2">
+        android:paddingTop="@dimen/space_s">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -23,20 +24,23 @@
                 android:id="@+id/lineName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Hesba.Label" />
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/Hesba.Text.Body"
+                android:fontFamily="@font/hb_sans_medium" />
 
             <TextView
                 android:id="@+id/lineInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/Hesba.Text.Caption" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/lineCost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/sp_2"
+            android:layout_marginStart="@dimen/space_s"
             android:textAppearance="@style/TextAppearance.Hesba.Money" />
 
         <com.google.android.material.button.MaterialButton
@@ -46,7 +50,7 @@
             android:layout_height="wrap_content"
             app:icon="@drawable/ic_close"
             app:iconSize="18dp"
-            app:iconTint="@color/hb_ink_soft" />
+            app:iconTint="@color/hesba_text_hint" />
     </LinearLayout>
 
     <LinearLayout
@@ -54,11 +58,11 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/sp_3">
+        android:paddingBottom="@dimen/space_m">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilQty"
-            style="@style/Widget.Hesba.TextInput"
+            style="@style/Hesba.Field"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:hint="@string/field_quantity">
@@ -72,13 +76,13 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/lineUnit"
-            style="@style/Widget.Hesba.Button.Outlined"
+            style="@style/Hesba.Button.Secondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/sp_2"
+            android:layout_marginStart="@dimen/space_s"
             android:minWidth="88dp"
-            android:paddingStart="@dimen/sp_3"
-            android:paddingEnd="@dimen/sp_3" />
+            android:paddingStart="@dimen/space_m"
+            android:paddingEnd="@dimen/space_m" />
     </LinearLayout>
 
     <View style="@style/Hesba.Divider" />

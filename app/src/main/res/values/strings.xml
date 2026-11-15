@@ -2,8 +2,7 @@
 <!-- Français (langue par défaut de HESBA) -->
 <resources>
     <string name="app_name">Hesba</string>
-    <string name="app_name_display">HESBA</string>
-    <string name="logo_mark">dt</string>
+    <string name="app_name_display">Hesba</string>
     <string name="app_version">Version %1$s · données gardées sur ce téléphone</string>
 
     <!-- Formats -->
@@ -680,4 +679,23 @@
     <string name="bento_sim_sub">Si les prix montent</string>
     <string name="bento_shop_title">Courses</string>
     <string name="bento_shop_sub">Pour ta production</string>
+    <!-- Accueil Minimal -->
+    <string name="home_stat_recipes">Recettes enregistrées</string>
+    <string name="home_last_calc">Dernier calcul</string>
+    <string name="home_last_calc_name">Dernier calcul · %1$s</string>
+    <string name="home_last_calc_suggested">Prix conseillé : %1$s</string>
+    <string name="home_last_calc_empty">Aucune recette calculée pour l\'instant. Crée ta première recette pour voir son coût ici.</string>
+    <string name="badge_margin_ok">Marge OK · %1$s</string>
+    <string name="badge_price_low">Prix trop bas · %1$s</string>
+    <string name="home_tools">Suivi et outils</string>
+    <!-- Mes recettes (Minimal) -->
+    <string name="action_first_recipe">Créer ma première recette</string>
+    <string name="list_per_portion">par part</string>
+    <string name="list_meta">%1$s · %2$s</string>
+    <plurals name="recipe_ingredients">
+        <item quantity="one">%d ingrédient</item>
+        <item quantity="many">%d ingrédients</item>
+        <item quantity="other">%d ingrédients</item>
+    </plurals>
+    <string name="field_unit">Unité</string>
 </resources>

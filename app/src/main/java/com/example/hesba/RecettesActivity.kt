@@ -25,7 +25,6 @@ import com.example.hesba.domain.RecipeSearch
 import com.example.hesba.domain.Workspace
 import com.example.hesba.ui.BaseActivity
 import com.example.hesba.ui.Fmt
-import com.example.hesba.ui.Hairline
 import com.example.hesba.ui.Motion
 import com.example.hesba.ui.Transitions
 import com.example.hesba.ui.RecipePhotos
@@ -56,7 +55,7 @@ class RecettesActivity : BaseActivity() {
 
         b.list.layoutManager = LinearLayoutManager(this)
         b.list.adapter = adapter
-        b.list.addItemDecoration(Hairline(this))
+        // design Minimal : chaque recette est une carte séparée de 12 dp, plus de filet entre les lignes
         b.btnNew.setOnClickListener { Transitions.open(this, b.btnNew, Intent(this, ComposeRecipeActivity::class.java), "add_recipe") }
 
         b.search.editSearch.setHint(R.string.search_recipes_hint)
@@ -111,7 +110,7 @@ class RecettesActivity : BaseActivity() {
                     b.empty.emptyAction.setText(R.string.action_add_ingredient)
                     b.empty.emptyAction.setOnClickListener { startActivity(Intent(this, NouvelIngredientActivity::class.java)) }
                 } else {
-                    b.empty.emptyAction.setText(R.string.action_new_recipe)
+                    b.empty.emptyAction.setText(R.string.action_first_recipe)
                     b.empty.emptyAction.setOnClickListener { startActivity(Intent(this, ComposeRecipeActivity::class.java)) }
                 }
             } else {
@@ -150,49 +149,33 @@ class RecettesActivity : BaseActivity() {
                 v.photo.clipToOutline = true
             }
 
-            // prix de la carte : prix pratiqué, sinon prix conseillé (signalé comme tel)
-            val selling = c.sellingPriceMillimes
-            val suggested = c.suggestedPriceMillimes
-            when {
-                selling != null -> {
-                    v.price.text = Fmt.money(ctx, selling)
-                    v.price.setTextColor(getColor(R.color.hb_ink))
-                    v.priceNote.visibility = View.GONE
-                }
-                suggested != null && c.isComplete -> {
-                    v.price.text = Fmt.money(ctx, suggested)
-                    v.price.setTextColor(getColor(R.color.hb_ink_soft))
-                    v.priceNote.setText(R.string.list_suggested)
-                    v.priceNote.visibility = View.VISIBLE
-                }
-                else -> {
-                    v.price.setText(R.string.value_missing)
-                    v.price.setTextColor(getColor(R.color.hb_ink_soft))
-                    v.priceNote.visibility = View.GONE
-                }
-            }
+            // design Minimal : coût par part en turquoise à la fin, nombre d'ingrédients et de parts dessous
+            v.price.text = Fmt.money(ctx, c.costPerPortionMillimes)
+            val ingredients = c.lines.size
             v.details.text = getString(
-                R.string.list_cost_line,
-                resources.getQuantityString(R.plurals.portions, r.nombreParts, r.nombreParts),
-                Fmt.money(ctx, c.costPerPortionMillimes)
+                R.string.list_meta,
+                resources.getQuantityString(R.plurals.recipe_ingredients, ingredients, ingredients),
+                resources.getQuantityString(R.plurals.portions, r.nombreParts, r.nombreParts)
             )
 
+            // badge de marge : vert si la marge voulue est atteinte, rouge sinon, gris sans prix de vente
             val target = BigDecimal(r.margeVoulue.toString())
             val margin = c.realMarginPercent
             when {
                 !c.isComplete -> {
                     v.margin.setText(R.string.tag_incomplete)
-                    v.margin.setTextColor(getColor(R.color.hb_bad))
+                    badge(v.margin, R.drawable.bg_badge_error, R.color.hesba_error)
                     v.marginBar.set(null, target.toFloat())
                 }
                 margin == null -> {
                     v.margin.setText(R.string.list_no_price)
-                    v.margin.setTextColor(getColor(R.color.hb_ink_soft))
+                    badge(v.margin, R.drawable.bg_tag, R.color.hesba_text_secondary)
                     v.marginBar.set(null, target.toFloat())
                 }
                 else -> {
                     v.margin.text = getString(R.string.tag_margin, Fmt.percent(ctx, margin))
-                    v.margin.setTextColor(getColor(if (margin < target) R.color.hb_bad else R.color.hb_good))
+                    val low = margin < target
+                    badge(v.margin, if (low) R.drawable.bg_badge_error else R.drawable.bg_badge_success, if (low) R.color.hesba_error else R.color.hesba_success)
                     v.marginBar.set(margin.toFloat(), target.toFloat())
                 }
             }
@@ -204,6 +187,11 @@ class RecettesActivity : BaseActivity() {
                 Transitions.open(ctx, v.row, Intent(ctx, RecipeDetailActivity::class.java).putExtra(RecipeDetailActivity.EXTRA_ID, r.id), "recipe_${r.id}")
             }
         }
+    }
+
+    private fun badge(view: android.widget.TextView, background: Int, color: Int) {
+        view.setBackgroundResource(background)
+        view.setTextColor(getColor(color))
     }
 
     private object Diff : DiffUtil.ItemCallback<RecipeSearch.Item>() {

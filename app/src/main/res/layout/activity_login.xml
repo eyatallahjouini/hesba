@@ -1,136 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Connexion (design Minimal) : marque centrée, carte avec les champs, un seul bouton principal,
+     lien « Créer un compte » en bas. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/hesba_background"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/gutter"
-        android:paddingEnd="@dimen/gutter"
-        android:paddingBottom="@dimen/sp_5">
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingEnd="@dimen/screen_margin"
+        android:paddingBottom="@dimen/space_xl">
 
-        <!-- marque : « dt » dans un carré safran, puis le nom -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_7"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="@drawable/bg_logo"
-                android:fontFamily="@font/hb_sans_bold"
-                android:gravity="center"
-                android:importantForAccessibility="no"
-                android:text="@string/logo_mark"
-                android:textColor="@color/hb_on_accent"
-                android:textSize="20sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/sp_3"
-                android:fontFamily="@font/hb_sans_bold"
-                android:text="@string/app_name_display"
-                android:textColor="@color/hb_ink"
-                android:textSize="22sp"
-                android:textStyle="normal" />
-        </LinearLayout>
+        <!-- marque : logo Hesba, nom, phrase courte (logo décoratif : le nom est lu juste dessous) -->
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/space_xxl"
+            android:importantForAccessibility="no"
+            android:src="@drawable/logo_hesba" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_6"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/space_m"
             android:accessibilityHeading="true"
-            android:text="@string/login_title"
-            android:textAppearance="@style/TextAppearance.Hesba.Display" />
+            android:text="@string/app_name_display"
+            android:textAppearance="@style/Hesba.Text.Headline" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_2"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/space_xs"
+            android:gravity="center"
             android:text="@string/login_subtitle"
-            android:textAppearance="@style/TextAppearance.Hesba.Body.Soft" />
+            android:textAppearance="@style/Hesba.Text.Caption" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilEmail"
+        <!-- carte des champs -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Hesba.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_5"
-            android:hint="@string/field_email">
+            android:layout_marginTop="@dimen/space_xl">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editEmail"
-                style="@style/Widget.Hesba.EditText"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="emailAddress"
-                android:imeOptions="actionNext"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_3"
-            android:hint="@string/field_password"
-            app:endIconMode="password_toggle">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/login_title"
+                    android:textAppearance="@style/Hesba.Text.Title" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editPassword"
-                style="@style/Widget.Hesba.EditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autofillHints="password"
-                android:imeOptions="actionDone"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilEmail"
+                    style="@style/Hesba.Field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:hint="@string/field_email"
+                    app:startIconDrawable="@drawable/ic_mail">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editEmail"
+                        style="@style/Widget.Hesba.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="emailAddress"
+                        android:imeOptions="actionNext"
+                        android:inputType="textEmailAddress" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPassword"
+                    style="@style/Hesba.Field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:hint="@string/field_password"
+                    app:endIconMode="password_toggle"
+                    app:startIconDrawable="@drawable/ic_lock">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPassword"
+                        style="@style/Widget.Hesba.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="password"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- seul bouton principal de l'écran -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
+            style="@style/Hesba.Button.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_5"
+            android:layout_marginTop="@dimen/space_xl"
             android:text="@string/action_login" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCreateAccount"
-            style="@style/Widget.Hesba.Button.Outlined"
+            android:id="@+id/btnNoAccount"
+            style="@style/Hesba.Button.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_3"
-            android:text="@string/action_create_account" />
+            android:layout_marginTop="@dimen/space_m"
+            android:text="@string/action_try_without_account" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:minHeight="@dimen/sp_5" />
+            android:minHeight="@dimen/space_xl" />
 
-        <View style="@style/Hesba.Divider" />
-
+        <!-- lien texte turquoise -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNoAccount"
-            style="@style/Widget.Hesba.Button.Text"
-            android:layout_width="match_parent"
+            android:id="@+id/btnCreateAccount"
+            style="@style/Hesba.Button.Text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_2"
-            android:text="@string/action_try_without_account" />
+            android:layout_gravity="center_horizontal"
+            android:text="@string/action_create_account" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
             android:gravity="center"
             android:text="@string/login_local_note"
-            android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+            android:textAppearance="@style/Hesba.Text.Caption" />
     </LinearLayout>
 </ScrollView>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/hb_bento_ripple">
+<!-- cercle d'initiales : turquoise clair, lettres ardoise -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/hesba_ripple">
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/hb_bento_avatar" />
+            <solid android:color="@color/hesba_accent_soft" />
         </shape>
     </item>
 </ripple>

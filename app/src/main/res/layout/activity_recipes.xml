@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Mes recettes : une carte de restaurant. En-tête fixe (titre, recherche, tri), liste, bouton carré d'ajout. -->
+<!-- Mes recettes (design Minimal) : barre ardoise, recherche, tri, liste de cartes, bouton flottant « + ». -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/hesba_background"
     android:orientation="vertical">
 
-    <!-- En-tête fixe : titre, recherche, tri -->
+    <!-- barre du haut (écran d'onglet : pas de retour) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/hesba_primary"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingEnd="@dimen/screen_margin">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
+            android:text="@string/tab_recipes"
+            android:textAppearance="@style/Hesba.Text.Toolbar" />
+    </LinearLayout>
+
+    <!-- recherche, tri, nombre -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/gutter"
-        android:paddingEnd="@dimen/gutter">
-
-        <TextView
-            android:id="@+id/txtCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_5"
-            android:textAppearance="@style/TextAppearance.Hesba.Section" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:accessibilityHeading="true"
-            android:text="@string/tab_recipes"
-            android:textAppearance="@style/TextAppearance.Hesba.Display" />
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingEnd="@dimen/screen_margin">
 
         <include
             android:id="@+id/search"
@@ -37,7 +40,7 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_1"
+            android:layout_marginTop="@dimen/space_s"
             android:scrollbars="none">
 
             <com.google.android.material.chip.ChipGroup
@@ -72,36 +75,21 @@
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
-        <!-- en-tête de colonnes de la carte -->
+        <!-- nombre de recettes (caché quand la liste est vide) -->
         <LinearLayout
             android:id="@+id/columns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_2"
-            android:orientation="horizontal"
-            android:paddingBottom="6dp">
+            android:layout_marginTop="@dimen/space_xs"
+            android:layout_marginBottom="@dimen/space_s"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/col_recipe"
-                android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.Hesba.Section"
-                android:textColor="@color/hb_ink_soft" />
-
-            <TextView
+                android:id="@+id/txtCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/col_price"
-                android:textAppearance="@style/TextAppearance.Hesba.Section"
-                android:textColor="@color/hb_ink_soft" />
+                android:textAppearance="@style/Hesba.Text.Caption" />
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/rule"
-            android:background="@color/hb_ink" />
     </LinearLayout>
 
     <FrameLayout
@@ -114,8 +102,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingStart="@dimen/gutter"
-            android:paddingEnd="@dimen/gutter"
+            android:paddingStart="@dimen/screen_margin"
+            android:paddingEnd="@dimen/screen_margin"
             android:paddingBottom="@dimen/list_bottom_clearance" />
 
         <include
@@ -123,9 +111,13 @@
             layout="@layout/view_empty"
             android:visibility="gone" />
 
-        <com.google.android.material.button.MaterialButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnNew"
-            style="@style/Widget.Hesba.AddSquare"
+            style="@style/Hesba.Fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/screen_margin"
             android:contentDescription="@string/action_new_recipe" />
     </FrameLayout>
 

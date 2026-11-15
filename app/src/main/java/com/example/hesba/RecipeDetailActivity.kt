@@ -19,7 +19,6 @@ import com.example.hesba.ui.Fmt
 import com.example.hesba.ui.RecipePdf
 import com.example.hesba.ui.Motion
 import com.example.hesba.ui.RecipePhotos
-import com.example.hesba.ui.widget.DotLeaderView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -129,6 +128,18 @@ class RecipeDetailActivity : BaseActivity() {
         b.btnApplySuggested.text = getString(R.string.action_use_price, Fmt.money(this, suggested))
         b.btnApplySuggested.setOnClickListener { suggested?.let { setPrice(it) } }
 
+        // design Minimal : carte en-tête (prix conseillé + badge de marge)
+        b.txtHeaderSuggested.text = getString(R.string.home_last_calc_suggested, Fmt.money(this, suggested))
+        if (margin == null) {
+            b.txtMarginBadge.visibility = View.GONE
+        } else {
+            val low = margin < target
+            b.txtMarginBadge.visibility = View.VISIBLE
+            b.txtMarginBadge.text = getString(if (low) R.string.badge_price_low else R.string.badge_margin_ok, Fmt.percent(this, margin))
+            b.txtMarginBadge.setBackgroundResource(if (low) R.drawable.bg_badge_error else R.drawable.bg_badge_success)
+            b.txtMarginBadge.setTextColor(getColor(if (low) R.color.hesba_error else R.color.hesba_success))
+        }
+
         // ingrédient qui pèse le plus
         val top = cost.mostExpensive
         if (top != null && cost.ingredientsBatchExact.signum() > 0) {
@@ -187,17 +198,15 @@ class RecipeDetailActivity : BaseActivity() {
             if (detail != null) { v.ledgerDetail.text = detail; v.ledgerDetail.visibility = View.VISIBLE }
             v.ledgerValue.text = value
             if (strong) {
-                v.ledgerLabel.setTextAppearance(R.style.TextAppearance_Hesba_Ticket_Strong)
-                v.ledgerValue.setTextAppearance(R.style.TextAppearance_Hesba_Ticket_Strong)
+                // design Minimal : totaux en texte fort (plus de police ticket)
+                v.ledgerLabel.setTextAppearance(R.style.TextAppearance_Hesba_Subtitle)
+                v.ledgerValue.setTextAppearance(R.style.TextAppearance_Hesba_Money)
             }
             b.listDetail.addView(v.root)
         }
-        // filet pointillé de ticket
-        fun rule() = b.listDetail.addView(DotLeaderView(this).apply {
-            layoutParams = android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimensionPixelSize(R.dimen.sp_2)).apply {
-                topMargin = resources.getDimensionPixelSize(R.dimen.sp_1); bottomMargin = resources.getDimensionPixelSize(R.dimen.sp_1)
-            }
-        })
+        // design Minimal : les lignes sont déjà séparées par un filet fin (showDividers du layout),
+        // les totaux se distinguent par le texte fort ; plus de pointillés de ticket
+        fun rule() = Unit
 
         for (lc in cost.lines) {
             val ing = lc.ingredient

@@ -21,7 +21,6 @@ import com.example.hesba.domain.Money
 import com.example.hesba.domain.TextNormalizer
 import com.example.hesba.ui.BaseActivity
 import com.example.hesba.ui.Fmt
-import com.example.hesba.ui.Hairline
 import com.example.hesba.ui.Motion
 import com.example.hesba.ui.Transitions
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,7 +47,7 @@ class IngredientsActivity : BaseActivity() {
 
         b.list.layoutManager = LinearLayoutManager(this)
         b.list.adapter = adapter
-        b.list.addItemDecoration(Hairline(this, R.color.hb_slate_line))
+        // design Minimal : chaque ingrédient est une carte séparée de 12 dp, plus de filet entre les lignes
         b.btnAdd.setOnClickListener { Transitions.open(this, b.btnAdd, Intent(this, NouvelIngredientActivity::class.java), "add_ingredient") }
         b.search.editSearch.setHint(R.string.search_ingredients_hint)
         b.search.editSearch.doAfterTextChanged {
@@ -123,11 +122,11 @@ class IngredientsActivity : BaseActivity() {
             v.details.text = parts.joinToString(" · ")
             if (i.prixMillimes == null) {
                 v.price.setText(R.string.price_missing)
-                v.price.setTextColor(getColor(R.color.hb_chalk_bad))
+                v.price.setTextColor(getColor(R.color.hesba_error))
                 v.unitPrice.text = ""
             } else {
                 v.price.text = Fmt.money(ctx, i.prixMillimes)
-                v.price.setTextColor(getColor(R.color.hb_chalk_accent))
+                v.price.setTextColor(getColor(R.color.hesba_text_primary))
                 v.unitPrice.text = normalizedPrice(ctx, i)
             }
             v.row.contentDescription = listOf(i.nom, v.price.text, v.details.text, v.unitPrice.text).filter { it.isNotBlank() }.joinToString(", ")

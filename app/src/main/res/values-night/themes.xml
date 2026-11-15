@@ -1,6 +1,10 @@
 <resources>
-    <!-- Les couleurs viennent de values-night/colors_theme.xml ; seules les icônes des barres système changent. -->
+    <!-- Les couleurs viennent de values-night/colors.xml.
+         En sombre, hesba_primary (#0B0F13) serait invisible sur les cartes : les composants Material
+         qui utilisent colorPrimary (interrupteurs, chargement, poignées de sélection) passent au turquoise. -->
     <style name="Theme.Hesba" parent="Base.Theme.Hesba">
+        <item name="colorPrimary">@color/hesba_accent</item>
+        <item name="colorOnPrimary">@color/hesba_on_accent</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

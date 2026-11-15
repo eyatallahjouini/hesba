@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- pastille d'icône : turquoise très clair -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/hb_bento_scan_chip" />
-    <corners android:radius="14dp" />
+    <solid android:color="@color/hesba_accent_soft" />
+    <corners android:radius="@dimen/radius_button" />
 </shape>

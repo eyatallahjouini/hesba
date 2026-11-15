@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Carte résumé collée en bas : surface, filet fin en haut, coins du haut 16 dp, sans ombre -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/hesba_border" />
+            <corners android:topLeftRadius="@dimen/radius_card" android:topRightRadius="@dimen/radius_card" />
+        </shape>
+    </item>
+    <item android:top="1dp">
+        <shape>
+            <solid android:color="@color/hesba_surface" />
+            <corners android:topLeftRadius="@dimen/radius_card" android:topRightRadius="@dimen/radius_card" />
+        </shape>
+    </item>
+</layer-list>

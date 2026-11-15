@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Fente de l'imprimante de caisse d'où sort le ticket -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/hb_ink" />
-    <corners android:radius="2dp" />
-</shape>

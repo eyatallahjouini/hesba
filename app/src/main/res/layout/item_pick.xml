@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Une ligne de la liste de choix (design Minimal) : titre, détail en petit texte gris -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:minHeight="@dimen/touch"
     android:orientation="vertical"
-    android:paddingTop="@dimen/sp_3"
-    android:paddingBottom="@dimen/sp_3">
+    android:paddingTop="@dimen/space_m"
+    android:paddingBottom="@dimen/space_m">
 
     <TextView
         android:id="@+id/pickTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Hesba.Label" />
+        android:textAppearance="@style/Hesba.Text.Body" />
 
     <TextView
         android:id="@+id/pickSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFeatureSettings="tnum"
-        android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+        android:textAppearance="@style/Hesba.Text.Caption" />
 </LinearLayout>

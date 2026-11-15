@@ -30,6 +30,9 @@ class ReceiptLayout @JvmOverloads constructor(context: Context, attrs: Attribute
     private val path = Path()
     private var edgeTop = false
     private var edgeBottom = true
+    /** Design Minimal : carte plate arrondie (fond surface, filet fin) au lieu du papier de caisse. */
+    private var flat = false
+    private val radius = resources.getDimension(R.dimen.radius_card)
     private var revealed = 1f
     private var animator: ValueAnimator? = null
 
@@ -39,7 +42,13 @@ class ReceiptLayout @JvmOverloads constructor(context: Context, attrs: Attribute
         val a = context.obtainStyledAttributes(attrs, R.styleable.ReceiptLayout)
         edgeTop = a.getBoolean(R.styleable.ReceiptLayout_edgeTop, false)
         edgeBottom = a.getBoolean(R.styleable.ReceiptLayout_edgeBottom, true)
+        flat = a.getBoolean(R.styleable.ReceiptLayout_flat, false)
         a.recycle()
+        if (flat) {
+            edgeTop = false; edgeBottom = false
+            paper.color = ContextCompat.getColor(context, R.color.hesba_surface)
+            edge.color = ContextCompat.getColor(context, R.color.hesba_border)
+        }
         // place pour les dents
         setPadding(paddingLeft, paddingTop + if (edgeTop) toothH.toInt() else 0, paddingRight, paddingBottom + if (edgeBottom) toothH.toInt() else 0)
     }
@@ -52,6 +61,10 @@ class ReceiptLayout @JvmOverloads constructor(context: Context, attrs: Attribute
     private fun buildPath(w: Float, h: Float) {
         path.reset()
         val half = edge.strokeWidth / 2
+        if (flat) {
+            path.addRoundRect(half, half, w - half, h - half, radius, radius, Path.Direction.CW)
+            return
+        }
         val count = maxOf(1, (w / tooth).toInt())
         val step = w / count
         if (edgeTop) {

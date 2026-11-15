@@ -34,6 +34,9 @@ class NouvelIngredientActivity : BaseActivity() {
         const val EXTRA_INGREDIENT_ID = "EXTRA_INGREDIENT_ID"
         const val EXTRA_NAME = "name"
         const val EXTRA_RETURN = "return"   // renvoie l'id créé à l'écran appelant
+        // liste déroulante des unités : même ordre que les puces du layout
+        private val UNIT_CHIPS = listOf(R.id.unitKg, R.id.unitG, R.id.unitL, R.id.unitMl, R.id.unitPiece)
+        private val UNIT_LABELS = listOf(R.string.unit_kg, R.string.unit_g, R.string.unit_l, R.string.unit_ml, R.string.unit_piece)
     }
 
     private lateinit var b: ActivityNouvelIngredientBinding
@@ -53,7 +56,12 @@ class NouvelIngredientActivity : BaseActivity() {
 
         listOf(b.editQuantity, b.editPrice, b.editYield).forEach { it.doAfterTextChanged { clearErrors(); live() } }
         b.editName.doAfterTextChanged { b.tilName.error = null }
-        b.groupUnit.setOnCheckedStateChangeListener { _, _ -> updateQuantityHint(); live() }
+        b.groupUnit.setOnCheckedStateChangeListener { _, _ -> syncUnitDropdown(); updateQuantityHint(); live() }
+        // design Minimal : l'unité se choisit dans une liste déroulante, qui coche la puce correspondante
+        // (le groupe de puces, caché, reste la valeur lue par le reste du code)
+        b.dropUnit.setSimpleItems(unitLabels().toTypedArray())
+        b.dropUnit.setOnItemClickListener { _, _, position, _ -> b.groupUnit.check(UNIT_CHIPS[position]) }
+        syncUnitDropdown()
         b.btnSave.setOnClickListener { save() }
         b.btnDelete.setOnClickListener { askDelete() }
         b.btnAddSynonym.setOnClickListener { addSynonym() }
@@ -141,6 +149,14 @@ class NouvelIngredientActivity : BaseActivity() {
     }
 
     // ---------- saisie ----------
+
+    private fun unitLabels() = UNIT_LABELS.map { getString(it) }
+
+    /** Affiche dans la liste déroulante l'unité cochée dans le groupe de puces. */
+    private fun syncUnitDropdown() {
+        val index = UNIT_CHIPS.indexOf(b.groupUnit.checkedChipId).coerceAtLeast(0)
+        b.dropUnit.setText(unitLabels()[index], false)
+    }
 
     private fun unit(): MeasureUnit = when (b.groupUnit.checkedChipId) {
         R.id.unitG -> MeasureUnit.G

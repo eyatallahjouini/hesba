@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Grille Bento de l'Accueil : une rangée = 78 dp, espace entre cartes 10 dp ; une carte haute = 2 rangées + 1 espace -->
+<!-- Grille de l'Accueil : une rangée = 80 dp, espace entre cartes 12 dp ; une carte haute = 2 rangées + 1 espace.
+     Les petites cartes (une rangée) gardent 12 dp de marge intérieure pour que Cairo, haute, tienne sans être coupée. -->
 <resources>
-    <dimen name="bento_gap">10dp</dimen>
-    <dimen name="bento_row">78dp</dimen>
-    <dimen name="bento_tall">166dp</dimen>
-    <dimen name="bento_pad">16dp</dimen>
-    <dimen name="bento_pad_small">14dp</dimen>
+    <dimen name="bento_gap">@dimen/card_gap</dimen>
+    <dimen name="bento_row">80dp</dimen>
+    <dimen name="bento_tall">172dp</dimen>
+    <dimen name="bento_pad">@dimen/card_padding</dimen>
+    <dimen name="bento_pad_small">@dimen/space_m</dimen>
 </resources>

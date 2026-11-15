@@ -11,27 +11,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="@dimen/sp_3"
-        android:paddingBottom="@dimen/sp_3">
+        android:paddingTop="@dimen/space_m"
+        android:paddingBottom="@dimen/space_m">
 
         <TextView
             android:id="@+id/txtRead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFeatureSettings="tnum"
-            android:textAppearance="@style/TextAppearance.Hesba.Caption"
+            android:textAppearance="@style/Hesba.Text.Caption"
             android:textDirection="anyRtl" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_2"
+            android:layout_marginTop="@dimen/space_s"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnMatch"
-                style="@style/Widget.Hesba.Button.Outlined"
+                style="@style/Hesba.Button.Secondary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -44,22 +44,22 @@
             <TextView
                 android:id="@+id/tagMatch"
                 style="@style/Hesba.Tag"
-                android:layout_marginStart="@dimen/sp_2" />
+                android:layout_marginStart="@dimen/space_s" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/txtQuantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_2"
+            android:layout_marginTop="@dimen/space_s"
             android:fontFeatureSettings="tnum"
-            android:padding="@dimen/sp_1"
-            android:textAppearance="@style/TextAppearance.Hesba.Body" />
+            android:padding="@dimen/space_xs"
+            android:textAppearance="@style/Hesba.Text.Body" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_1"
+            android:layout_marginTop="@dimen/space_xs"
             android:baselineAligned="true"
             android:orientation="horizontal">
 
@@ -68,13 +68,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+                android:textAppearance="@style/Hesba.Text.Caption" />
 
             <TextView
                 android:id="@+id/txtPrices"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/sp_1"
+                android:padding="@dimen/space_xs"
                 android:textAppearance="@style/TextAppearance.Hesba.Money.Small" />
         </LinearLayout>
 
@@ -84,21 +84,21 @@
             android:layout_height="wrap_content"
             android:fontFeatureSettings="tnum"
             android:gravity="end"
-            android:textAppearance="@style/TextAppearance.Hesba.Caption" />
+            android:textAppearance="@style/Hesba.Text.Caption" />
 
         <TextView
             android:id="@+id/txtProblem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_1"
-            android:textAppearance="@style/TextAppearance.Hesba.Caption"
-            android:textColor="@color/hb_bad"
+            android:layout_marginTop="@dimen/space_xs"
+            android:textAppearance="@style/Hesba.Text.Caption"
+            android:textColor="@color/hesba_error"
             android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sp_2"
+            android:layout_marginTop="@dimen/space_s"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -112,7 +112,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAccept"
-                    style="@style/Widget.Hesba.Button.Outlined"
+                    style="@style/Hesba.Button.Secondary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/touch"
@@ -121,7 +121,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnIgnore"
-                    style="@style/Widget.Hesba.Button.Outlined"
+                    style="@style/Hesba.Button.Secondary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/touch"
@@ -130,7 +130,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEdit"
-                style="@style/Widget.Hesba.Button.Text"
+                style="@style/Hesba.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/review_edit"

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Option à choisir (langue) : filet fin ; choisie → filet safran épais et fond safran très doux -->
+<!-- Option à choisir (langue), design Minimal : carte blanche à filet fin ; choisie → filet turquoise et fond turquoise très clair -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
         <shape>
-            <solid android:color="@color/hb_accent_soft" />
-            <stroke android:width="2dp" android:color="@color/hb_accent" />
-            <corners android:radius="@dimen/radius_m" />
+            <solid android:color="@color/hesba_accent_soft" />
+            <stroke android:width="2dp" android:color="@color/hesba_accent" />
+            <corners android:radius="@dimen/radius_button" />
         </shape>
     </item>
     <item>
         <shape>
-            <solid android:color="@color/hb_surface" />
-            <stroke android:width="1dp" android:color="@color/hb_line" />
-            <corners android:radius="@dimen/radius_m" />
+            <solid android:color="@color/hesba_surface" />
+            <stroke android:width="1dp" android:color="@color/hesba_border" />
+            <corners android:radius="@dimen/radius_button" />
         </shape>
     </item>
 </selector>

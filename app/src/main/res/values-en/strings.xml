@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hesba</string>
-    <string name="app_name_display">HESBA</string>
-    <string name="logo_mark">dt</string>
+    <string name="app_name_display">Hesba</string>
     <string name="app_version">Version %1$s · data kept on this phone</string>
 
     <string name="money_format">%1$s TND</string>
@@ -645,4 +644,22 @@
     <string name="bento_sim_sub">If prices go up</string>
     <string name="bento_shop_title">Shopping</string>
     <string name="bento_shop_sub">For your production</string>
+    <!-- Home (Minimal) -->
+    <string name="home_stat_recipes">Saved recipes</string>
+    <string name="home_last_calc">Latest calculation</string>
+    <string name="home_last_calc_name">Latest calculation · %1$s</string>
+    <string name="home_last_calc_suggested">Suggested price: %1$s</string>
+    <string name="home_last_calc_empty">No recipe calculated yet. Create your first recipe to see its cost here.</string>
+    <string name="badge_margin_ok">Margin OK · %1$s</string>
+    <string name="badge_price_low">Price too low · %1$s</string>
+    <string name="home_tools">Tracking and tools</string>
+    <!-- My recipes (Minimal) -->
+    <string name="action_first_recipe">Create my first recipe</string>
+    <string name="list_per_portion">per portion</string>
+    <string name="list_meta">%1$s · %2$s</string>
+    <plurals name="recipe_ingredients">
+        <item quantity="one">%d ingredient</item>
+        <item quantity="other">%d ingredients</item>
+    </plurals>
+    <string name="field_unit">Unit</string>
 </resources>

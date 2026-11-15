@@ -61,7 +61,7 @@ class InvoicesActivity : BaseActivity() {
         }
         b.content.addView(View(this).apply {
             layoutParams = android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, resources.getDimensionPixelSize(R.dimen.hairline)).apply { topMargin = resources.getDimensionPixelSize(R.dimen.sp_4) }
-            setBackgroundColor(getColor(R.color.hb_line))
+            setBackgroundColor(getColor(R.color.hesba_border))
         })
         for (f in invoices) {
             val v = ItemLinkBinding.inflate(LayoutInflater.from(this), b.content, false)

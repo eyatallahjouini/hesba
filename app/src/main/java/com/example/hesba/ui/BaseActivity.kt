@@ -2,15 +2,22 @@ package com.example.hesba.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.LayoutInflaterCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -35,7 +42,8 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Transitions.install(this)
         if (Build.VERSION.SDK_INT < 28) installHeadingSupport()
-        enableEdgeToEdge()
+        // barre de statut ardoise (design Minimal) : icônes blanches, la bande est peinte dans applyInsets
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT))
         super.onCreate(savedInstanceState)
         if (requiresSession && !session.isLoggedIn()) {
             startActivity(Intent(this, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
@@ -79,6 +87,8 @@ abstract class BaseActivity : AppCompatActivity() {
         val right = root.paddingRight
         val top = root.paddingTop
         val bottom = root.paddingBottom
+        val screenBackground: Drawable = root.background ?: ColorDrawable(Color.TRANSPARENT)
+        val statusBarColor = ContextCompat.getColor(this, R.color.hesba_primary)
         ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -88,6 +98,11 @@ abstract class BaseActivity : AppCompatActivity() {
                 top = bars.top + top,
                 bottom = maxOf(bars.bottom, ime.bottom) + bottom
             )
+            // bande ardoise derrière la barre de statut, par-dessus le fond de l'écran
+            v.background = LayerDrawable(arrayOf(screenBackground, ColorDrawable(statusBarColor))).apply {
+                setLayerGravity(1, Gravity.TOP or Gravity.FILL_HORIZONTAL)
+                setLayerHeight(1, bars.top)
+            }
             WindowInsetsCompat.CONSUMED
         }
         findViewById<View?>(R.id.btnBack)?.setOnClickListener { onBackPressedDispatcher.onBackPressed() }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Petite boîte de saisie (prix, quantité, nom) -->
+<!-- Petite boîte de saisie (design Minimal) : un champ Hesba.Field (prix, quantité, nom) -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="@dimen/sp_5"
-    android:paddingTop="@dimen/sp_2"
-    android:paddingEnd="@dimen/sp_5">
+    android:paddingStart="@dimen/space_xl"
+    android:paddingTop="@dimen/space_s"
+    android:paddingEnd="@dimen/space_xl">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til"

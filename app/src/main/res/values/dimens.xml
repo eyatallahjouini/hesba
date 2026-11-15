@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Espacements : grille de 4 dp. Marge latérale 20 dp, cibles tactiles 48 dp minimum. -->
+<!-- Espacements : grille de 4 dp. Marge d'écran 16 dp, cibles tactiles 48 dp minimum. -->
 <resources>
+    <!-- ===== Système Minimal ===== -->
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_s">8dp</dimen>
+    <dimen name="space_m">12dp</dimen>
+    <dimen name="space_l">16dp</dimen>
+    <dimen name="space_xl">24dp</dimen>
+    <dimen name="space_xxl">32dp</dimen>
+    <dimen name="radius_field">10dp</dimen>
+    <dimen name="radius_button">12dp</dimen>
+    <dimen name="radius_card">16dp</dimen>
+    <dimen name="radius_badge">8dp</dimen>
+    <dimen name="screen_margin">@dimen/space_l</dimen>
+    <dimen name="card_gap">@dimen/space_m</dimen>
+    <dimen name="card_padding">@dimen/space_l</dimen>
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="toolbar_height">56dp</dimen>
+
+    <!-- ===== Anciens noms (écrans pas encore refaits) ===== -->
     <dimen name="sp_1">4dp</dimen>
     <dimen name="sp_2">8dp</dimen>
     <dimen name="sp_3">12dp</dimen>
@@ -8,7 +26,7 @@
     <dimen name="sp_5">24dp</dimen>
     <dimen name="sp_6">32dp</dimen>
     <dimen name="sp_7">48dp</dimen>
-    <dimen name="gutter">20dp</dimen>
+    <dimen name="gutter">@dimen/space_l</dimen>
     <dimen name="touch">48dp</dimen>
     <dimen name="row_min">64dp</dimen>
     <dimen name="radius_s">6dp</dimen>

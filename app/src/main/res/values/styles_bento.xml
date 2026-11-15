@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Accueil en grille Bento : cartes arrondies de tailles différentes, une idée par carte. -->
+<!-- Cartes « Suivi et outils » de l'Accueil, en style Minimal : cartes plates blanches, filet fin, texte Cairo. -->
 <resources>
     <!-- parent vide requis par aapt pour les styles Hesba.Bento.* (héritage par le nom) -->
     <style name="Hesba.Bento" />
@@ -10,7 +10,7 @@
         <item name="android:layout_height">@dimen/bento_row</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/bg_bento_card</item>
-        <item name="android:elevation">1dp</item>
+        <item name="android:elevation">0dp</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:padding">@dimen/bento_pad_small</item>
         <item name="android:clickable">true</item>
@@ -20,17 +20,15 @@
     <style name="Hesba.Bento.Label">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/hb_mono_medium</item>
-        <item name="android:textSize">11sp</item>
-        <item name="android:letterSpacing">0.1</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/hb_bento_label</item>
+        <item name="android:fontFamily">@font/hb_sans_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/hesba_text_secondary</item>
     </style>
     <style name="Hesba.Bento.Big">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">@font/hb_sans_semibold</item>
-        <item name="android:textSize">38sp</item>
+        <item name="android:fontFamily">@font/hb_mono_semibold</item>
+        <item name="android:textSize">30sp</item>
         <item name="android:letterSpacing">-0.02</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:fontFeatureSettings">tnum</item>
@@ -40,7 +38,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/hb_sans_semibold</item>
-        <item name="android:textSize">17sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/hb_bento_ink</item>
     </style>
     <style name="Hesba.Bento.Name">
@@ -71,6 +69,6 @@
         <item name="android:layout_width">22dp</item>
         <item name="android:layout_height">22dp</item>
         <item name="android:importantForAccessibility">no</item>
-        <item name="tint">@color/hb_bento_icon</item>
+        <item name="tint">@color/hesba_accent</item>
     </style>
 </resources>

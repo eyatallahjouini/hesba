@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Palette HESBA « Minimal » (mode sombre). Accent turquoise inchangé. -->
+<resources>
+    <color name="hesba_primary">#0B0F13</color>
+    <color name="hesba_background">#12171C</color>
+    <color name="hesba_surface">#1F2933</color>
+    <color name="hesba_text_primary">#F1F3F5</color>
+    <color name="hesba_text_secondary">#9AA3AD</color>
+    <color name="hesba_text_hint">#7A8591</color>
+    <color name="hesba_border">#2E3A46</color>
+    <color name="hesba_success">#6FD3BC</color>
+    <color name="hesba_success_bg">#173A33</color>
+    <color name="hesba_error">#F28B9C</color>
+    <color name="hesba_error_bg">#3D1A22</color>
+
+    <color name="hesba_accent_text">#3CBFA4</color>
+    <color name="hesba_accent_soft">#1C3A35</color>
+    <color name="hesba_surface_alt">#26323E</color>
+    <color name="hesba_border_strong">#3E4C5A</color>
+    <color name="hesba_ripple">#1FF1F3F5</color>
+    <color name="hesba_scrim">#CC000000</color>
+</resources>

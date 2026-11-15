@@ -185,6 +185,46 @@ class InvoiceParserTest {
     }
 
     @Test
+    fun heureDuTicketNestPasUnIngredient() {
+        // le « : » de l'heure est souvent lu comme un point ou un espace par l'OCR
+        listOf("14:35", "Heure : 09:12", "Heure 14.35", "Heure 14 35", "H : 14.35", "Time 14:35:20", "14h35",
+            "الساعة ١٤:٣٥", "03/11/2026 14:35", "Date : 03-11-26").forEach {
+            assertFalse(it, InvoiceParser.isIngredientLine(it))
+        }
+    }
+
+    @Test
+    fun lignesDuTicketIgnorees() {
+        listOf("", "----------", "123 456 789", "TOTAL 25,400", "Sous-total 20,000", "TVA 19% 3,800", "Timbre 1,000",
+            "Remise 2,000", "Net à payer 25,400", "Espèces 30,000", "Rendu 4,600", "Monnaie 4,600", "Carte 25,400",
+            "Tél : 73 123 456", "MF 1234567/A", "Ticket N° 0045", "Facture N° 118", "Caisse 2", "Caissier : Ali 3",
+            "Merci de votre visite", "À bientôt", "المجموع ٢٥٫٤٠٠", "شكرا لزيارتكم", "رقم ٤٥").forEach {
+            assertFalse(it, InvoiceParser.isIngredientLine(it))
+        }
+    }
+
+    @Test
+    fun vraisArticlesGardes() {
+        listOf("Farine fleur sac 25 kg 2 32,000 64,000", "Lait 1L 12 1.350 16.200", "Beurre doux 250 g",
+            "Levure boulangère 0,800", "سكر ١٠ كغ ١٫٨٥٠ ١٨٫٥٠٠").forEach {
+            assertTrue(it, InvoiceParser.isIngredientLine(it))
+        }
+        assertFalse(InvoiceParser.isIngredientLine("Beurre"))   // nom sans prix ni quantité
+    }
+
+    @Test
+    fun ticketCompletSansHeureNiTotalDansLesIngredients() {
+        val inv = InvoiceParser.parse(listOf(
+            "Ticket N° 0045", "03/11/2026 14:35", "Heure 14.35", "Caisse 2",
+            "Farine 2 1,200 2,400", "Sucre 1 kg 1,850", "TOTAL 4,250", "Espèces 5,000", "Rendu 0,750", "Merci, à bientôt"
+        ))
+        assertEquals(listOf("Farine", "Sucre"), inv.lines.map { it.name })
+        assertEquals("2026-11-03", inv.date.value)
+        assertEquals(4250L, inv.totalMillimes)
+        assertNull(inv.supplier.value)   // « Ticket N° 0045 » n'est pas pris pour le magasin
+    }
+
+    @Test
     fun reconstructionDesLignesOcr() {
         // ML Kit rend souvent les colonnes séparément : on les remet sur la même ligne
         val tokens = listOf(

@@ -71,6 +71,45 @@ object InvoiceParser {
         "prix unitaire", "p u", "pu ", "montant", "qty", "unit price", "amount", "item", "التسميه", "البيان", "الكميه", "السعر", "المبلغ",
         "الثمن", "سعر الوحده", "الماده")
 
+    // Heure : 14:35, 09:12:47, 14h35 (heures 0-23, minutes et secondes 0-59)
+    private val TIME = Regex("(?<!\\d)([01]?\\d|2[0-3])\\s*[:hH]\\s*[0-5]\\d(?:\\s*:\\s*[0-5]\\d)?(?!\\d)")
+    // « H : 14.35 » : l'OCR lit souvent le « : » de l'heure comme un point
+    private val H_LABEL = Regex("^h\\s*[:.]", RegexOption.IGNORE_CASE)
+
+    /** Mots d'un ticket de caisse qui ne désignent jamais un article acheté. */
+    private val RECEIPT_NOISE_WORDS = listOf(
+        // heure et date
+        "heure", "heures", "time", "الساعه", "الوقت", "date", "التاريخ",
+        // totaux et paiement
+        "total", "sous total", "tva", "timbre", "remise", "net a payer", "especes", "espece", "rendu", "monnaie",
+        "carte", "cb", "paiement", "cash", "المجموع", "الجمله", "الباقي", "نقدا", "بطاقه", "طابع", "خصم",
+        // magasin, ticket, caisse
+        "tel", "telephone", "fax", "adresse", "matricule", "mf", "m f", "ticket", "facture", "caisse", "caissier",
+        "caissiere", "magasin", "الهاتف", "العنوان", "المعرف الجبائي", "رقم", "فاتوره", "تذكره", "الصندوق", "المحل",
+        // messages de fin
+        "merci", "a bientot", "au revoir", "bonne journee", "bienvenue", "شكرا", "الى اللقاء", "مرحبا"
+    )
+
+    /** Vrai si la ligne parle du ticket lui-même (heure, date, total, magasin, message…) et pas d'un article. */
+    private fun isReceiptNoise(line: String): Boolean {
+        val norm = TextNormalizer.normalize(line)
+        return TIME.containsMatchIn(line) ||                                    // heure HH:MM, HH:MM:SS, 14h35
+            H_LABEL.containsMatchIn(line.trim()) ||                             // « H : … »
+            findDate(line) != null ||                                           // date JJ/MM/AAAA, JJ-MM-AA, AAAA-MM-JJ
+            (RECEIPT_NOISE_WORDS + TOTAL_WORDS + SUBTOTAL_WORDS + TAX_WORDS + DISCOUNT_WORDS + IGNORE_WORDS)
+                .any { containsWord(norm, it) }                                 // mots-clés FR / EN / AR
+    }
+
+    /**
+     * Une ligne devient un ingrédient seulement si elle ressemble à un article acheté.
+     */
+    fun isIngredientLine(line: String): Boolean {
+        val cleaned = clean(line)
+        if (cleaned.none { it.isLetter() }) return false   // vide, ou seulement chiffres et symboles
+        if (isReceiptNoise(cleaned)) return false          // heure, date, total, magasin, fin de ticket
+        return parseLine(cleaned) != null                  // un nom (2 lettres ou plus) ET un prix ou une quantité
+    }
+
     fun parse(rawLines: List<String>): ParsedInvoice {
         val lines = rawLines.map { clean(it) }.filter { it.isNotBlank() }
         var supplier: Extracted<String>? = null
@@ -106,9 +145,9 @@ object InvoiceParser {
                 IGNORE_WORDS.any { containsWord(norm, TextNormalizer.normalize(it)) } -> Unit
                 isHeader(norm) -> Unit
                 else -> {
-                    val product = parseLine(line)
+                    val product = if (isIngredientLine(line)) parseLine(line) else null
                     if (product != null) products += product
-                    else if (supplier == null && index < 4 && isNameLike(line)) supplier = Extracted(line.trim(), true)
+                    else if (supplier == null && index < 4 && isNameLike(line) && !isReceiptNoise(line)) supplier = Extracted(line.trim(), true)
                 }
             }
         }
